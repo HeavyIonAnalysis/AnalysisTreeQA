@@ -1,10 +1,10 @@
 #include "AnalysisTree/Cuts.hpp"
 #include "CbmCuts.h"
 
-#include "EntryConfig.hpp"
-#include "Manager.hpp"
-#include "Task.hpp"
-#include "Utils.hpp"
+#include "src/EntryConfig.hpp"
+#include "src/Manager.hpp"
+#include "src/Task.hpp"
+#include "src/Utils.hpp"
 
 typedef AnalysisTree::QA::EntryConfig::PlotType PlotType;
 using AnalysisTree::QA::gNbins;
@@ -21,12 +21,16 @@ void SimParticlesQA(QA::Task& task);
 void SimEventHeaderQA(QA::Task& task);
 void RecEventHeaderQA(QA::Task& task);
 void EfficiencyMaps(QA::Task& task);
+void TrdTracksQA(QA::Task& task);
+void RichRingsQA(QA::Task& task);
 
 const std::string sim_event_header = "SimEventHeader";
 const std::string rec_event_header = "RecEventHeader";
 const std::string sim_particles = "SimParticles";
 const std::string rec_tracks = "VtxTracks";
 const std::string tof_hits = "TofHits";
+const std::string trd_tracks = "TrdTracks";
+const std::string rich_rings = "RichRings";
 
 std::vector<size_t> pdf_plots{};
 
@@ -49,15 +53,18 @@ int main(int argc, char** argv) {
 
   auto* task = new QA::Task;
 
-  KFPFTracksQA(*task);
-  VertexTracksQA(*task);
-  TofHitsQA(*task);
-  SimParticlesQA(*task);
-  SimEventHeaderQA(*task);
-  RecEventHeaderQA(*task);
-  EfficiencyMaps(*task);
+  RichRingsQA(*task);
+  TrdTracksQA(*task);
 
-  AddParticlesFlowQA(task, sim_particles, {sim_event_header, "psi_RP"}, {2212, 211, -211});
+//  KFPFTracksQA(*task);
+//  VertexTracksQA(*task);
+//  TofHitsQA(*task);
+//  SimParticlesQA(*task);
+//  SimEventHeaderQA(*task);
+  RecEventHeaderQA(*task);
+//  EfficiencyMaps(*task);
+//
+//  AddParticlesFlowQA(task, sim_particles, {sim_event_header, "psi_RP"}, {2212, 211, -211});
 
   man.AddTask(task);
 
@@ -66,6 +73,46 @@ int main(int argc, char** argv) {
   man.Finish();
 
   return 0;
+}
+
+
+void TrdTracksQA(QA::Task& task){
+  AddTrackQA(&task, trd_tracks);
+  AddTracksMatchQA(&task, trd_tracks, rec_tracks);
+
+  task.AddH1({"TRD energy_loss, GeV", {trd_tracks, "energy_loss"}, {gNbins, 0, 1}});
+  task.AddH1({"Number of hits in TRD", {trd_tracks, "n_hits"}, {6, 0, 6}});
+
+  task.AddH1({"PID ANN", {trd_tracks, "pid_ann"}, {gNbins, -1, 1}});
+  task.AddH1({"PID WKN", {trd_tracks, "pid_wkn"}, {gNbins, -1, 1}});
+  task.AddH1({"PID Likelihood, e^{-}", {trd_tracks, "pid_like_e"}, {gNbins, -1, 1}});
+  task.AddH1({"PID Likelihood, #pi", {trd_tracks, "pid_like_pi"}, {gNbins, -1, 1}});
+  task.AddH1({"PID Likelihood, K", {trd_tracks, "pid_like_k"}, {gNbins, -1, 1}});
+  task.AddH1({"PID Likelihood, p", {trd_tracks, "pid_like_p"}, {gNbins, -1, 1}});
+  task.AddH1({"PID Likelihood, #mu", {trd_tracks, "pid_like_mu"}, {gNbins, -1, 1}});
+
+  task.AddH1({"#chi^{2}/NDF", {trd_tracks, "chi2_ov_ndf"}, {gNbins, 0, 30}});
+  task.AddH1({"p_{T}^{last} (GeV/c)", {trd_tracks, "pT_out"}, {gNbins, 0, 10}});
+  task.AddH1({"p^{last} (GeV/c)", {trd_tracks, "p_out"}, {gNbins, 0, 10}});
+}
+
+void RichRingsQA(QA::Task& task){
+  task.AddH1({"RICh ring x-position (cm)", {rich_rings, "x"}, {gNbins, -100, 100}});
+  task.AddH1({"RICh ring y-position (cm)", {rich_rings, "y"}, {gNbins, -250, 250}});
+  task.AddH2({"RICh ring x-position (cm)", {rich_rings, "x"}, {gNbins, -100, 100}}, {"RICh ring y-position (cm)", {rich_rings, "y"}, {gNbins, -250, 250}});
+
+  task.AddH1({"Ring radius", {rich_rings, "radius"}, {gNbins, 0, 10}});
+
+  task.AddH1({"n_hits", {rich_rings, "n_hits"}, {gNbins, 0, 60}});
+  task.AddH1({"n_hits_on_ring", {rich_rings, "n_hits_on_ring"}, {gNbins, 0, 100}});
+  task.AddH1({"axis_a", {rich_rings, "axis_a"}, {gNbins, 0, 10}});
+  task.AddH1({"axis_b", {rich_rings, "axis_b"}, {gNbins, 0, 10}});
+
+  task.AddH1({"distance", {rich_rings, "distance"}, {gNbins, 0, 1}});
+  task.AddH1({"chi2_ov_ndf", {rich_rings, "chi2_ov_ndf"}, {gNbins, 0, 1}});
+  task.AddH1({"pid_ann", {rich_rings, "pid_ann"}, {gNbins, 0, 1}});
+  task.AddH1({"phi_ellipse", {rich_rings, "phi_ellipse"}, {gNbins, 0, 100}});
+  task.AddH1({"has_projection", {rich_rings, "has_projection"}, {2, 0, 2}});
 }
 
 void VertexTracksQA(QA::Task& task) {

@@ -32,5 +32,5 @@ endif()
 
 add_executable(tests test_runner.cxx)
 include_directories(${CMAKE_SOURCE_DIR}/src)
-target_link_libraries(tests gtest AnalysisTreeQA)
-add_test(NAME TestAnalysisTreeQA COMMAND tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+target_link_libraries(tests gtest AnalysisTreeQA AnalysisTreeInfra ${ROOT_LIBRARIES})
+gtest_discover_tests(tests TEST_PREFIX new:)

@@ -50,8 +50,8 @@ include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_IN
 set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
 set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
 
-include(cmake_modules/cuts.cmake)
-include(cmake_modules/plots_maker.cmake)
+#include(cmake_modules/cuts.cmake)
+#include(cmake_modules/plots_maker.cmake)
 
 add_subdirectory(src)
 add_subdirectory(test)

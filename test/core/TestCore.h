@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "Manager.h"
+#include "Task.h"
 
 TEST(Test_AnalysisTreeCore, Test_SimpleTest) {
   int a=1;
@@ -17,18 +18,23 @@ TEST(Test_AnalysisTreeCore, Test_TH1_QA) {
 
   AnalysisTree::QA::Manager man({"../../input/filelist.txt"}, {"aTree"});
   man.SetOutFileName("test_th1.root");
-  man.AddEntry({"VtxTracks", "px"}, {100, -3, 3});
-  man.Run(10);
 
-//  std::unique_ptr<TFile> qa_file{ TFile::Open("test_th1.root", "read")};
-//  auto* histo = (TH1F*) qa_file->Get("VtxTracks/VtxTracks_px");
-//  EXPECT_GT(histo->GetEntries(), 0);
+  auto* task = new AnalysisTree::QA::Task;
+
+  task->AddH1({"p_{x}", {"VtxTracks", "px"}, {100, -3, 3}});
+  man.AddTask(task);
+
+  man.Run(10);
 }
 
 TEST(Test_AnalysisTreeCore, Test_TH2_QA) {
   AnalysisTree::QA::Manager man({"../../input/filelist.txt"}, {"aTree"});
   man.SetOutFileName("test_th2.root");
-  man.AddEntry2D({{"VtxTracks", "px"}, {"VtxTracks", "py"}}, {{100,-3,3}});
+
+  auto* task = new AnalysisTree::QA::Task;
+  task->AddH2({"p_{x}", {"VtxTracks", "px"}, {100, -3, 3}}, {"p_{y}", {"VtxTracks", "py"}, {100, -3, 3}});
+  man.AddTask(task);
+
   man.Run(10);
 
   std::unique_ptr<TFile> qa_file{ TFile::Open("test_th2.root", "read")};
@@ -39,15 +45,19 @@ TEST(Test_AnalysisTreeCore, Test_TH2_QA) {
 
 TEST(Test_AnalysisTreeCore, Test_Cuts_QA) {
 
-  AnalysisTree::Cuts p_cut("p_cut", "VtxTracks");
-  AnalysisTree::SimpleCut px_cut("px", -0.5, 0.5);
-  AnalysisTree::SimpleCut py_cut("py", -0.5, 0.5);
-  p_cut.AddCuts( {px_cut, py_cut} );
+  AnalysisTree::SimpleCut px_cut({"VtxTracks", "px"}, -0.5, 0.5);
+  AnalysisTree::SimpleCut py_cut({"VtxTracks", "py"}, -0.5, 0.5);
 
-  AnalysisTree::QA::Manager man("../../input/filelist.txt", "aTree");
+  auto* p_cut = new AnalysisTree::Cuts("p_cut", {px_cut, py_cut});
+
+  AnalysisTree::QA::Manager man({"../../input/filelist.txt"}, {"aTree"});
   man.SetOutFileName("test_cuts.root");
   man.AddBranchCut(p_cut);
-  man.AddEntry2D({{"VtxTracks", "px"}, {"VtxTracks", "py"}}, {{100,-3,3}});
+
+  auto* task = new AnalysisTree::QA::Task;
+  task->AddH2({"p_{x}", {"VtxTracks", "px"}, {100, -3, 3}}, {"p_{y}", {"VtxTracks", "py"}, {100, -3, 3}});
+  man.AddTask(task);
+
   man.Run(10);
 
   std::unique_ptr<TFile> qa_file{ TFile::Open("test_cuts.root", "read")};

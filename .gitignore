@@ -1,0 +1,78 @@
+# Created by .ignore support plugin (hsz.mobi)
+### C++ template
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+.idea/.gitignore
+.idea/AnalysisTreeQA.iml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+cmake-build-*/AnalysisTreeQA.cbp
+cmake-build-*/AnalysisTreeQA/
+cmake-build-*/CMakeCache.txt
+cmake-build-*/CMakeFiles/3.17.3/CMakeCCompiler.cmake
+cmake-build-*/CMakeFiles/3.17.3/CMakeCXXCompiler.cmake
+cmake-build-*/CMakeFiles/3.17.3/CMakeDetermineCompilerABI_C.bin
+cmake-build-*/CMakeFiles/3.17.3/CMakeDetermineCompilerABI_CXX.bin
+cmake-build-*/CMakeFiles/3.17.3/CMakeSystem.cmake
+cmake-build-*/CMakeFiles/3.17.3/CompilerIdC/CMakeCCompilerId.c
+cmake-build-*/CMakeFiles/3.17.3/CompilerIdC/tmp/
+cmake-build-*/CMakeFiles/3.17.3/CompilerIdCXX/CMakeCXXCompilerId.cpp
+cmake-build-*/CMakeFiles/3.17.3/CompilerIdCXX/tmp/
+cmake-build-*/CMakeFiles/CMakeDirectoryInformation.cmake
+cmake-build-*/CMakeFiles/CMakeOutput.log
+cmake-build-*/CMakeFiles/CMakeRuleHashes.txt
+cmake-build-*/CMakeFiles/CMakeTmp/
+cmake-build-*/CMakeFiles/Cuts_Ext.dir/
+cmake-build-*/CMakeFiles/Export/
+cmake-build-*/CMakeFiles/Makefile.cmake
+cmake-build-*/CMakeFiles/Makefile2
+cmake-build-*/CMakeFiles/PlotsMaker_Ext.dir/
+cmake-build-*/CMakeFiles/TargetDirectories.txt
+cmake-build-*/CMakeFiles/clion-environment.txt
+cmake-build-*/CMakeFiles/clion-log.txt
+cmake-build-*/CMakeFiles/cmake.check_cache
+cmake-build-*/CMakeFiles/progress.marks
+cmake-build-*/Cuts_Ext-prefix/
+cmake-build-*/Makefile
+cmake-build-*/PlotsMaker_Ext-prefix/
+cmake-build-*/bin/
+cmake-build-*/cmake_install.cmake
+cmake-build-*/external/
+cmake-build-*/googletest-build/
+cmake-build-*/lib/
+cmake-build-*/src/
+cmake-build-*/test/
+install/

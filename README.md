@@ -22,11 +22,10 @@ Simple program:
     task->AddH1({"N_{hits}", {"VtxTracks", "nhits"}, {15, 0, 15}}); 
 
     // AnalysisTree::Variable in case of more complicated plot
-    Variable chi2_over_ndf("chi2/ndf", "VtxTracks", {"chi2", "ndf"}, []( std::vector<double>& var ) { return var.at(0)/var.at(1); });
+    Variable chi2_over_ndf("chi2/ndf", {{"VtxTracks", "chi2"}, {"VtxTracks", "ndf"}}, []( std::vector<double>& var ) { return var.at(0)/var.at(1); });
     task->AddH1({"#chi^{2}/NDF", chi2_over_ndf, {100, 0, 100}}); 
 
     // 2D histo:
-    man.AddEntry2D({{"VtxTracks", "dcax"}, {"VtxTracks", "dcay"}}, {{nbins, -1, 1}});
     task->AddH2({"DCA_{x}", {"VtxTracks", "dcax"}, {100, -1, 1}}, {"DCA_{y}", {"VtxTracks", "dcay"}, {100, -1, 1}}); 
 
     // Histogramm with additional cut:

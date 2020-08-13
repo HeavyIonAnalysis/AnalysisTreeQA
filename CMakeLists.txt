@@ -36,19 +36,23 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ftree-vectorize -ffast-math -DNODEBUG")
 message(STATUS "Using CXX flags for ${CMAKE_BUILD_TYPE}: ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
-find_package(AnalysisTree REQUIRED)
+find_package(AnalysisTree)
 find_package(ROOT REQUIRED RIO)
 
 if (ROOT_FOUND)
     message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")
     include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS})
     include(${ROOT_USE_FILE})
-endif (ROOT_FOUND)
+endif(ROOT_FOUND)
 
 include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
 
 set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
 set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
+
+if(NOT AnalysisTree_FOUND)
+    include(cmake_modules/analysistree.cmake)
+endif()
 
 include(cmake_modules/cuts.cmake)
 

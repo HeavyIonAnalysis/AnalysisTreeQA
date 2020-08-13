@@ -9,13 +9,12 @@ string(REPLACE ".cxx" ".h" HEADERS "${SOURCES}")
 list(APPEND HEADERS "VariantMagic.hpp" "Utils.hpp")
 
 add_library(AnalysisTreeQA STATIC ${SOURCES} G__AnalysisTreeQA.cxx)
+include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES})
+#link_directories(${PROJECT_LINK_DIRECTORIES})
 add_dependencies(AnalysisTreeQA ${PROJECT_DEPENDENCIES})
 
-if(ROOT_FOUND)
-  ROOT_GENERATE_DICTIONARY(G__AnalysisTreeQA ${HEADERS} LINKDEF AnalysisTreeQALinkDef.h)
-  include_directories(${CMAKE_SOURCE_DIR}/src)
-  target_link_libraries(AnalysisTreeQA ${ROOT_LIBRARIES} AnalysisTreeBase AnalysisTreeInfra)
-endif(ROOT_FOUND)  
+ROOT_GENERATE_DICTIONARY(G__AnalysisTreeQA ${HEADERS} LINKDEF AnalysisTreeQALinkDef.h)
+target_link_libraries(AnalysisTreeQA ${ROOT_LIBRARIES} AnalysisTreeBase AnalysisTreeInfra)
 
 install(TARGETS AnalysisTreeQA EXPORT AnalysisTreeQATargets
         LIBRARY DESTINATION lib

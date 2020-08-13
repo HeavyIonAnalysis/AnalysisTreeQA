@@ -1,7 +1,5 @@
 #include "AnalysisTree/Cuts.hpp"
-
 #include "CbmCuts.h"
-//#include "Canvas.h"
 
 #include "src/EntryConfig.hpp"
 #include "src/Manager.hpp"

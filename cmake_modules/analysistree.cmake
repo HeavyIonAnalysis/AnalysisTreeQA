@@ -15,13 +15,10 @@ ExternalProject_Add(AnalysisTree_Ext
         "-DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}"
         )
 
-find_library(AnalysisTreeBase_LIB NAMES libAnalysisTreeBase.so HINTS ${AnalysisTree_LIBRARY_DIR} REQUIRED)
-add_library(AnalysisTreeBase SHARED IMPORTED)
-set_target_properties(AnalysisTreeBase PROPERTIES IMPORTED_LOCATION ${AnalysisTreeBase_LIB})
+find_library(AnalysisTree_LIB NAMES libAnalysisTreeBase.so libAnalysisTreeInfra.so HINTS ${AnalysisTree_LIBRARY_DIR} REQUIRED)
+add_library(AnalysisTree SHARED IMPORTED)
+set_target_properties(AnalysisTree PROPERTIES IMPORTED_LOCATION ${AnalysisTree_LIB})
 
-find_library(AnalysisTreeInfra_LIB NAMES libAnalysisTreeInfra.so HINTS ${AnalysisTree_LIBRARY_DIR} REQUIRED)
-add_library(AnalysisTreeInfra SHARED IMPORTED)
-set_target_properties(AnalysisTreeInfra PROPERTIES IMPORTED_LOCATION ${AnalysisTreeInfra_LIB})
 
 list(APPEND PROJECT_DEPENDENCIES AnalysisTree_Ext)
 list(APPEND PROJECT_LINK_DIRECTORIES ${AnalysisTree_LIBRARY_DIR})

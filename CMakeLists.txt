@@ -45,8 +45,6 @@ if (ROOT_FOUND)
     include(${ROOT_USE_FILE})
 endif(ROOT_FOUND)
 
-include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
-
 set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
 set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
 
@@ -55,6 +53,8 @@ if(NOT AnalysisTree_FOUND)
 endif()
 
 include(cmake_modules/cuts.cmake)
+
+include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
 
 add_subdirectory(src)
 #add_subdirectory(test)

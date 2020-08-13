@@ -41,3 +41,11 @@ install(
         lib
         OPTIONAL
 )
+
+install(
+        FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/${PCM_FILE_NAME}.rootmap"
+        DESTINATION
+        lib
+        OPTIONAL
+)

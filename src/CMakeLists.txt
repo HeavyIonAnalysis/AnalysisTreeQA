@@ -5,7 +5,7 @@ set(SOURCES
         Task.cpp
 )
 
-string(REPLACE ".cxx" ".h" HEADERS "${SOURCES}")
+string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
 list(APPEND HEADERS "VariantMagic.hpp" "Utils.hpp")
 
 add_library(AnalysisTreeQA STATIC ${SOURCES} G__AnalysisTreeQA.cxx)

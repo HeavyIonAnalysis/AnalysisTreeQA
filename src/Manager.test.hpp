@@ -3,17 +3,6 @@
 
 #include <gtest/gtest.h>
 
-#include <TFile.h>
-#include <TH1.h>
-#include <TH2.h>
-#include <TTree.h>
-#include <vector>
-
-#include "AnalysisTree/SimpleCut.hpp"
-
-#include "Manager.hpp"
-#include "Task.hpp"
-
 // Coming soon...
 
 TEST(Test_AnalysisTreeQACore, Test_Test) {

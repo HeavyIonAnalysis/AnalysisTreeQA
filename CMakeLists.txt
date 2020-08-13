@@ -57,7 +57,7 @@ endif()
 include(cmake_modules/cuts.cmake)
 
 add_subdirectory(src)
-add_subdirectory(test)
+#add_subdirectory(test)
 add_subdirectory(tasks)
 
 include(CMakePackageConfigHelpers)

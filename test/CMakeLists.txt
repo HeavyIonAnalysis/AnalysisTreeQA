@@ -31,6 +31,6 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
 endif()
 
 add_executable(tests test_runner.cxx)
-include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES})
+include_directories(${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(tests gtest AnalysisTreeQA)
 add_test(NAME TestAnalysisTreeQA COMMAND tests WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

@@ -8,12 +8,11 @@
 
 #include "EntryConfig.hpp"
 
-namespace AnalysisTree{
-namespace QA{
+namespace AnalysisTree {
+namespace QA {
 
-class Task : public FillTask{
+class Task : public FillTask {
  public:
-
   Task() = default;
 
   void Init(std::map<std::string, void*>&) override;
@@ -22,22 +21,22 @@ class Task : public FillTask{
 
   size_t AddEntry(const EntryConfig& entry) {
     entries_.push_back(entry);
-    return entries_.size()-1;
+    return entries_.size() - 1;
   }
 
   size_t AddH1(const Axis& x, Cuts* cuts = nullptr) {
     entries_.emplace_back(EntryConfig(x, cuts));
-    return entries_.size()-1;
+    return entries_.size() - 1;
   }
 
   size_t AddH2(const Axis& x, const Axis& y, Cuts* cuts = nullptr) {
     entries_.emplace_back(EntryConfig(x, y, cuts));
-    return entries_.size()-1;
+    return entries_.size() - 1;
   }
 
   size_t AddProfile(const Axis& x, const Axis& y, Cuts* cuts = nullptr) {
     entries_.emplace_back(EntryConfig(x, y, cuts, true));
-    return entries_.size()-1;
+    return entries_.size() - 1;
   }
 
   std::vector<EntryConfig>& Entries() { return entries_; }
@@ -49,7 +48,7 @@ class Task : public FillTask{
   std::map<std::string, TDirectory*> dir_map_{};
 };
 
-}
-}
+}// namespace QA
+}// namespace AnalysisTree
 
-#endif //ANALYSISTREEQA_SRC_TASK_HPP_
+#endif//ANALYSISTREEQA_SRC_TASK_HPP_

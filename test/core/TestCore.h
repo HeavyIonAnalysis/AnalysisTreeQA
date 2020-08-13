@@ -1,16 +1,16 @@
 #include <gtest/gtest.h>
 
 #include <TFile.h>
-#include <TTree.h>
 #include <TH1.h>
 #include <TH2.h>
+#include <TTree.h>
 #include <vector>
 
 #include "Manager.hpp"
 #include "Task.hpp"
 
 TEST(Test_AnalysisTreeCore, Test_SimpleTest) {
-  int a=1;
+  int a = 1;
   ASSERT_EQ(a, 1);
 }
 
@@ -19,7 +19,7 @@ TEST(Test_AnalysisTreeCore, Test_TH1_QA) {
   AnalysisTree::QA::Manager man({"../../input/filelist.txt"}, {"aTree"});
   man.SetOutFileName("test_th1.root");
 
-  auto* task = new AnalysisTree::QA::Task;
+  auto *task = new AnalysisTree::QA::Task;
 
   task->AddH1({"p_{x}", {"VtxTracks", "px"}, {100, -3, 3}});
   man.AddTask(task);
@@ -31,15 +31,15 @@ TEST(Test_AnalysisTreeCore, Test_TH2_QA) {
   AnalysisTree::QA::Manager man({"../../input/filelist.txt"}, {"aTree"});
   man.SetOutFileName("test_th2.root");
 
-  auto* task = new AnalysisTree::QA::Task;
+  auto *task = new AnalysisTree::QA::Task;
   task->AddH2({"p_{x}", {"VtxTracks", "px"}, {100, -3, 3}}, {"p_{y}", {"VtxTracks", "py"}, {100, -3, 3}});
   man.AddTask(task);
 
   man.Run(10);
 
-  std::unique_ptr<TFile> qa_file{ TFile::Open("test_th2.root", "read")};
+  std::unique_ptr<TFile> qa_file{TFile::Open("test_th2.root", "read")};
 
-  auto* histo = (TH2F*) qa_file->Get("VtxTracks/VtxTracks_px_py");
+  auto *histo = (TH2F *) qa_file->Get("VtxTracks/VtxTracks_px_py");
   EXPECT_GT(histo->GetEntries(), 0);
 }
 
@@ -48,22 +48,20 @@ TEST(Test_AnalysisTreeCore, Test_Cuts_QA) {
   AnalysisTree::SimpleCut px_cut({"VtxTracks", "px"}, -0.5, 0.5);
   AnalysisTree::SimpleCut py_cut({"VtxTracks", "py"}, -0.5, 0.5);
 
-  auto* p_cut = new AnalysisTree::Cuts("p_cut", {px_cut, py_cut});
+  auto *p_cut = new AnalysisTree::Cuts("p_cut", {px_cut, py_cut});
 
   AnalysisTree::QA::Manager man({"../../input/filelist.txt"}, {"aTree"});
   man.SetOutFileName("test_cuts.root");
   man.AddBranchCut(p_cut);
 
-  auto* task = new AnalysisTree::QA::Task;
+  auto *task = new AnalysisTree::QA::Task;
   task->AddH2({"p_{x}", {"VtxTracks", "px"}, {100, -3, 3}}, {"p_{y}", {"VtxTracks", "py"}, {100, -3, 3}});
   man.AddTask(task);
 
   man.Run(10);
 
-  std::unique_ptr<TFile> qa_file{ TFile::Open("test_cuts.root", "read")};
+  std::unique_ptr<TFile> qa_file{TFile::Open("test_cuts.root", "read")};
 
-  auto* histo = (TH2F*) qa_file->Get("VtxTracks/VtxTracks_px_py");
+  auto *histo = (TH2F *) qa_file->Get("VtxTracks/VtxTracks_px_py");
   EXPECT_GT(histo->GetEntries(), 0);
 }
-
-

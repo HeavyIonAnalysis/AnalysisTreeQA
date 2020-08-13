@@ -4,10 +4,10 @@
 #include "AnalysisTree/Variable.hpp"
 #include "TAxis.h"
 
-namespace AnalysisTree{
-namespace QA{
+namespace AnalysisTree {
+namespace QA {
 
-class Axis : public Variable, public TAxis{
+class Axis : public Variable, public TAxis {
 
  public:
   Axis() = default;
@@ -17,9 +17,8 @@ class Axis : public Variable, public TAxis{
   }
 
   const char* GetName() const override { return Variable::GetName().c_str(); }
-
 };
 
-}
-}
-#endif //ANALYSISTREEQA_SRC_AXIS_HPP_
+}// namespace QA
+}// namespace AnalysisTree
+#endif//ANALYSISTREEQA_SRC_AXIS_HPP_

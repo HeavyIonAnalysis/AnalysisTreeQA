@@ -1,8 +1,8 @@
 #ifndef ANALYSISTREE_QA_ENTRYCONFIG_H
 #define ANALYSISTREE_QA_ENTRYCONFIG_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "AnalysisTree/Cuts.hpp"
 
@@ -25,7 +25,6 @@ class EntryConfig {
 #endif
 
  public:
-
   enum class PlotType : short {
     kHisto1D,
     kHisto2D,
@@ -48,12 +47,12 @@ class EntryConfig {
   Cuts* GetEntryCuts() const { return entry_cuts_; }
   PlotType GetType() const { return type_; }
 
-  std::pair<int, std::vector<int>> GetVariablesId() const { return vars_id_;}
+  std::pair<int, std::vector<int>> GetVariablesId() const { return vars_id_; }
   void SetVariablesId(const std::pair<int, std::vector<int>>& var_id) { vars_id_ = var_id; }
 
   std::vector<Variable> GetVariables() const {
     std::vector<Variable> vars{};
-    for(const auto& axis : axes_){
+    for (const auto& axis : axes_) {
       vars.emplace_back(axis);
     }
     return vars;
@@ -66,7 +65,6 @@ class EntryConfig {
   PlotPointer GetPlot() { return plot_; }
 
  protected:
-
   void InitPlot();
   TH1* CreateHisto1D() const;
   TH2* CreateHisto2D() const;
@@ -74,7 +72,7 @@ class EntryConfig {
   void Set2DName();
 
   PlotPointer plot_;
-  std::string name_;  ///< Name of the plot
+  std::string name_;///< Name of the plot
   std::string title_;
   PlotType type_{PlotType(-1)};
 
@@ -83,9 +81,8 @@ class EntryConfig {
   std::pair<int, std::vector<int>> vars_id_{};
 
   TDirectory* out_dir_{nullptr};
-
 };
 
-}
-}
-#endif //ANALYSISTREE_QA_ENTRYCONFIG_H
+}// namespace QA
+}// namespace AnalysisTree
+#endif//ANALYSISTREE_QA_ENTRYCONFIG_H

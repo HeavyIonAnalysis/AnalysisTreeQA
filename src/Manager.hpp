@@ -14,14 +14,12 @@ class Task;
 class Manager : public TaskManager {
 
  public:
-
-  Manager(const std::vector<std::string> &filelists,
-          const std::vector<std::string> &in_trees) : TaskManager(filelists, in_trees) {}
+  Manager(const std::vector<std::string>& filelists,
+          const std::vector<std::string>& in_trees) : TaskManager(filelists, in_trees) {}
 
   void AddTask(QA::Task* task);
-
 };
 
-}
-}
-#endif //ANALYSISTREE_QA_MANAGER_H
+}// namespace QA
+}// namespace AnalysisTree
+#endif//ANALYSISTREE_QA_MANAGER_H

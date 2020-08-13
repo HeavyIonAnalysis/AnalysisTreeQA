@@ -37,7 +37,6 @@ message(STATUS "Using CXX flags for ${CMAKE_BUILD_TYPE}: ${CMAKE_CXX_FLAGS_${CMA
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 list(APPEND CMAKE_PREFIX_PATH ${ROOTSYS})
-
 find_package(AnalysisTree)
 find_package(ROOT REQUIRED RIO)
 

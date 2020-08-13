@@ -6,8 +6,8 @@
 
 #include "AnalysisTree/Cuts.hpp"
 
-#include "Axis.h"
-#include "Constants.h"
+#include "Axis.hpp"
+#include "VariantMagic.hpp"
 
 class TH1;
 class TH2;

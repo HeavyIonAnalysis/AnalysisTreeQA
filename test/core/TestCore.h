@@ -6,8 +6,8 @@
 #include <TH2.h>
 #include <vector>
 
-#include "Manager.h"
-#include "Task.h"
+#include "Manager.hpp"
+#include "Task.hpp"
 
 TEST(Test_AnalysisTreeCore, Test_SimpleTest) {
   int a=1;

@@ -1,5 +1,5 @@
-#ifndef ANALYSISTREEQA_SRC_AXIS_H_
-#define ANALYSISTREEQA_SRC_AXIS_H_
+#ifndef ANALYSISTREEQA_SRC_AXIS_HPP_
+#define ANALYSISTREEQA_SRC_AXIS_HPP_
 
 #include "AnalysisTree/Variable.hpp"
 #include "TAxis.h"
@@ -22,4 +22,4 @@ class Axis : public Variable, public TAxis{
 
 }
 }
-#endif //ANALYSISTREEQA_SRC_AXIS_H_
+#endif //ANALYSISTREEQA_SRC_AXIS_HPP_

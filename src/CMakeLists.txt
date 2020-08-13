@@ -1,15 +1,16 @@
 set(SOURCES
-  Manager.cxx
-  EntryConfig.cxx
-        Axis.cxx
-  Task.cxx
+        Manager.cpp
+        EntryConfig.cpp
+        Axis.cpp
+        Task.cpp
 )
 
 string(REPLACE ".cxx" ".h" HEADERS "${SOURCES}")
-list(APPEND HEADERS "Constants.h")
+list(APPEND HEADERS "VariantMagic.hpp" "Utils.hpp")
 
 add_library(AnalysisTreeQA STATIC ${SOURCES} G__AnalysisTreeQA.cxx)
 add_dependencies(AnalysisTreeQA ${PROJECT_DEPENDENCIES})
+
 if(ROOT_FOUND)
   ROOT_GENERATE_DICTIONARY(G__AnalysisTreeQA ${HEADERS} LINKDEF AnalysisTreeQALinkDef.h)
   include_directories(${CMAKE_SOURCE_DIR}/src)

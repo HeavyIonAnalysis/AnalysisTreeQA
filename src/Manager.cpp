@@ -1,7 +1,8 @@
-#include "Manager.h"
-#include "Task.h"
+#include "Manager.hpp"
+#include "Task.hpp"
 
-namespace AnalysisTree::QA{
+namespace AnalysisTree {
+namespace QA{
 
 void Manager::AddTask(QA::Task* task) {
   assert(tasks_.empty()); // For the moment one task per Manager
@@ -23,4 +24,4 @@ void Manager::AddTask(QA::Task* task) {
   tasks_.emplace_back(var_task); //Needs to be executed first
   tasks_.emplace_back(task);
 }
-}
+} }

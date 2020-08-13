@@ -3,9 +3,10 @@
 #include "TProfile.h"
 #include "TDirectory.h"
 
-#include "EntryConfig.h"
+#include "EntryConfig.hpp"
 
-namespace AnalysisTree::QA{
+namespace AnalysisTree {
+namespace QA{
 
 EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts) :
   name_(axis.GetName()),
@@ -124,4 +125,4 @@ std::string EntryConfig::GetDirectoryName() const {
   return name;
 }
 
-}
+} }

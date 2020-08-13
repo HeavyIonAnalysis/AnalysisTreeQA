@@ -1,12 +1,12 @@
-#ifndef ANALYSISTREEQA_SRC_TASK_H_
-#define ANALYSISTREEQA_SRC_TASK_H_
+#ifndef ANALYSISTREEQA_SRC_TASK_HPP_
+#define ANALYSISTREEQA_SRC_TASK_HPP_
 
 #include "TFile.h"
 
 #include "AnalysisTree/FillTask.hpp"
 #include "AnalysisTree/VarManager.hpp"
 
-#include "EntryConfig.h"
+#include "EntryConfig.hpp"
 
 namespace AnalysisTree{
 namespace QA{
@@ -52,4 +52,4 @@ class Task : public FillTask{
 }
 }
 
-#endif //ANALYSISTREEQA_SRC_TASK_H_
+#endif //ANALYSISTREEQA_SRC_TASK_HPP_

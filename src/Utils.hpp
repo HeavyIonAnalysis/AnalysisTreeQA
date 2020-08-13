@@ -1,9 +1,13 @@
-#ifndef ANALYSISTREEQA_SRC_UTILS_H_
-#define ANALYSISTREEQA_SRC_UTILS_H_
+#ifndef ANALYSISTREEQA_SRC_UTILS_HPP_
+#define ANALYSISTREEQA_SRC_UTILS_HPP_
 
-#include "Constants.h"
+#include "VariantMagic.hpp"
+#include "Task.hpp"
 
-namespace AnalysisTree::QA{
+namespace AnalysisTree {
+namespace QA{
+
+constexpr int gNbins = 500;
 
 void AddTrackQA(Task* task, const std::string& branch, Cuts* cuts = nullptr) {
 
@@ -59,5 +63,5 @@ void AddParticlesFlowQA(Task* task, const std::string& particles, const Field& p
 }
 
 
-}
-#endif //ANALYSISTREEQA_SRC_UTILS_H_
+} }
+#endif //ANALYSISTREEQA_SRC_UTILS_HPP_

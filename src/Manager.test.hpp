@@ -16,6 +16,11 @@
 
 // Coming soon...
 
+TEST(Test_AnalysisTreeQACore, Test_Test) {
+  int a=1;
+  ASSERT_EQ(a,1);
+}
+
 //TEST(Test_AnalysisTreeCore, Test_TH1_QA) {
 //
 //  AnalysisTree::QA::Manager man({"../../input/filelist.txt"}, {"aTree"});

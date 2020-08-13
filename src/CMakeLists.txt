@@ -1,8 +1,8 @@
 set(SOURCES
-        Manager.cpp
-        EntryConfig.cpp
-        Axis.cpp
-        Task.cpp
+    Manager.cpp
+    EntryConfig.cpp
+    Axis.cpp
+    Task.cpp
 )
 
 string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
@@ -27,7 +27,7 @@ install(
         FILES
         ${HEADERS}
         DESTINATION
-        include
+        include/AnalysisTreeQA
         COMPONENT
         Devel
 )

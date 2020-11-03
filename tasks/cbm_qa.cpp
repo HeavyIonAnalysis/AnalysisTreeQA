@@ -1,10 +1,10 @@
+#include <AnalysisTree/TaskManager.hpp>
 #include "AnalysisTree/Cuts.hpp"
-#include "CbmCuts.h"
+//#include "CbmCuts.h"
 
 #include "src/EntryConfig.hpp"
-#include "src/Manager.hpp"
 #include "src/Task.hpp"
-#include "src/Utils.hpp"
+#include "src/BasicQA.hpp"
 
 typedef AnalysisTree::QA::EntryConfig::PlotType PlotType;
 using AnalysisTree::QA::gNbins;
@@ -43,34 +43,33 @@ int main(int argc, char** argv) {
 
   const std::string filelist = argv[1];
 
-  QA::Manager man({filelist}, {"aTree"});
-  man.SetOutFileName("cbmqa.root");
+  TaskManager* man = TaskManager::GetInstance();
 
-  man.AddBranchCut(GetCbmTrackCuts(rec_tracks));
-  man.AddBranchCut(GetCbmMcTracksCuts(sim_particles));
-  man.AddBranchCut(GetCbmTofHitsCuts(tof_hits));
-  man.SetEventCuts(GetCbmEventCuts(rec_event_header));
+//  man.AddBranchCut(GetCbmTrackCuts(rec_tracks));
+//  man.AddBranchCut(GetCbmMcTracksCuts(sim_particles));
+//  man.AddBranchCut(GetCbmTofHitsCuts(tof_hits));
+//  man.SetEventCuts(GetCbmEventCuts(rec_event_header));
 
   auto* task = new QA::Task;
+  task->SetOutputFileName("cbm_qa.root");
 
   RichRingsQA(*task);
   TrdTracksQA(*task);
-
-//  KFPFTracksQA(*task);
-//  VertexTracksQA(*task);
-//  TofHitsQA(*task);
-//  SimParticlesQA(*task);
-//  SimEventHeaderQA(*task);
+  KFPFTracksQA(*task);
+  VertexTracksQA(*task);
+  TofHitsQA(*task);
+  SimParticlesQA(*task);
+  SimEventHeaderQA(*task);
   RecEventHeaderQA(*task);
 //  EfficiencyMaps(*task);
 //
 //  AddParticlesFlowQA(task, sim_particles, {sim_event_header, "psi_RP"}, {2212, 211, -211});
 
-  man.AddTask(task);
+  man->AddTask(task);
 
-  man.Init();
-  man.Run(1000);
-  man.Finish();
+  man->Init({filelist}, {"rTree"});
+  man->Run(-1);
+  man->Finish();
 
   return 0;
 }
@@ -80,11 +79,17 @@ void TrdTracksQA(QA::Task& task){
   AddTrackQA(&task, trd_tracks);
   AddTracksMatchQA(&task, trd_tracks, rec_tracks);
 
-  task.AddH1({"TRD energy_loss, GeV", {trd_tracks, "energy_loss"}, {gNbins, 0, 1}});
+  task.AddH1({"TRD total energy loss, keV", {trd_tracks, "energy_loss_total"}, {gNbins, 0, 1}});
+
+  task.AddH1({"TRD energy loss in 1st station, keV", {trd_tracks, "energy_loss_0"}, {gNbins, 0, 1}});
+  task.AddH1({"TRD energy loss in 2nd station", {trd_tracks, "energy_loss_1"}, {gNbins, 0, 1}});
+  task.AddH1({"TRD energy loss in 3rd station", {trd_tracks, "energy_loss_2"}, {gNbins, 0, 1}});
+  task.AddH1({"TRD energy loss in 4th station", {trd_tracks, "energy_loss_3"}, {gNbins, 0, 1}});
+
   task.AddH1({"Number of hits in TRD", {trd_tracks, "n_hits"}, {6, 0, 6}});
 
   task.AddH1({"PID ANN", {trd_tracks, "pid_ann"}, {gNbins, -1, 1}});
-  task.AddH1({"PID WKN", {trd_tracks, "pid_wkn"}, {gNbins, -1, 1}});
+//  task.AddH1({"PID WKN", {trd_tracks, "pid_wkn"}, {gNbins, -1, 1}});
   task.AddH1({"PID Likelihood, e^{-}", {trd_tracks, "pid_like_e"}, {gNbins, -1, 1}});
   task.AddH1({"PID Likelihood, #pi", {trd_tracks, "pid_like_pi"}, {gNbins, -1, 1}});
   task.AddH1({"PID Likelihood, K", {trd_tracks, "pid_like_k"}, {gNbins, -1, 1}});
@@ -108,11 +113,8 @@ void RichRingsQA(QA::Task& task){
   task.AddH1({"axis_a", {rich_rings, "axis_a"}, {gNbins, 0, 10}});
   task.AddH1({"axis_b", {rich_rings, "axis_b"}, {gNbins, 0, 10}});
 
-  task.AddH1({"distance", {rich_rings, "distance"}, {gNbins, 0, 1}});
   task.AddH1({"chi2_ov_ndf", {rich_rings, "chi2_ov_ndf"}, {gNbins, 0, 1}});
-  task.AddH1({"pid_ann", {rich_rings, "pid_ann"}, {gNbins, 0, 1}});
-  task.AddH1({"phi_ellipse", {rich_rings, "phi_ellipse"}, {gNbins, 0, 100}});
-  task.AddH1({"has_projection", {rich_rings, "has_projection"}, {2, 0, 2}});
+  task.AddH1({"phi_ellipse", {rich_rings, "phi_ellipse"}, {gNbins, -3.2, 3.2}});
 }
 
 void VertexTracksQA(QA::Task& task) {
@@ -149,7 +151,7 @@ void TofHitsQA(QA::Task& task) {
 void SimParticlesQA(QA::Task& task) {
   AddParticleQA(&task, sim_particles);
 
-  task.AddH1({"PDG code", {sim_particles, "pid"}, {8001, -3999.5, 4000.5}});
+//  task.AddH1({"PDG code", {sim_particles, "pid"}, {8001, -3999.5, 4000.5}});
 }
 
 void SimEventHeaderQA(QA::Task& task) {
@@ -182,8 +184,8 @@ void RecEventHeaderQA(QA::Task& task) {
 void EfficiencyMaps(QA::Task& task) {
 
   const float y_beam = 1.62179f;// TODO from DataHeader
-  const float p_mass = AnalysisTree::GetMassByPdgId(2212);
-  const float pi_mass = AnalysisTree::GetMassByPdgId(211);
+  const float p_mass = 0.938;
+  const float pi_mass = 0.14;
 
   Variable proton_y("y-y_{beam}", {{rec_tracks, "p"}, {rec_tracks, "pz"}},
                     [y_beam, p_mass](std::vector<double>& var) {
@@ -195,9 +197,9 @@ void EfficiencyMaps(QA::Task& task) {
                       const float e = sqrt(pi_mass*pi_mass + var[0]*var[0]);
                       return 0.5*log( (e+var[1]) / (e-var[1]) ); });
 
-  Cuts* mc_protons = new Cuts("McProtons", {{{sim_particles, "pid"}, 2212}});
-  Cuts* mc_pions_neg = new Cuts("McPionsNeg", {{{sim_particles, "pid"}, -211}});
-  Cuts* mc_pions_pos = new Cuts("McPionsPos", {{{sim_particles, "pid"}, 211}});
+  Cuts* mc_protons = new Cuts("McProtons", {EqualsCut({sim_particles+".pid"}, 2212)});
+  Cuts* mc_pions_neg = new Cuts("McPionsNeg", {EqualsCut({sim_particles+".pid"}, -211)});
+  Cuts* mc_pions_pos = new Cuts("McPionsPos", {EqualsCut({sim_particles+".pid"}, -211)});
 
   task.AddH2({"#it{y}_{Lab}", {sim_particles, "rapidity"}, {gNbins, -1, 5}}, {"p_{T}, GeV/c", {sim_particles, "pT"}, {gNbins, 0, 2}}, mc_protons);
   task.AddH2({"#it{y}_{Lab}", proton_y, {gNbins, -1, 5}}, {"p_{T}, GeV/c", {rec_tracks, "pT"}, {gNbins, 0, 2}}, mc_protons);

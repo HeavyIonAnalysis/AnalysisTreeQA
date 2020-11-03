@@ -8,6 +8,21 @@
 namespace AnalysisTree {
 namespace QA {
 
+struct fill_struct : public Utils::Visitor<void> {
+  fill_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
+  void operator()(TH1*) const { throw std::runtime_error("Cannot apply Fill(va1, val2) to TH1"); }
+  void operator()(TH2* h2) const { h2->Fill(val1_, val2_); }
+  void operator()(TProfile* p) const { p->Fill(val1_, val2_); }
+  double val1_, val2_;
+};
+
+struct write_struct : public Utils::Visitor<void> {
+  explicit write_struct(std::string n) : name_(std::move(n)) {}
+  template<class PlotType>
+  void operator()(PlotType* p) const { p->Write(name_.c_str()); }
+  std::string name_;
+};
+
 EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts) : name_(axis.GetName()),
                                                          type_(PlotType::kHisto1D),
                                                          axes_({axis}),
@@ -91,24 +106,16 @@ void EntryConfig::Set2DName() {
 }
 
 void EntryConfig::Fill(double value1, double value2) {
-#ifdef USEBOOST
-  boost::apply_visitor(fill_struct{value1, value2}, plot_);
-#else
-  std::visit([value1, value2](auto&& arg) { arg->Fill(value1, value2); }, plot_);
-#endif
+  ANALYSISTREE_UTILS_VISIT(fill_struct(value1, value2), plot_);
 }
 
 void EntryConfig::Write() const {
   assert(out_dir_);
   out_dir_->cd();
-#ifdef USEBOOST
-  boost::apply_visitor(write_struct{name_}, plot_);
-#else
-  std::visit([this](auto&& arg) { arg->Write(name_.c_str()); }, plot_);
-#endif
+  ANALYSISTREE_UTILS_VISIT(write_struct(name_), plot_);
 }
 
-void EntryConfig::Fill(double value) { get_func<TH1*>(plot_)->Fill(value); }
+void EntryConfig::Fill(double value) { ANALYSISTREE_UTILS_GET<TH1*>(plot_)->Fill(value); }
 
 std::string EntryConfig::GetDirectoryName() const {
 

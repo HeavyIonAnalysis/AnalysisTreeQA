@@ -32,5 +32,6 @@ endif()
 
 add_executable(tests test_runner.cxx)
 include_directories(${CMAKE_SOURCE_DIR}/src)
+add_dependencies(tests AnalysisTreeQA)
 target_link_libraries(tests gtest AnalysisTreeQA AnalysisTreeInfra ${ROOT_LIBRARIES})
 gtest_discover_tests(tests TEST_PREFIX new:)

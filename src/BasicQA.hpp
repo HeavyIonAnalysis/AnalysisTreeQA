@@ -1,15 +1,14 @@
-#ifndef ANALYSISTREEQA_SRC_UTILS_HPP_
-#define ANALYSISTREEQA_SRC_UTILS_HPP_
+#ifndef ANALYSISTREEQA_SRC_BASICQA_HPP_
+#define ANALYSISTREEQA_SRC_BASICQA_HPP_
 
 #include "Task.hpp"
-#include "VariantMagic.hpp"
 
 namespace AnalysisTree {
 namespace QA {
 
 constexpr int gNbins = 500;
 
-void AddTrackQA(Task* task, const std::string& branch, Cuts* cuts = nullptr) {
+inline void AddTrackQA(Task* task, const std::string& branch, Cuts* cuts = nullptr) {
 
   task->AddH1({"p_{x}, GeV/c", {branch, "px"}, {gNbins, -3, 3}}, cuts);
   task->AddH1({"p_{y}, GeV/c", {branch, "py"}, {gNbins, -3, 3}}, cuts);
@@ -25,7 +24,7 @@ void AddTrackQA(Task* task, const std::string& branch, Cuts* cuts = nullptr) {
   task->AddH2({"#eta", {branch, "eta"}, {gNbins, -1, 7}}, {"p_{T}, GeV/c", {branch, "pT"}, {gNbins, 0, 2}}, cuts);
 }
 
-void AddParticleQA(Task* task, const std::string& branch, Cuts* cuts = nullptr) {
+inline void AddParticleQA(Task* task, const std::string& branch, Cuts* cuts = nullptr) {
 
   AddTrackQA(task, branch, cuts);
 
@@ -37,7 +36,7 @@ void AddParticleQA(Task* task, const std::string& branch, Cuts* cuts = nullptr) 
   task->AddH2({"#it{y}_{Lab}", {branch, "rapidity"}, {gNbins, -1, 5}}, {"p_{T}, GeV/c", {branch, "pT"}, {gNbins, 0, 2}}, cuts);
 }
 
-void AddTracksMatchQA(Task* task, const std::string& rec_tracks, const std::string& sim_particles, Cuts* cuts = nullptr) {
+inline void AddTracksMatchQA(Task* task, const std::string& rec_tracks, const std::string& sim_particles, Cuts* cuts = nullptr) {
 
   task->AddH2({"p_{x}, GeV/c", {rec_tracks, "px"}, {gNbins, -3, 3}}, {"p_{x}, GeV/c", {sim_particles, "px"}, {gNbins, -3, 3}}, cuts);
   task->AddH2({"p_{y}, GeV/c", {rec_tracks, "py"}, {gNbins, -3, 3}}, {"p_{y}, GeV/c", {sim_particles, "py"}, {gNbins, -3, 3}}, cuts);
@@ -49,13 +48,13 @@ void AddTracksMatchQA(Task* task, const std::string& rec_tracks, const std::stri
   task->AddH2({"#phi", {rec_tracks, "phi"}, {gNbins, -3.2, 3.2}}, {"#phi", {sim_particles, "phi"}, {gNbins, -3.2, 3.2}}, cuts);
 }
 
-void AddParticlesFlowQA(Task* task, const std::string& particles, const Field& psi_RP, const std::vector<int>& pdg_codes) {
+inline void AddParticlesFlowQA(Task* task, const std::string& particles, const Field& psi_RP, const std::vector<int>& pdg_codes) {
 
   Variable v1("v1", {{particles, "phi"}, psi_RP}, [](std::vector<double> phi) { return cos(phi[0] - phi[1]); });
   Variable v2("v2", {{particles, "phi"}, psi_RP}, [](std::vector<double> phi) { return cos(2 * (phi[0] - phi[1])); });
 
   for (auto pdg : pdg_codes) {
-    auto* pid_cut = new Cuts("mc_" + std::to_string(pdg), {{{particles, "pid"}, pdg}});
+    auto* pid_cut = new Cuts("mc_" + std::to_string(pdg), {EqualsCut(particles+".pid", pdg)});
 
     task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{1}", v1, {}}, pid_cut);
     task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{2}", v2, {}}, pid_cut);
@@ -64,4 +63,4 @@ void AddParticlesFlowQA(Task* task, const std::string& particles, const Field& p
 
 }// namespace QA
 }// namespace AnalysisTree
-#endif//ANALYSISTREEQA_SRC_UTILS_HPP_
+#endif//ANALYSISTREEQA_SRC_BASICQA_HPP_

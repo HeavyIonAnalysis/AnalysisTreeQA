@@ -1,24 +1,19 @@
 set(SOURCES
-    Manager.cpp
     EntryConfig.cpp
-    Axis.cpp
     Task.cpp
 )
 
 string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
-list(APPEND HEADERS "VariantMagic.hpp" "Utils.hpp")
+list(APPEND HEADERS "BasicQA.hpp")
 
-add_library(AnalysisTreeQA STATIC ${SOURCES} G__AnalysisTreeQA.cxx)
+add_library(AnalysisTreeQA SHARED ${SOURCES} G__AnalysisTreeQA.cxx)
 
-if(Boost_FOUND)
-  include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES} ${Boost_INCLUDE_DIR})
-  link_directories(${PROJECT_LINK_DIRECTORIES} ${Boost_LIBRARY_DIRS})
-else()
-  include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES})
-  link_directories(${PROJECT_LINK_DIRECTORIES})
+include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES})
+link_directories(${PROJECT_LINK_DIRECTORIES})
+
+if(PROJECT_DEPENDENCIES)
+  add_dependencies(AnalysisTreeQA ${PROJECT_DEPENDENCIES})
 endif()
-
-add_dependencies(AnalysisTreeQA ${PROJECT_DEPENDENCIES})
 
 ROOT_GENERATE_DICTIONARY(G__AnalysisTreeQA ${HEADERS} LINKDEF AnalysisTreeQALinkDef.h)
 target_link_libraries(AnalysisTreeQA ${ROOT_LIBRARIES})

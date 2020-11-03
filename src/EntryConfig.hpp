@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "AnalysisTree/Cuts.hpp"
+#include <TAxis.h>
 
-#include "Axis.hpp"
-#include "VariantMagic.hpp"
+#include "AnalysisTree/Cuts.hpp"
+#include "AnalysisTree/Utils.hpp"
 
 class TH1;
 class TH2;
@@ -16,13 +16,20 @@ class TProfile;
 namespace AnalysisTree {
 namespace QA {
 
+class Axis : public Variable, public TAxis {
+ public:
+  Axis() = default;
+  Axis(const std::string& title, const Variable& var, const TAxis& a) : Variable(var), TAxis(a) {
+    this->SetTitle(title.c_str());
+  }
+  const char* GetName() const override { return Variable::GetName().c_str(); }
+ protected:
+  ClassDefOverride(Axis, 1);
+};
+
 class EntryConfig {
 
-#ifdef USEBOOST
-  using PlotPointer = boost::variant<TH1*, TH2*, TProfile*>;
-#else
-  using PlotPointer = std::variant<TH1*, TH2*, TProfile*>;
-#endif
+  using PlotPointer = ANALYSISTREE_UTILS_VARIANT<TH1*, TH2*, TProfile*>;
 
  public:
   enum class PlotType : short {
@@ -32,25 +39,30 @@ class EntryConfig {
   };
 
   EntryConfig() = default;
-
   explicit EntryConfig(const Axis& axis, Cuts* cuts = nullptr);
   EntryConfig(const Axis& x, const Axis& y, Cuts* cuts = nullptr, bool is_profile = false);
+
+  EntryConfig(const EntryConfig&) = default;
+  EntryConfig(EntryConfig&&) = default;
+  EntryConfig& operator=(EntryConfig&&) = default;
+  EntryConfig& operator=(const EntryConfig&) = default;
+  virtual ~EntryConfig() = default;
 
   void Fill(double value);
   void Fill(double value1, double value2);
   void Write() const;
 
-  const std::vector<Axis>& GetAxes() const { return axes_; }
+  ANALYSISTREE_ATTR_NODISCARD const std::vector<Axis>& GetAxes() const { return axes_; }
   std::vector<Axis>& Axes() { return axes_; }
 
-  uint GetNdimentions() const { return axes_.size(); }
-  Cuts* GetEntryCuts() const { return entry_cuts_; }
-  PlotType GetType() const { return type_; }
+  ANALYSISTREE_ATTR_NODISCARD uint GetNdimentions() const { return axes_.size(); }
+  ANALYSISTREE_ATTR_NODISCARD Cuts* GetEntryCuts() const { return entry_cuts_; }
+  ANALYSISTREE_ATTR_NODISCARD PlotType GetType() const { return type_; }
 
-  std::pair<int, std::vector<int>> GetVariablesId() const { return vars_id_; }
+  ANALYSISTREE_ATTR_NODISCARD std::pair<int, std::vector<int>> GetVariablesId() const { return vars_id_; }
   void SetVariablesId(const std::pair<int, std::vector<int>>& var_id) { vars_id_ = var_id; }
 
-  std::vector<Variable> GetVariables() const {
+  ANALYSISTREE_ATTR_NODISCARD std::vector<Variable> GetVariables() const {
     std::vector<Variable> vars{};
     for (const auto& axis : axes_) {
       vars.emplace_back(axis);
@@ -58,7 +70,7 @@ class EntryConfig {
     return vars;
   }
 
-  std::string GetDirectoryName() const;
+  ANALYSISTREE_ATTR_NODISCARD std::string GetDirectoryName() const;
 
   void SetOutDir(TDirectory* out_dir) { out_dir_ = out_dir; }
 
@@ -66,9 +78,9 @@ class EntryConfig {
 
  protected:
   void InitPlot();
-  TH1* CreateHisto1D() const;
-  TH2* CreateHisto2D() const;
-  TProfile* CreateProfile() const;
+  ANALYSISTREE_ATTR_NODISCARD TH1* CreateHisto1D() const;
+  ANALYSISTREE_ATTR_NODISCARD TH2* CreateHisto2D() const;
+  ANALYSISTREE_ATTR_NODISCARD TProfile* CreateProfile() const;
   void Set2DName();
 
   PlotPointer plot_;
@@ -81,6 +93,7 @@ class EntryConfig {
   std::pair<int, std::vector<int>> vars_id_{};
 
   TDirectory* out_dir_{nullptr};
+  ClassDef(EntryConfig, 1);
 };
 
 }// namespace QA

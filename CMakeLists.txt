@@ -5,6 +5,17 @@ cmake_minimum_required(VERSION 3.5)
 project(AnalysisTreeQA CXX)
 set(PROJECT_VERSION 1.1)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
+#
+# Options
+#
+set(AnalysisTreeQA_BUILD_TASKS OFF CACHE BOOL "Build user' AnalysisTreeQA tasks (tasks/)")
+set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for AnalysisTreeQA")
+set(AnalysisTreeQA_BUNDLED_AT ON CACHE BOOL "Get and build AnalysisTree")
+set(AnalysisTreeQA_BUNDLED_AT_VERSION "master" CACHE STRING "Bundled AnalysisTree version")
+set(AnalysisTreeQA_BUNDLED_CUTS ON CACHE BOOL "Get and build AnalysisTreeCuts")
+set(AnalysisTreeQA_BUNDLED_CUTS_VERSION "v0.0.1" CACHE STRING "Bundled AnalysisTreeCuts version")
+
 # by default build optimized code
 if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RELEASE)
@@ -28,17 +39,12 @@ if(Boost_FOUND)
     message(STATUS "Boost include dir: ${Boost_INCLUDE_DIRS}")
 endif()
 
-set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for the AnalysisTree")
-set(AnalysisTreeQA_BUILD_EXAMPLES ON CACHE BOOL "Build examples for the AnalysisTree")
-
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -g -DDEBUG -D__DEBUG -Wall -Wextra --coverage")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -g -DDEBUG -D__DEBUG -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ftree-vectorize -ffast-math -DNODEBUG")
 message(STATUS "Using CXX flags for ${CMAKE_BUILD_TYPE}: ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 list(APPEND CMAKE_PREFIX_PATH ${ROOTSYS})
-
-find_package(AnalysisTree QUIET)
 find_package(ROOT REQUIRED RIO)
 
 message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")
@@ -48,15 +54,11 @@ include(${ROOT_USE_FILE})
 set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
 set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
 
-if(NOT AnalysisTree_FOUND)
-    include(cmake_modules/AnalysisTree.cmake)
-endif()
-
 include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
 
 add_subdirectory(src)
 
-if(AnalysisTreeQA_BUILD_EXAMPLES)
+if(AnalysisTreeQA_BUILD_TASKS)
     add_subdirectory(tasks)
 endif()
 
@@ -77,7 +79,7 @@ export(EXPORT AnalysisTreeQATargets
         FILE "${CMAKE_CURRENT_BINARY_DIR}/AnalysisTreeQA/AnalysisTreeQATargets.cmake")
 
 message(STATUS "AnalysisTreeQATargets: ${AnalysisTreeQATargets}")
-        
+
 set(ConfigPackageLocation lib/cmake/AnalysisTreeQA)
 
 set(AnalysisTreeQA_INCLUDE_DIR "include")
@@ -104,4 +106,3 @@ install(FILES
         COMPONENT
         Devel
         )
-

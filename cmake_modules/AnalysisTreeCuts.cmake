@@ -1,4 +1,3 @@
-
 if (AnalysisTreeQA_BUNDLED_CUTS)
     message("-- Building bundled AnalysisTreeCuts")
 
@@ -6,7 +5,7 @@ if (AnalysisTreeQA_BUNDLED_CUTS)
 
     FetchContent_Declare(AnalysisTreeCuts
             GIT_REPOSITORY "https://git.cbm.gsi.de/pwg-c2f/analysis/cuts.git"
-#            GIT_VERSION ${AnalysisTreeQA_BUNDLED_CUTS_VERSION}
+            #            GIT_VERSION ${AnalysisTreeQA_BUNDLED_CUTS_VERSION}
             GIT_SHALLOW ON
             )
     FetchContent_GetProperties(AnalysisTreeCuts)

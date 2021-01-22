@@ -54,7 +54,7 @@ inline void AddParticlesFlowQA(Task* task, const std::string& particles, const F
   Variable v2("v2", {{particles, "phi"}, psi_RP}, [](std::vector<double> phi) { return cos(2 * (phi[0] - phi[1])); });
 
   for (auto pdg : pdg_codes) {
-    auto* pid_cut = new Cuts("mc_" + std::to_string(pdg), {EqualsCut(particles+".pid", pdg)});
+    auto* pid_cut = new Cuts("mc_" + std::to_string(pdg), {EqualsCut(particles + ".pid", pdg)});
 
     task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{1}", v1, {}}, pid_cut);
     task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{2}", v2, {}}, pid_cut);

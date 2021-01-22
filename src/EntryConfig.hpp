@@ -23,6 +23,7 @@ class Axis : public Variable, public TAxis {
     this->SetTitle(title.c_str());
   }
   const char* GetName() const override { return Variable::GetName().c_str(); }
+
  protected:
   ClassDefOverride(Axis, 1);
 };

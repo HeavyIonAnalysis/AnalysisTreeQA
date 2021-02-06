@@ -8,9 +8,7 @@ set(SOURCES
 string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
 list(APPEND HEADERS "BasicQA.hpp")
 
-add_library(AnalysisTreeQA STATIC ${SOURCES} G__AnalysisTreeQA.cxx)
-
-message(STATUS "!!!!!!!!!!!!!! ${AnalysisTree_INCLUDE_DIR}")
+add_library(AnalysisTreeQA SHARED ${SOURCES} G__AnalysisTreeQA.cxx)
 
 if (Boost_FOUND)
   include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES} ${Boost_INCLUDE_DIR})

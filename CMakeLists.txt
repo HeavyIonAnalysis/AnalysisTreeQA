@@ -10,6 +10,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 # Options
 #
 set(AnalysisTreeQA_BUILD_TASKS OFF CACHE BOOL "Build user' AnalysisTreeQA tasks (tasks/)")
+set(AnalysisTreeQA_BUILD_EXAMPLES ON CACHE BOOL "Build AnalysisTreeQA examples (examples/)")
 set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for AnalysisTreeQA")
 set(AnalysisTreeQA_BUNDLED_AT ON CACHE BOOL "Get and build AnalysisTree")
 set(AnalysisTreeQA_BUNDLED_AT_VERSION "master" CACHE STRING "Bundled AnalysisTree version")
@@ -61,6 +62,11 @@ add_subdirectory(src)
 if(AnalysisTreeQA_BUILD_TASKS)
     add_subdirectory(tasks)
 endif()
+
+if(AnalysisTreeQA_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
 
 if(AnalysisTreeQA_BUILD_TESTS)
     include(GoogleTest)

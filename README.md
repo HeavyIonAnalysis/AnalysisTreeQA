@@ -1,14 +1,44 @@
 # AnalysisTreeQA
 [![Build Status](https://travis-ci.com/HeavyIonAnalysis/AnalysisTreeQA.svg?branch=master)](https://travis-ci.com/HeavyIonAnalysis/AnalysisTreeQA)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/HeavyIonAnalysis/AnalysisTreeQA?sort=semver)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/HeavyIonAnalysisQA/AnalysisTree)
+
+## Doxygen documentation:
+
+TO BE ADDED
+https://heavyionanalysis.github.io/AnalysisTreeQA/
+
+## General information
+
+This is a package for Quality Assurance and some basic analysis of AnalysisTree data.
 
 ## Installation
 
+ROOT6 is needed for installation. Version compiled with c++17 flag is preferred, otherwise CMAKE_CXX_STANDARD flag needs to be implicitly specified (see below).
+
+    git clone git@github.com:HeavyIonAnalysis/AnalysisTreeQA.git
     cd AnalysisTreeQA
     mkdir build install
     cd build
+    source /path/to/your/thisroot.sh
     cmake -DCMAKE_INSTALL_PREFIX=../install ../
     make -j install
-    
+
+### List of CMake options:
+
+To apply the flag use -D{Name}={value}, for example, if you want to compile using c++11:
+
+    cmake -DCMAKE_CXX_STANDARD=11 ../
+
+| Name  | Default value | Possible values |
+| ------------- | ------------- | ---------- |
+| CMAKE_BUILD_TYPE  | RELEASE  | RELEASE/DEBUG |
+| CMAKE_CXX_STANDARD  | 17  | 11/14/17 |
+| AnalysisTreeQA_BUILD_TESTS  | ON  | ON/OFF |
+| AnalysisTreeQA_BUILD_TASKS  | OFF  | ON/OFF |
+| AnalysisTreeQA_BUNDLED_AT  | ON  | ON/OFF |
+| AnalysisTreeQA_BUNDLED_AT_VERSION  | master  | master/v2.0.1/... |
+
 ## Usage
 
 Simple program: 

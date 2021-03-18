@@ -63,6 +63,7 @@ if(AnalysisTreeQA_BUILD_TASKS)
 endif()
 
 if(AnalysisTreeQA_BUILD_TESTS)
+    message("Compiling tests")
     include(GoogleTest)
     enable_testing()
     add_subdirectory(test)

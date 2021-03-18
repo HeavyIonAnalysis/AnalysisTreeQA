@@ -1,7 +1,3 @@
-//
-// Created by eugene on 14/11/2020.
-//
-
 #include "Manager.hpp"
 #include "Task.hpp"
 #include <AnalysisTree/Cuts.hpp>

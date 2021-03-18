@@ -50,7 +50,7 @@ class Task : public AnalysisTask {
   std::string out_file_name_{"QA.root"};
   TFile* out_file_{nullptr};
 
-  ClassDef(Task, 1);
+  ClassDefOverride(Task, 1);
 };
 
 }// namespace QA

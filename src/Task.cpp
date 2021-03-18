@@ -25,6 +25,7 @@ void Task::Exec() {
 }
 
 void Task::Finish() {
+  out_file_->cd();
   for (auto& plot : entries_) {
     plot.Write();
   }

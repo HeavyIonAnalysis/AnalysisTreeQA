@@ -56,7 +56,7 @@ class EntryConfig {
   ANALYSISTREE_ATTR_NODISCARD const std::vector<Axis>& GetAxes() const { return axes_; }
   std::vector<Axis>& Axes() { return axes_; }
 
-  ANALYSISTREE_ATTR_NODISCARD uint GetNdimentions() const { return axes_.size(); }
+  ANALYSISTREE_ATTR_NODISCARD unsigned int GetNdimentions() const { return axes_.size(); }
   ANALYSISTREE_ATTR_NODISCARD Cuts* GetEntryCuts() const { return entry_cuts_; }
   ANALYSISTREE_ATTR_NODISCARD PlotType GetType() const { return type_; }
 

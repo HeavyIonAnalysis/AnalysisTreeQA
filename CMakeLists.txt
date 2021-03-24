@@ -67,7 +67,6 @@ if(AnalysisTreeQA_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
-
 if(AnalysisTreeQA_BUILD_TESTS)
     include(GoogleTest)
     enable_testing()

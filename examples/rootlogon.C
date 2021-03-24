@@ -1,5 +1,5 @@
 {
-  gSystem->Load("AnalysisTreeBase");
-  gSystem->Load("AnalysisTreeInfra");
-  gSystem->Load("AnalysisTreeQA");
+  gSystem->Load("libAnalysisTreeBase");
+  gSystem->Load("libAnalysisTreeInfra");
+  gSystem->Load("libAnalysisTreeQA");
 }

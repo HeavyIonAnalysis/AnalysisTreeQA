@@ -1,3 +1,5 @@
+include(AnalysisTree)
+
 # Download and unpack googletest at configure time
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists-GTest.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .

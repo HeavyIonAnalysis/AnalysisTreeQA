@@ -35,7 +35,9 @@ TEST(Test_AnalysisTreeQA, Test_Manager) {
   fl << filename << "\n";
   fl.close();
 
-//  man = TaskManager::GetInstance();
+  delete toy_mc;
+  man->Tasks().clear();
+  man = TaskManager::GetInstance();
 
   auto* task = new QA::Task;
   Cuts eta_cut("eta_cut", {RangeCut("SimParticles.eta", -1, 1)});
@@ -65,6 +67,7 @@ TEST(Test_AnalysisTreeQA, Test_Manager) {
   EXPECT_NEAR(h_rec_px->GetMean(), 0, 0.01);
 //  EXPECT_NEAR(h_rec_px->GetStdDev(), 1., 0.5);
 
+  delete man;
 }
 
 }

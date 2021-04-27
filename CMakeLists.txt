@@ -13,7 +13,7 @@ set(AnalysisTreeQA_BUILD_TASKS OFF CACHE BOOL "Build user' AnalysisTreeQA tasks 
 set(AnalysisTreeQA_BUILD_EXAMPLES ON CACHE BOOL "Build AnalysisTreeQA examples (examples/)")
 set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for AnalysisTreeQA")
 set(AnalysisTreeQA_BUNDLED_AT ON CACHE BOOL "Get and build AnalysisTree")
-set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.1.0" CACHE STRING "Bundled AnalysisTree version")
+set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.1.1" CACHE STRING "Bundled AnalysisTree version")
 set(AnalysisTreeQA_BUNDLED_CUTS ON CACHE BOOL "Get and build AnalysisTreeCuts")
 set(AnalysisTreeQA_BUNDLED_CUTS_VERSION "v0.0.1" CACHE STRING "Bundled AnalysisTreeCuts version")
 

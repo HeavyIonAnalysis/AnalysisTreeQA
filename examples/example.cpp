@@ -7,7 +7,7 @@
 
 using namespace AnalysisTree;
 
-void example(const std::string& filelist){
+void example(const std::string& filelist = "/home/vklochkov/Data/cbm/fl_test.txt"){
   auto* man = TaskManager::GetInstance();
 
   auto* task = new QA::Task;
@@ -15,6 +15,10 @@ void example(const std::string& filelist){
 
   // 1D histo
   task->AddH1({"p_{T}, GeV/c", Variable::FromString("VtxTracks.pT"), {100, 0, 3}});
+
+  // 1D histo with cut
+  Cuts* pT_cut =  new Cuts("pT_cut", {RangeCut("VtxTracks.pT", 1, 1.5)});
+  task->AddH1({"p_{T}, GeV/c", Variable::FromString("VtxTracks.pT"), {100, 0, 3}}, pT_cut);
 
   // AnalysisTree::Variable in case of more complicated plot
   Variable chi2_over_ndf("#chi^{2}/NDF", {{"VtxTracks", "chi2"}, {"VtxTracks", "ndf"}}, []( std::vector<double>& var ) { return var.at(0)/var.at(1); });
@@ -56,6 +60,6 @@ int main(int argc, char* argv[]){
 
   const std::string filename = argv[1];
   example(filename);
-  
+
   return 0;
 }

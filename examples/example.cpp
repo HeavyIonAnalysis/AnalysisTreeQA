@@ -7,7 +7,7 @@
 
 using namespace AnalysisTree;
 
-void example(const std::string& filelist = "/home/vklochkov/Data/cbm/fl_test.txt"){
+void example(const std::string& filelist){
   auto* man = TaskManager::GetInstance();
 
   auto* task = new QA::Task;

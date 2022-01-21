@@ -36,11 +36,12 @@ class EntryConfig {
   enum class PlotType : short {
     kHisto1D,
     kHisto2D,
-    kProfile
+    kProfile,
+    kIntergral
   };
 
   EntryConfig() = default;
-  explicit EntryConfig(const Axis& axis, Cuts* cuts = nullptr);
+  explicit EntryConfig(const Axis& axis, Cuts* cuts = nullptr, bool is_integral = false);
   EntryConfig(const Axis& x, const Axis& y, Cuts* cuts = nullptr, bool is_profile = false);
 
   EntryConfig(const EntryConfig&) = default;

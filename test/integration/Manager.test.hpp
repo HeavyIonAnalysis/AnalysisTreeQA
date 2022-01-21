@@ -47,6 +47,9 @@ TEST(Test_AnalysisTreeQA, Test_Manager) {
   AddTracksMatchQA(task, "RecTracks", "SimParticles");
   AddParticlesFlowQA(task, "SimParticles", {"SimEventHeader", "psi_RP"}, {211});
 
+  task->AddIntegral({"#sum p_{T}, GeV/c", {"RecTracks", "pT"}, {100, 0, 300}});
+  task->AddIntegral({"M", {"RecTracks", "ones"}, {300, 0, 300}});
+
   man->AddTask(task);
 
   man->Init({filelist}, {treename});

@@ -7,19 +7,30 @@ void Task::Exec() {
 
   AnalysisTask::Exec();
 
+  double integral{0.};
+
   for (auto& plot : entries_) {
     auto var_ids = plot.GetVariablesId();
     for (auto var : this->GetValues(var_ids.first)) {
-      switch (plot.GetNdimentions()) {
-        case 1: {
-          plot.Fill(var[var_ids.second.at(0)]);
-          break;
-        }
-        case 2: {
-          plot.Fill(var[var_ids.second.at(0)], var[var_ids.second.at(1)]);
-          break;
+      if(plot.GetType() == EntryConfig::PlotType::kIntergral){
+        integral += var[var_ids.second.at(0)];
+      }
+      else{
+        switch (plot.GetNdimentions()) {
+          case 1: {
+            plot.Fill(var[var_ids.second.at(0)]);
+            break;
+          }
+          case 2: {
+            plot.Fill(var[var_ids.second.at(0)], var[var_ids.second.at(1)]);
+            break;
+          }
         }
       }
+    }
+
+    if(plot.GetType() == EntryConfig::PlotType::kIntergral){
+      plot.Fill(integral);
     }
   }// plots
 }

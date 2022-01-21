@@ -41,6 +41,23 @@ class Task : public AnalysisTask {
     return entries_.size() - 1;
   }
 
+  size_t AddIntegral(const Axis& x, Cuts* cuts = nullptr) {
+    if(x.GetFields()[0].GetName() == "ones"){
+      Axis x_one = Axis(x.GetTitle(),
+//                        Variable("Ones", {}, [](const std::vector<double>& ){return 1;}),
+                        Variable("Ones", {{x.GetBranchName(), "id"}}, [](const std::vector<double>& ){return 1;}),
+                        {x.GetNbins(), x.GetXmin(), x.GetXmax()});
+      entries_.emplace_back(EntryConfig(x_one, cuts, true));
+    }
+    else{
+      entries_.emplace_back(EntryConfig(x, cuts, true));
+    }
+
+    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
+    entries_.back().SetVariablesId(var_id);
+    return entries_.size() - 1;
+  }
+
   std::vector<EntryConfig>& Entries() { return entries_; }
   void SetOutputFileName(std::string name) { out_file_name_ = std::move(name); }
 

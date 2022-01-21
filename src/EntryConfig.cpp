@@ -23,12 +23,16 @@ struct write_struct : public Utils::Visitor<void> {
   std::string name_;
 };
 
-EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts) : name_(axis.GetName()),
-                                                         type_(PlotType::kHisto1D),
-                                                         axes_({axis}),
-                                                         entry_cuts_(cuts) {
+EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts, bool is_integral)
+  : name_(axis.GetName()),
+    type_(is_integral ? PlotType::kIntergral : PlotType::kHisto1D),
+    axes_({axis}),
+    entry_cuts_(cuts) {
   if (cuts)
     name_ += "_" + cuts->GetName();
+  if(is_integral){
+    name_ += "_integral";
+  }
   InitPlot();
 }
 
@@ -83,6 +87,10 @@ void EntryConfig::InitPlot() {
     }
     case PlotType::kHisto2D: {
       plot_ = CreateHisto2D();
+      break;
+    }
+    case PlotType::kIntergral: {
+      plot_ = CreateHisto1D();
       break;
     }
     case PlotType::kProfile: {

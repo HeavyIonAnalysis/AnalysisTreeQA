@@ -25,7 +25,7 @@ struct write_struct : public Utils::Visitor<void> {
 
 EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts, bool is_integral)
   : name_(axis.GetName()),
-    type_(is_integral ? PlotType::kIntergral : PlotType::kHisto1D),
+    type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
     axes_({axis}),
     entry_cuts_(cuts) {
   if (cuts)
@@ -42,6 +42,15 @@ EntryConfig::EntryConfig(const Axis& x, const Axis& y, Cuts* cuts, bool is_profi
   Set2DName();
   InitPlot();
 }
+
+EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y) : type_(PlotType::kIntegral2D),
+                                                                                      axes_({x, y}),
+                                                                                      entry_cuts_(cuts_x) {
+  Set2DName();
+  InitPlot();
+}
+
+
 
 TH1* EntryConfig::CreateHisto1D() const {
   auto* ret = new TH1F(name_.c_str(), title_.c_str(),
@@ -89,8 +98,12 @@ void EntryConfig::InitPlot() {
       plot_ = CreateHisto2D();
       break;
     }
-    case PlotType::kIntergral: {
+    case PlotType::kIntegral1D: {
       plot_ = CreateHisto1D();
+      break;
+    }
+    case PlotType::kIntegral2D: {
+      plot_ = CreateHisto2D();
       break;
     }
     case PlotType::kProfile: {
@@ -132,8 +145,7 @@ std::string EntryConfig::GetDirectoryName() const {
     const auto& br = ax.GetBranches();
     branches.insert(br.begin(), br.end());
   }
-  //  std::sort(branches.begin(), branches.end());
-
+  std::cout << "@@@@" << branches.size() << std::endl;
   std::string name{*branches.begin()};
   for (auto it = ++branches.begin(); it != branches.end(); ++it) {
     name += "_" + *it;

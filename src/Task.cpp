@@ -3,35 +3,53 @@
 namespace AnalysisTree {
 namespace QA {
 
+void Task::FillIntegral(EntryConfig& plot){
+
+  double integral_x{0.};
+  double integral_y{0.};
+  auto var_ids = plot.GetVariablesId();
+
+  for (const auto& var : this->GetValues(var_ids.at(0).first)) {
+    integral_x += var[var_ids.at(0).second];
+  }
+  if(plot.GetNdimentions() > 1) {
+    for (const auto& var : this->GetValues(var_ids.at(1).first)) {
+      integral_y += var[var_ids.at(1).second];
+    }
+  }
+  if(plot.GetNdimentions() == 1) {
+    plot.Fill(integral_x);
+  }
+  else{
+    plot.Fill(integral_x, integral_y);
+  }
+}
+
 void Task::Exec() {
 
   AnalysisTask::Exec();
 
-  double integral{0.};
-
   for (auto& plot : entries_) {
+
+    if(plot.GetType() == EntryConfig::PlotType::kIntegral1D || plot.GetType() == EntryConfig::PlotType::kIntegral2D){
+      FillIntegral(plot);
+      continue;
+    }
     auto var_ids = plot.GetVariablesId();
-    for (auto var : this->GetValues(var_ids.first)) {
-      if(plot.GetType() == EntryConfig::PlotType::kIntergral){
-        integral += var[var_ids.second.at(0)];
-      }
-      else{
-        switch (plot.GetNdimentions()) {
-          case 1: {
-            plot.Fill(var[var_ids.second.at(0)]);
-            break;
-          }
-          case 2: {
-            plot.Fill(var[var_ids.second.at(0)], var[var_ids.second.at(1)]);
-            break;
-          }
+    for (auto var : this->GetValues(var_ids.at(0).first)) {
+
+      switch (plot.GetNdimentions()) {
+        case 1: {
+          plot.Fill(var[var_ids.at(0).second]);
+          break;
+        }
+        case 2: {
+          plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second]);
+          break;
         }
       }
     }
 
-    if(plot.GetType() == EntryConfig::PlotType::kIntergral){
-      plot.Fill(integral);
-    }
   }// plots
 }
 
@@ -60,6 +78,14 @@ void Task::Init() {
     entry.SetOutDir(dir_map_.find(entry.GetDirectoryName())->second);
   }
 }
+
+size_t Task::AddAnalysisEntry(const Axis& a, Cuts* cuts, bool is_integral){
+  entries_.emplace_back(EntryConfig(a, cuts, is_integral));
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
+  entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
+  return entries_.size() - 1;
+}
+
 
 }// namespace QA
 }// namespace AnalysisTree

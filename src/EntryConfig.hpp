@@ -21,6 +21,12 @@ class Axis : public Variable, public TAxis {
   Axis() = default;
   Axis(const std::string& title, const Variable& var, const TAxis& a) : Variable(var), TAxis(a) {
     this->SetTitle(title.c_str());
+    if(this->GetFields().size() == 1 && this->GetFields().at(0).GetName() == "ones"){
+//      fields_[0] = Field(fields_[0].GetBranchName(), "ones");
+//      fields_.clear();
+      this->lambda_ = [](const std::vector<double>& ){ return 1; };
+      this->name_ = "Ones";
+    }
   }
   const char* GetName() const override { return Variable::GetName().c_str(); }
 
@@ -37,12 +43,14 @@ class EntryConfig {
     kHisto1D,
     kHisto2D,
     kProfile,
-    kIntergral
+    kIntegral1D,
+    kIntegral2D
   };
 
   EntryConfig() = default;
   explicit EntryConfig(const Axis& axis, Cuts* cuts = nullptr, bool is_integral = false);
   EntryConfig(const Axis& x, const Axis& y, Cuts* cuts = nullptr, bool is_profile = false);
+  EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y);
 
   EntryConfig(const EntryConfig&) = default;
   EntryConfig(EntryConfig&&) = default;
@@ -61,8 +69,8 @@ class EntryConfig {
   ANALYSISTREE_ATTR_NODISCARD Cuts* GetEntryCuts() const { return entry_cuts_; }
   ANALYSISTREE_ATTR_NODISCARD PlotType GetType() const { return type_; }
 
-  ANALYSISTREE_ATTR_NODISCARD std::pair<int, std::vector<int>> GetVariablesId() const { return vars_id_; }
-  void SetVariablesId(const std::pair<int, std::vector<int>>& var_id) { vars_id_ = var_id; }
+  ANALYSISTREE_ATTR_NODISCARD std::vector<std::pair<int, int>> GetVariablesId() const { return vars_id_; }
+  void SetVariablesId(const std::vector<std::pair<int, int>>& var_id) { vars_id_ = var_id; }
 
   ANALYSISTREE_ATTR_NODISCARD std::vector<Variable> GetVariables() const {
     std::vector<Variable> vars{};
@@ -92,7 +100,7 @@ class EntryConfig {
 
   std::vector<Axis> axes_{};
   Cuts* entry_cuts_{nullptr};
-  std::pair<int, std::vector<int>> vars_id_{};
+  std::vector<std::pair<int, int>> vars_id_{};
 
   TDirectory* out_dir_{nullptr};
   ClassDef(EntryConfig, 1);

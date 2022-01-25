@@ -145,7 +145,6 @@ std::string EntryConfig::GetDirectoryName() const {
     const auto& br = ax.GetBranches();
     branches.insert(br.begin(), br.end());
   }
-  std::cout << "@@@@" << branches.size() << std::endl;
   std::string name{*branches.begin()};
   for (auto it = ++branches.begin(); it != branches.end(); ++it) {
     name += "_" + *it;

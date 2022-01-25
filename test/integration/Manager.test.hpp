@@ -43,13 +43,20 @@ TEST(Test_AnalysisTreeQA, Test_Manager) {
   Cuts eta_cut("eta_cut", {RangeCut("SimParticles.eta", -1, 1)});
 
   AddParticleQA(task, "SimParticles");
-//  AddTrackQA(task, "RecTracks");
-//  AddTracksMatchQA(task, "RecTracks", "SimParticles");
-//  AddParticlesFlowQA(task, "SimParticles", {"SimEventHeader", "psi_RP"}, {211});
+  AddTrackQA(task, "RecTracks");
+  AddTracksMatchQA(task, "RecTracks", "SimParticles");
+  AddParticlesFlowQA(task, "SimParticles", {"SimEventHeader", "psi_RP"}, {211});
 
-//  task->AddIntegral({"#sum p_{T}, GeV/c", {"RecTracks", "pT"}, {100, 0, 300}});
-//  task->AddIntegral({"M", {"RecTracks", "ones"}, {300, 0, 300}});
-//  task->AddIntegral({"M_{rec}", {"RecTracks", "ones"}, {300, 0, 300}}, {"M_{sim}", {"SimParticles", "ones"}, {300, 0, 300}});
+  task->AddIntegral({"#sum p_{T}, GeV/c", {"RecTracks", "pT"}, {100, 0, 300}});
+  task->AddIntegral({"M", {"RecTracks", "ones"}, {300, 0, 300}});
+  task->AddIntegral({"M_{rec}", {"RecTracks", "ones"}, {300, 0, 300}},
+                    {"M_{sim}", {"SimParticles", "ones"}, {300, 0, 300}});
+
+  task->AddIntegral({"M_{rec}", {"RecTracks", "ones"}, {300, 0, 300}},
+                    {"M_{sim}", {"SimParticles", "ones"}, {100, 0, 300}},
+                    new Cuts("pions", {EqualsCut("SimParticles.pid", 211)}),
+                    new Cuts("pions", {EqualsCut("SimParticles.pid", 211)}) );
+
 
   man->AddTask(task);
 

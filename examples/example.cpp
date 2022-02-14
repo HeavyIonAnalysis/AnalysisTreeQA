@@ -17,7 +17,7 @@ void example(const std::string& filelist){
   task->AddH1({"p_{T}, GeV/c", Variable::FromString("VtxTracks.pT"), {100, 0, 3}});
 
   // 1D histo with cut
-  Cuts* pT_cut =  new Cuts("pT_cut", {RangeCut("VtxTracks.pT", 1, 1.5)});
+  Cuts* pT_cut =  new Cuts("pT_cut", {RangeCut("VtxTracks.pT", 0, 1.5)});
   task->AddH1({"p_{T}, GeV/c", Variable::FromString("VtxTracks.pT"), {100, 0, 3}}, pT_cut);
 
   // AnalysisTree::Variable in case of more complicated plot

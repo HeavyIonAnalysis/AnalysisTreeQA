@@ -3,7 +3,7 @@ include(AnalysisTree)
 set(SOURCES
     EntryConfig.cpp
     Task.cpp
-)
+    YamlReader.cpp Axis.cpp Axis.hpp)
 
 string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
 list(APPEND HEADERS "BasicQA.hpp")
@@ -18,7 +18,7 @@ else ()
   link_directories(${PROJECT_LINK_DIRECTORIES})
 endif ()
 
-#add_dependencies(AnalysisTreeQA ${PROJECT_DEPENDENCIES})
+add_dependencies(AnalysisTreeQA AnalysisTreeInfra AnalysisTreeBase)
 
 ROOT_GENERATE_DICTIONARY(G__AnalysisTreeQA
         ${HEADERS}
@@ -29,10 +29,13 @@ target_link_libraries(AnalysisTreeQA
         PUBLIC
         AnalysisTreeBase
         AnalysisTreeInfra
+        yaml-cpp
         )
 target_include_directories(AnalysisTreeQA
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        ${YAML_CPP_INCLUDE_DIR}
+        ${yaml-cpp_INCLUDE_DIR}
         )
 
 install(TARGETS AnalysisTreeQA EXPORT AnalysisTreeQATargets

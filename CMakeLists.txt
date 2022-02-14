@@ -13,9 +13,11 @@ set(AnalysisTreeQA_BUILD_TASKS OFF CACHE BOOL "Build user' AnalysisTreeQA tasks 
 set(AnalysisTreeQA_BUILD_EXAMPLES ON CACHE BOOL "Build AnalysisTreeQA examples (examples/)")
 set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for AnalysisTreeQA")
 set(AnalysisTreeQA_BUNDLED_AT ON CACHE BOOL "Get and build AnalysisTree")
-set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.2.5" CACHE STRING "Bundled AnalysisTree version")
+set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.2.6" CACHE STRING "Bundled AnalysisTree version")
 set(AnalysisTreeQA_BUNDLED_CUTS ON CACHE BOOL "Get and build AnalysisTreeCuts")
 set(AnalysisTreeQA_BUNDLED_CUTS_VERSION "v0.0.1" CACHE STRING "Bundled AnalysisTreeCuts version")
+
+option(yaml-cpp_BUNDLED "Build bundled yaml-cpp" OFF)
 
 # by default build optimized code
 if(NOT DEFINED CMAKE_BUILD_TYPE)
@@ -46,7 +48,11 @@ message(STATUS "Using CXX flags for ${CMAKE_BUILD_TYPE}: ${CMAKE_CXX_FLAGS_${CMA
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 list(APPEND CMAKE_PREFIX_PATH ${ROOTSYS})
+
 find_package(ROOT REQUIRED RIO)
+
+include(cmake_modules/YamlCpp.cmake)
+include(cmake_modules/AnalysisTree.cmake)
 
 message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")
 include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS})
@@ -55,7 +61,7 @@ include(${ROOT_USE_FILE})
 set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
 set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
 
-include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
+include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${YAML_CPP_INCLUDE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
 
 add_subdirectory(src)
 

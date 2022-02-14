@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include <TAxis.h>
-
 #include "AnalysisTree/Cuts.hpp"
 #include "AnalysisTree/Utils.hpp"
+
+#include <Axis.hpp>
 
 class TH1;
 class TH2;
@@ -15,24 +15,6 @@ class TProfile;
 
 namespace AnalysisTree {
 namespace QA {
-
-class Axis : public Variable, public TAxis {
- public:
-  Axis() = default;
-  Axis(const std::string& title, const Variable& var, const TAxis& a) : Variable(var), TAxis(a) {
-    this->SetTitle(title.c_str());
-    if(this->GetFields().size() == 1 && this->GetFields().at(0).GetName() == "ones"){
-//      fields_[0] = Field(fields_[0].GetBranchName(), "ones");
-//      fields_.clear();
-      this->lambda_ = [](const std::vector<double>& ){ return 1; };
-      this->name_ = "Ones";
-    }
-  }
-  const char* GetName() const override { return Variable::GetName().c_str(); }
-
- protected:
-  ClassDefOverride(Axis, 1);
-};
 
 class EntryConfig {
 
@@ -48,9 +30,9 @@ class EntryConfig {
   };
 
   EntryConfig() = default;
-  explicit EntryConfig(const Axis& axis, Cuts* cuts = nullptr, bool is_integral = false);
-  EntryConfig(const Axis& x, const Axis& y, Cuts* cuts = nullptr, bool is_profile = false);
-  EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y);
+  explicit EntryConfig(const Axis& axis, Cuts* cuts = nullptr, bool is_integral = false, const std::string& name="");
+  EntryConfig(const Axis& x, const Axis& y, Cuts* cuts = nullptr, bool is_profile = false, const std::string& name="");
+  EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y, const std::string& name="");
 
   EntryConfig(const EntryConfig&) = default;
   EntryConfig(EntryConfig&&) = default;
@@ -86,12 +68,14 @@ class EntryConfig {
 
   PlotPointer GetPlot() { return plot_; }
 
+  void Print() const;
+
  protected:
   void InitPlot();
   ANALYSISTREE_ATTR_NODISCARD TH1* CreateHisto1D() const;
   ANALYSISTREE_ATTR_NODISCARD TH2* CreateHisto2D() const;
   ANALYSISTREE_ATTR_NODISCARD TProfile* CreateProfile() const;
-  void Set2DName();
+  std::string Construct2DName();
 
   PlotPointer plot_;
   std::string name_;///< Name of the plot

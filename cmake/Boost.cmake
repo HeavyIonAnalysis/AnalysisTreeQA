@@ -1,0 +1,11 @@
+if(CMAKE_CXX_STANDARD LESS 17)
+    find_package(Boost REQUIRED)
+endif()
+
+if(Boost_FOUND)
+    message(STATUS "Boost version ${Boost_VERSION_STRING} is found!")
+    message(STATUS "Boost include dir: ${Boost_INCLUDE_DIRS}")
+    message(STATUS "Boost lib dir: ${Boost_LIBRARY_DIRS}")
+    list(APPEND PROJECT_INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}})
+    list(APPEND PROJECT_LINK_DIRECTORIES ${Boost_LIBRARY_DIRS}})
+endif()

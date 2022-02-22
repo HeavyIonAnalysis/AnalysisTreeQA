@@ -1,42 +1,25 @@
-include(AnalysisTree)
-
 set(SOURCES
     EntryConfig.cpp
     Task.cpp
-    YamlReader.cpp Axis.cpp Axis.hpp)
+    YamlReader.cpp
+    Axis.cpp)
 
 string(REPLACE ".cpp" ".hpp" HEADERS "${SOURCES}")
 list(APPEND HEADERS "BasicQA.hpp")
 
+include_directories(${PROJECT_INCLUDE_DIRECTORIES})
+
 add_library(AnalysisTreeQA SHARED ${SOURCES} G__AnalysisTreeQA.cxx)
-
-if (Boost_FOUND)
-  include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES} ${Boost_INCLUDE_DIR})
-  link_directories(${PROJECT_LINK_DIRECTORIES} ${Boost_LIBRARY_DIRS})
-else ()
-  include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES})
-  link_directories(${PROJECT_LINK_DIRECTORIES})
-endif ()
-
-add_dependencies(AnalysisTreeQA AnalysisTreeInfra AnalysisTreeBase)
+target_link_libraries(AnalysisTreeQA PUBLIC ${PROJECT_LINK_LIBRARIES} yaml-cpp)
+add_dependencies(AnalysisTreeQA AnalysisTreeInfra)
+target_include_directories(AnalysisTreeQA PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 ROOT_GENERATE_DICTIONARY(G__AnalysisTreeQA
         ${HEADERS}
         LINKDEF AnalysisTreeQALinkDef.h
         OPTIONS -I${CMAKE_BINARY_DIR}/include
         )
-target_link_libraries(AnalysisTreeQA
-        PUBLIC
-        AnalysisTreeBase
-        AnalysisTreeInfra
-        yaml-cpp
-        )
-target_include_directories(AnalysisTreeQA
-        PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        ${YAML_CPP_INCLUDE_DIR}
-        ${yaml-cpp_INCLUDE_DIR}
-        )
+
 
 install(TARGETS AnalysisTreeQA EXPORT AnalysisTreeQATargets
         LIBRARY DESTINATION lib

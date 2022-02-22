@@ -18,7 +18,7 @@ class Axis : public Variable, public TAxis {
     }
   }
   const char* GetName() const override { return Variable::GetName().c_str(); }
-  void Print() const override ;
+  void Print(Option_t *option="") const override ;
 
  protected:
   ClassDefOverride(Axis, 1);

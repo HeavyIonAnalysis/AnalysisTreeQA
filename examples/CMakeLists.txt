@@ -2,7 +2,7 @@ if(Boost_FOUND)
     include_directories(${PROJECT_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR} ${Boost_INCLUDE_DIR})
     link_directories(${PROJECT_LINK_DIRECTORIES} ${Boost_LIBRARY_DIRS})
 else()
-    include_directories(${PROJECT_INCLUDE_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR})
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
     link_directories(${PROJECT_LINK_DIRECTORIES})
 endif()
 

@@ -1,0 +1,44 @@
+1D:
+# Simplest way to define plot
+- x_axis:
+    field: "SimParticles.pT"
+    bins: [100, 0, 3]
+# Better way to define plot (cuts are defined in C++ code)
+- name: "sim_pT_y_1.5_3"
+  x_axis: &sim_pT # anchor could be reused later
+   title: "p_{T}, GeV/c"
+   field: "SimParticles.pT"
+   bins: [100, 0, 3]
+  cuts: "sim_y_cut"
+# Plot by variable name (defined in C++ code)
+- name: "pxpy"
+  x_axis:
+    field: "pxpy"
+    bin_edges: [-3, -1.5, -0.5, 0, 0.5, 1.5, 3]
+2D:
+- name: "sim_pT_y"
+  x_axis: &sim_y
+    title: "#it{y}"
+    field: "SimParticles.rapidity"
+    bins: [100, -2, 2]
+  y_axis: *sim_pT
+Profile:
+- name: "pT_y_profile"
+  x_axis: *sim_pT
+  y_axis: *sim_y
+Integral:
+- name: "pT_integral"
+  x_axis: &sim_pT_integral
+    title: "#sum{p_{T}, GeV/c}"
+    field: "SimParticles.pT"
+    bins: [100, 0, 30]
+  cuts: "sim_y_cut"
+Integral2D:
+- name: "pT_M_integral"
+  x_axis:
+    title: "M"
+    field: "SimParticles.ones"
+    bins: [100, 70, 130]
+  y_axis: *sim_pT_integral
+  y_cuts: "sim_y_cut"
+

@@ -1,11 +1,14 @@
-include("${CMAKE_CURRENT_LIST_DIR}/AnalysisTreeQATargets.cmake")
+cmake_minimum_required(VERSION 2.8.2)
 
-@PACKAGE_INIT@
+project(googletest-download NONE)
 
-message ("-- Found AnalysisTreeQA...")
-
-set(AnalysisTreeQA_INCLUDE_DIR	"@PACKAGE_AnalysisTreeQA_INCLUDE_DIR@")
-message ("AnalysisTreeQA_INCLUDE_DIR = ${AnalysisTreeQA_INCLUDE_DIR}")
-
-set(AnalysisTreeQA_LIBRARY_DIR	"@PACKAGE_AnalysisTreeQA_LIBRARY_DIR@")
-message ("AnalysisTreeQA_LIBRARY_DIR = ${AnalysisTreeQA_LIBRARY_DIR}")
+include(ExternalProject)
+ExternalProject_Add(googletest
+  URL               "https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip"
+  SOURCE_DIR        "${CMAKE_BINARY_DIR}/googletest-src"
+  BINARY_DIR        "${CMAKE_BINARY_DIR}/googletest-build"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+)

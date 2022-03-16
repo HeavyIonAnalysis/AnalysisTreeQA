@@ -8,6 +8,11 @@
 namespace AnalysisTree {
 namespace QA {
 
+using std::cout;
+using std::endl;
+using std::setw;
+using std::left;
+
 struct fill_struct : public Utils::Visitor<void> {
   fill_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
   void operator()(TH1*) const { throw std::runtime_error("Cannot apply Fill(va1, val2) to TH1"); }
@@ -23,66 +28,71 @@ struct write_struct : public Utils::Visitor<void> {
   std::string name_;
 };
 
-EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts, bool is_integral)
-  : name_(axis.GetName()),
+EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts, bool is_integral, const std::string& name)
+  : name_(name.empty() ? axis.GetName() : name),
     type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
     axes_({axis}),
     entry_cuts_(cuts) {
-  if (cuts)
+  if (cuts && name.empty())
     name_ += "_" + cuts->GetName();
-  if(is_integral){
+  if(is_integral && name.empty()){
     name_ += "_integral";
   }
   InitPlot();
+  Print();
 }
 
-EntryConfig::EntryConfig(const Axis& x, const Axis& y, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
-                                                                                      axes_({x, y}),
-                                                                                      entry_cuts_(cuts) {
-  Set2DName();
+EntryConfig::EntryConfig(const Axis& x, const Axis& y, Cuts* cuts, bool is_profile, const std::string& name)
+  : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
+    axes_({x, y}),
+    entry_cuts_(cuts)
+{
+  name_ = name.empty() ? Construct2DName() : name;
   InitPlot();
+  Print();
 }
 
-EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y) : type_(PlotType::kIntegral2D),
-                                                                                      axes_({x, y}),
-                                                                                      entry_cuts_(cuts_x) {
-  Set2DName();
+EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y, const std::string& name)
+    : type_(PlotType::kIntegral2D),
+      axes_({x, y}),
+      entry_cuts_(cuts_x)
+{
+  name_ = name.empty() ? Construct2DName() : name;
   InitPlot();
+  Print();
 }
-
-
 
 TH1* EntryConfig::CreateHisto1D() const {
-  auto* ret = new TH1F(name_.c_str(), title_.c_str(),
-                       axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax());
-  ret->SetXTitle(axes_.at(0).GetTitle());
+  auto x = axes_.at(0);
+  TH1* ret = x.IsVariableBinSize() ?
+     new TH1F(name_.c_str(), title_.c_str(), x.GetNbins(), x.GetXbins()->GetArray()) :
+     new TH1F(name_.c_str(), title_.c_str(), x.GetNbins(), x.GetXmin(), x.GetXmax());
+  ret->SetXTitle(x.GetTitle());
   ret->SetYTitle("Entries");
   return ret;
 }
-// TODO fix axes
-TProfile* EntryConfig::CreateProfile() const {
 
-  TProfile* ret{nullptr};
-  if (axes_[1].GetNbins() == 1 && axes_[1].GetXmax() == 1. && axes_[1].GetXmin() == 0.) {// Not init by user
-    ret = new TProfile(name_.c_str(), title_.c_str(),
-                       axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax());
-  } else if (axes_.size() == 2) {
-    ret = new TProfile(name_.c_str(), title_.c_str(),
-                       axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax(),
-                       axes_.at(1).GetXmin(), axes_.at(1).GetXmax());
-  }
-  ret->SetYTitle(axes_.at(1).GetTitle());
-  ret->SetXTitle(axes_.at(0).GetTitle());
+TProfile* EntryConfig::CreateProfile() const {
+  auto x{axes_.at(0)}, y{axes_.at(1)};
+  auto ret = x.IsVariableBinSize() ?
+        new TProfile(name_.c_str(), title_.c_str(), x.GetNbins(), x.GetXbins()->GetArray()) :
+        new TProfile(name_.c_str(), title_.c_str(), x.GetNbins(), x.GetXmin(), x.GetXmax());
+
+  ret->SetXTitle(x.GetTitle());
+  ret->SetYTitle(y.GetTitle());
   return ret;
 }
 
 TH2* EntryConfig::CreateHisto2D() const {
+  auto x{axes_.at(0)}, y{axes_.at(1)};
+  assert(x.IsVariableBinSize() && y.IsVariableBinSize() || !x.IsVariableBinSize() && !y.IsVariableBinSize());
 
-  auto* ret = new TH2F(name_.c_str(), title_.c_str(),
-                       axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax(),
-                       axes_.at(1).GetNbins(), axes_.at(1).GetXmin(), axes_.at(1).GetXmax());
-  ret->SetXTitle(axes_.at(0).GetTitle());
-  ret->SetYTitle(axes_.at(1).GetTitle());
+  auto* ret = x.IsVariableBinSize() ?
+      new TH2F(name_.c_str(), title_.c_str(), x.GetNbins(), x.GetXbins()->GetArray(), y.GetNbins(), y.GetXbins()->GetArray()) :
+      new TH2F(name_.c_str(), title_.c_str(), x.GetNbins(), x.GetXmin(), x.GetXmax(), y.GetNbins(), y.GetXmin(), y.GetXmax());
+
+  ret->SetXTitle(x.GetTitle());
+  ret->SetYTitle(y.GetTitle());
   ret->SetZTitle("Entries");
   ret->SetMinimum(1);
   return ret;
@@ -116,14 +126,15 @@ void EntryConfig::InitPlot() {
   }
 }
 
-void EntryConfig::Set2DName() {
-  name_ = Form("%s_%s", axes_[0].GetName(), axes_[1].GetName());
+std::string EntryConfig::Construct2DName() {
+  std::string name = Form("%s_%s", axes_[0].GetName(), axes_[1].GetName());
   if (entry_cuts_ != nullptr)
-    name_ += "_" + entry_cuts_->GetName();
+    name += "_" + entry_cuts_->GetName();
 
   if (type_ == PlotType::kProfile) {
-    name_ += "_profile";
+    name += "_profile";
   }
+  return name;
 }
 
 void EntryConfig::Fill(double value1, double value2) {
@@ -153,6 +164,24 @@ std::string EntryConfig::GetDirectoryName() const {
     name += "_" + entry_cuts_->GetName();
   }
   return name;
+}
+
+void EntryConfig::Print() const {
+  cout << left;
+  switch (type_) {
+    case PlotType::kHisto1D : cout << setw(12) << "1D histo"; break;
+    case PlotType::kHisto2D : cout << setw(12) << "2D histo"; break;
+    case PlotType::kProfile : cout << setw(12) << "Profile"; break;
+    case PlotType::kIntegral1D : cout << setw(12) << "Integral"; break;
+    case PlotType::kIntegral2D : cout << setw(12) << "2D integral"; break;
+  }
+  for(const auto& axis : axes_){
+    axis.Print();
+  }
+  if(entry_cuts_){
+    cout << setw(15) << entry_cuts_->GetName();
+  }
+  cout << endl;
 }
 
 }// namespace QA

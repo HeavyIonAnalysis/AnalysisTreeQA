@@ -30,13 +30,13 @@ To apply the flag use -D{Name}={value}, for example, if you want to compile usin
     cmake -DCMAKE_CXX_STANDARD=11 ../
 
 | Name  | Default value | Possible values |
-| ------------- | ------------- | ---------- |
-| CMAKE_BUILD_TYPE  | RELEASE  | RELEASE/DEBUG |
-| CMAKE_CXX_STANDARD  | 17  | 11/14/17 |
-| AnalysisTreeQA_BUILD_TESTS  | ON  | ON/OFF |
-| AnalysisTreeQA_BUILD_TASKS  | OFF  | ON/OFF |
-| AnalysisTreeQA_BUNDLED_AT  | ON  | ON/OFF |
-| AnalysisTreeQA_BUNDLED_AT_VERSION  | master  | master/v2.0.1/... |
+| ------------- |---------------| ---------- |
+| CMAKE_BUILD_TYPE  | RELEASE       | RELEASE/DEBUG |
+| CMAKE_CXX_STANDARD  | 17            | 11/14/17 |
+| AnalysisTreeQA_BUILD_TESTS  | OFF           | ON/OFF |
+| AnalysisTreeQA_BUILD_TASKS  | OFF           | ON/OFF |
+| AnalysisTreeQA_BUNDLED_AT  | ON            | ON/OFF |
+| AnalysisTreeQA_BUNDLED_AT_VERSION  | master        | master/v2.0.1/... |
 
 ## Usage
 

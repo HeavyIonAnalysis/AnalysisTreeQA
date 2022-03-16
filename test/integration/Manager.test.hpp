@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 #include <random>
+#include <TSystem.h>
 
 #include "AnalysisTree/ToyMC.hpp"
 
@@ -32,7 +33,7 @@ TEST(Test_AnalysisTreeQA, Test_Manager) {
   man->Finish();
 
   std::ofstream fl(filelist);
-  fl << filename << "\n";
+  fl << std::string(gSystem->pwd()) + "/" + filename << "\n";
   fl.close();
 
   delete toy_mc;
@@ -68,13 +69,13 @@ TEST(Test_AnalysisTreeQA, Test_Manager) {
 
   auto* h_sim_y = (TH1*)f_qa.Get("SimParticles/SimParticles_rapidity");
 
-  EXPECT_NEAR(h_sim_y->GetEntries(), 100*n_events, 100);
+  EXPECT_NEAR(h_sim_y->GetEntries(), 100*n_events, 1000);
 //  EXPECT_NEAR(h_sim_y->GetMean(), 0, 0.01);
 //  EXPECT_NEAR(h_sim_y->GetStdDev(), 1., 0.05);
 
   auto* h_rec_px = (TH1*)f_qa.Get("RecTracks/RecTracks_px");
 
-  EXPECT_NEAR(h_rec_px->GetEntries(), 100*n_events, 100);
+  EXPECT_NEAR(h_rec_px->GetEntries(), 100*n_events, 1000);
   EXPECT_NEAR(h_rec_px->GetMean(), 0, 0.01);
 //  EXPECT_NEAR(h_rec_px->GetStdDev(), 1., 0.5);
 

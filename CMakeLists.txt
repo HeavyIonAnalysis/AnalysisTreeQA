@@ -1,25 +1,25 @@
-# Minimum 3.5 version is determined by cmake -E copy_if_different command
-# that was used to copy headers to the build directory:
-# multiple files are supported since cmake 3.5
-cmake_minimum_required(VERSION 3.5)
-project(AnalysisTreeQA CXX)
-set(PROJECT_VERSION 1.1)
+cmake_minimum_required(VERSION 3.14)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
-#
-# Options
-#
-set(AnalysisTreeQA_BUILD_TASKS OFF CACHE BOOL "Build user' AnalysisTreeQA tasks (tasks/)")
-set(AnalysisTreeQA_BUILD_EXAMPLES ON CACHE BOOL "Build AnalysisTreeQA examples (examples/)")
-set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for AnalysisTreeQA")
-set(AnalysisTreeQA_BUNDLED_AT ON CACHE BOOL "Get and build AnalysisTree")
-set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.2.5" CACHE STRING "Bundled AnalysisTree version")
-set(AnalysisTreeQA_BUNDLED_CUTS ON CACHE BOOL "Get and build AnalysisTreeCuts")
-set(AnalysisTreeQA_BUNDLED_CUTS_VERSION "v0.0.1" CACHE STRING "Bundled AnalysisTreeCuts version")
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+include(MunkeiVersionFromGitATQA)
+version_from_git(
+        LOG       ON
+        TIMESTAMP "%Y%m%d%H%M%S"
+)
+
+project(AnalysisTreeQA VERSION ${VERSION} LANGUAGES CXX)
+
+option(AnalysisTreeQA_BUILD_EXAMPLES "Build AnalysisTreeQA examples (examples/)" ON)
+option(AnalysisTreeQA_BUILD_TESTS "Build tests for AnalysisTreeQA" ON)
+option(AnalysisTreeQA_BUNDLED_AT "Get and build AnalysisTree" ON)
+option(yaml-cpp_BUNDLED "Build bundled yaml-cpp" ON)
+
+set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.2.6" CACHE STRING "Bundled AnalysisTree version")
 
 # by default build optimized code
 if(NOT DEFINED CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE RELEASE)
+    set(CMAKE_BUILD_TYPE Release)
 endif()
 
 if(NOT DEFINED CMAKE_CXX_STANDARD)
@@ -27,51 +27,26 @@ if(NOT DEFINED CMAKE_CXX_STANDARD)
 endif()
 
 # in DEBUG mode make verbose Makefile
-if (CMAKE_BUILD_TYPE MATCHES DEBUG)
+if (CMAKE_BUILD_TYPE MATCHES Debug)
     set(CMAKE_VERBOSE_MAKEFILE ON)
 endif ()
 
-if(CMAKE_CXX_STANDARD LESS 17)
-    find_package(Boost REQUIRED)
-endif()
-
-if(Boost_FOUND)
-    message(STATUS "Boost version ${Boost_VERSION_STRING} is found!")
-    message(STATUS "Boost include dir: ${Boost_INCLUDE_DIRS}")
-endif()
 
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -g -DDEBUG -D__DEBUG -Wall -Wextra")
+set(CMAKE_CXX_FLAGS_Debug "-O0 -ggdb -g -DDEBUG -D__DEBUG -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ftree-vectorize -ffast-math -DNODEBUG")
+set(CMAKE_CXX_FLAGS_Release "-O3 -ftree-vectorize -ffast-math -DNODEBUG")
 message(STATUS "Using CXX flags for ${CMAKE_BUILD_TYPE}: ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}}")
 
-list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-list(APPEND CMAKE_PREFIX_PATH ${ROOTSYS})
-find_package(ROOT REQUIRED RIO)
-
-message(STATUS "Using ROOT: ${ROOT_VERSION} <${ROOT_CONFIG}>")
-include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIR} ${ROOT_INCLUDE_DIRS})
-include(${ROOT_USE_FILE})
-
-set(EXTERNAL_DIR ${CMAKE_BINARY_DIR}/external)
-set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
-
-include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
+include(ROOT)
+include(AnalysisTree)
+include(YamlCpp)
+include(Boost)
 
 add_subdirectory(src)
-
-if(AnalysisTreeQA_BUILD_TASKS)
-    add_subdirectory(tasks)
-endif()
-
+add_subdirectory(test)
 if(AnalysisTreeQA_BUILD_EXAMPLES)
     add_subdirectory(examples)
-endif()
-
-if(AnalysisTreeQA_BUILD_TESTS)
-    message("Compiling tests")
-    include(GoogleTest)
-    enable_testing()
-    add_subdirectory(test)
 endif()
 
 include(CMakePackageConfigHelpers)

@@ -11,10 +11,10 @@ list(APPEND HEADERS "BasicQA.hpp")
 add_library(AnalysisTreeQA SHARED ${SOURCES} G__AnalysisTreeQA.cxx)
 
 if (Boost_FOUND)
-  include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES} ${Boost_INCLUDE_DIR})
+  include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES} ${Boost_INCLUDE_DIR} ${AnalysisTree_BINARY_DIR}/include)
   link_directories(${PROJECT_LINK_DIRECTORIES} ${Boost_LIBRARY_DIRS})
 else ()
-  include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES})
+  include_directories(${CMAKE_SOURCE_DIR}/src ${PROJECT_INCLUDE_DIRECTORIES} ${AnalysisTree_BINARY_DIR}/include)
   link_directories(${PROJECT_LINK_DIRECTORIES})
 endif ()
 
@@ -24,6 +24,7 @@ ROOT_GENERATE_DICTIONARY(G__AnalysisTreeQA
         ${HEADERS}
         LINKDEF AnalysisTreeQALinkDef.h
         OPTIONS -I${CMAKE_BINARY_DIR}/include
+        OPTIONS -I${AnalysisTree_BINARY_DIR}/include
         )
 target_link_libraries(AnalysisTreeQA
         PUBLIC

@@ -6,7 +6,7 @@ if (AnalysisTreeQA_BUNDLED_AT)
             AnalysisTree
             GIT_REPOSITORY "https://github.com/HeavyIonAnalysis/AnalysisTree.git"
             GIT_TAG ${AnalysisTreeQA_BUNDLED_AT_VERSION}
-            GIT_SHALLOW ON
+            GIT_SHALLOW ${AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW}
     )
     FetchContent_MakeAvailable(AnalysisTree)
 else()

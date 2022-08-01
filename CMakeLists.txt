@@ -14,6 +14,7 @@ set(AnalysisTreeQA_BUILD_EXAMPLES ON CACHE BOOL "Build AnalysisTreeQA examples (
 set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for AnalysisTreeQA")
 set(AnalysisTreeQA_BUNDLED_AT ON CACHE BOOL "Get and build AnalysisTree")
 set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.2.5" CACHE STRING "Bundled AnalysisTree version")
+set(AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW ON CACHE BOOL "Use CMake GIT_SHALLOW option")
 set(AnalysisTreeQA_BUNDLED_CUTS ON CACHE BOOL "Get and build AnalysisTreeCuts")
 set(AnalysisTreeQA_BUNDLED_CUTS_VERSION "v0.0.1" CACHE STRING "Bundled AnalysisTreeCuts version")
 

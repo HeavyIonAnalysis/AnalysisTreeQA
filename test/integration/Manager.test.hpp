@@ -66,13 +66,13 @@ TEST(Test_AnalysisTreeQA, Test_Manager) {
 
   TFile f_qa("QA.root", "read");
 
-  auto* h_sim_y = (TH1*)f_qa.Get("SimParticles/SimParticles_rapidity");
+  auto* h_sim_y = (TH1*)f_qa.Get("SimParticles/SimParticles.rapidity");
 
   EXPECT_NEAR(h_sim_y->GetEntries(), 100*n_events, 100);
 //  EXPECT_NEAR(h_sim_y->GetMean(), 0, 0.01);
 //  EXPECT_NEAR(h_sim_y->GetStdDev(), 1., 0.05);
 
-  auto* h_rec_px = (TH1*)f_qa.Get("RecTracks/RecTracks_px");
+  auto* h_rec_px = (TH1*)f_qa.Get("RecTracks/RecTracks.px");
 
   EXPECT_NEAR(h_rec_px->GetEntries(), 100*n_events, 100);
   EXPECT_NEAR(h_rec_px->GetMean(), 0, 0.01);

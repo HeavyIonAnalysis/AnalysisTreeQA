@@ -94,8 +94,11 @@ make -j install
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT   </td><td class="markdownTableBodyNone">ON   </td><td class="markdownTableBodyNone">ON/OFF    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT_VERSION   </td><td class="markdownTableBodyNone">master   </td><td class="markdownTableBodyNone">master/v2.0.1/...   </td></tr>
+<td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT_VERSION   </td><td class="markdownTableBodyNone">v2.2.8   </td><td class="markdownTableBodyNone">master/v2.0.1/...    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW   </td><td class="markdownTableBodyNone">ON   </td><td class="markdownTableBodyNone">ON/OFF   </td></tr>
 </table>
+<p >If AnalysisTreeQA_BUNDLED_AT_VERSION variable shows not on the tag (but branch name or commit hash) then AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW variable must be set OFF.</p>
 <h1>Usage</h1>
 <p >Simple program: </p><pre class="fragment">// Manager instance: filelist1, filelist2, ...; treename1, treename2, ...
 QA::Manager man({filelist1, filelist2}, {"aTree", "bTree"}); 

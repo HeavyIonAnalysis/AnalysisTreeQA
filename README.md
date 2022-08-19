@@ -36,7 +36,10 @@ To apply the flag use -D{Name}={value}, for example, if you want to compile usin
 | AnalysisTreeQA_BUILD_TESTS  | ON  | ON/OFF |
 | AnalysisTreeQA_BUILD_TASKS  | OFF  | ON/OFF |
 | AnalysisTreeQA_BUNDLED_AT  | ON  | ON/OFF |
-| AnalysisTreeQA_BUNDLED_AT_VERSION  | master  | master/v2.0.1/... |
+| AnalysisTreeQA_BUNDLED_AT_VERSION  | v2.2.8  | master/v2.0.1/... |
+| AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW  | ON  | ON/OFF |
+
+If AnalysisTreeQA_BUNDLED_AT_VERSION variable shows not on the tag (but branch name or commit hash) then AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW variable must be set OFF.
 
 ## Usage
 

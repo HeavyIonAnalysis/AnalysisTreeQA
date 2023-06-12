@@ -75,6 +75,8 @@ if(AnalysisTreeQA_BUILD_TESTS)
     add_subdirectory(test)
 endif()
 
+configure_file(cmake_modules/AnalysisTreeQAConfig.sh.in ${CMAKE_BINARY_DIR}/AnalysisTreeQAConfig.sh)
+
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
         "${CMAKE_CURRENT_BINARY_DIR}/AnalysisTreeQA/AnalysisTreeQAConfigVersion.cmake"
@@ -110,6 +112,14 @@ install(FILES
         "${CMAKE_CURRENT_BINARY_DIR}/AnalysisTreeQA/AnalysisTreeQAConfigVersion.cmake"
         DESTINATION
         ${ConfigPackageLocation}
+        COMPONENT
+        Devel
+        )
+
+install(FILES
+        ${CMAKE_BINARY_DIR}/AnalysisTreeQAConfig.sh
+        DESTINATION
+        bin
         COMPONENT
         Devel
         )

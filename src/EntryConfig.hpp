@@ -22,8 +22,6 @@ class Axis : public Variable, public TAxis {
   Axis(const std::string& title, const Variable& var, const TAxis& a) : Variable(var), TAxis(a) {
     this->SetTitle(title.c_str());
     if(this->GetFields().size() == 1 && this->GetFields().at(0).GetName() == "ones"){
-//      fields_[0] = Field(fields_[0].GetBranchName(), "ones");
-//      fields_.clear();
       this->lambda_ = [](const std::vector<double>& ){ return 1; };
       this->name_ = "Ones";
     }

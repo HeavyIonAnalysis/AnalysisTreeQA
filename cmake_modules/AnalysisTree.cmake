@@ -4,9 +4,9 @@ if (AnalysisTreeQA_BUNDLED_AT)
 
     FetchContent_Declare(
             AnalysisTree
-            GIT_REPOSITORY "https://github.com/HeavyIonAnalysis/AnalysisTree.git"
-            GIT_TAG ${AnalysisTreeQA_BUNDLED_AT_VERSION}
-            GIT_SHALLOW ${AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW}
+            GIT_REPOSITORY "https://github.com/lubynets/AnalysisTree.git"
+            GIT_TAG "dev"
+            GIT_SHALLOW "OFF"
     )
     FetchContent_MakeAvailable(AnalysisTree)
 else()

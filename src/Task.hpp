@@ -20,30 +20,42 @@ class Task : public AnalysisTask {
   void Exec() override;
   void Finish() override;
 
-  size_t AddH1(const Axis& x, Cuts* cuts = nullptr) {
-    entries_.emplace_back(EntryConfig(x, cuts, false));
-    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
+  size_t AddH1(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    if(weight.GetNumberOfBranches() == 0) {
+      weight = Variable::FromString(x.GetBranchName() + ".ones");
+    }
+    entries_.emplace_back(EntryConfig(x, weight, cuts, false));
+    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
     return entries_.size() - 1;
   }
 
-  size_t AddH2(const Axis& x, const Axis& y, Cuts* cuts = nullptr) {
-    entries_.emplace_back(EntryConfig(x, y, cuts));
-    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
+  size_t AddH2(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    if(weight.GetNumberOfBranches() == 0) {
+      weight = Variable::FromString(x.GetBranchName() + ".ones");
+    }
+    entries_.emplace_back(EntryConfig(x, y, weight, cuts));
+    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
     return entries_.size() - 1;
   }
 
-  size_t AddProfile(const Axis& x, const Axis& y, Cuts* cuts = nullptr) {
-    entries_.emplace_back(EntryConfig(x, y, cuts, true));
-    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
+  size_t AddProfile(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    if(weight.GetNumberOfBranches() == 0) {
+      weight = Variable::FromString(x.GetBranchName() + ".ones");
+    }
+    entries_.emplace_back(EntryConfig(x, y, weight, cuts, true));
+    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
     return entries_.size() - 1;
   }
 
-  size_t AddIntegral(const Axis& x, Cuts* cuts = nullptr) {
-    entries_.emplace_back(EntryConfig(x, cuts, true));
-    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
+  size_t AddIntegral(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    if(weight.GetNumberOfBranches() == 0) {
+      weight = Variable::FromString(x.GetBranchName() + ".ones");
+    }
+    entries_.emplace_back(EntryConfig(x, weight, cuts, true));
+    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
     return entries_.size() - 1;
   }
@@ -61,7 +73,7 @@ class Task : public AnalysisTask {
 
  private:
   void FillIntegral(EntryConfig& plot);
-  size_t AddAnalysisEntry(const Axis& a, Cuts* cuts, bool is_integral);
+//  size_t AddAnalysisEntry(const Axis& a, Cuts* cuts, bool is_integral);
 
   std::vector<EntryConfig> entries_{};
   std::map<std::string, TDirectory*> dir_map_{};

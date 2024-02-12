@@ -36,15 +36,21 @@ void Task::Exec() {
       continue;
     }
     auto var_ids = plot.GetVariablesId();
+    auto weights = this->GetWeights(var_ids.at(0).first);
+    int ivw{-1};
     for (auto var : this->GetValues(var_ids.at(0).first)) {
-
+      ++ivw;
+      auto weight = weights.at(ivw);
+      if(std::fabs(weight) < 1e-6) continue;
       switch (plot.GetNdimentions()) {
         case 1: {
-          plot.Fill(var[var_ids.at(0).second]);
+          if(std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second]);
+          else                                plot.Fill(var[var_ids.at(0).second], weight);
           break;
         }
         case 2: {
-          plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second]);
+          if(std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second]);
+          else                                plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second], weight);
           break;
         }
       }
@@ -79,12 +85,12 @@ void Task::Init() {
   }
 }
 
-size_t Task::AddAnalysisEntry(const Axis& a, Cuts* cuts, bool is_integral){
-  entries_.emplace_back(EntryConfig(a, cuts, is_integral));
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
-  entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
-  return entries_.size() - 1;
-}
+//size_t Task::AddAnalysisEntry(const Axis& a, Cuts* cuts, bool is_integral){
+//  entries_.emplace_back(EntryConfig(a, cuts, is_integral));
+//  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
+//  entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
+//  return entries_.size() - 1;
+//}
 
 
 }// namespace QA

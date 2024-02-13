@@ -8,12 +8,20 @@
 namespace AnalysisTree {
 namespace QA {
 
-struct fill_struct : public Utils::Visitor<void> {
-  fill_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
-  void operator()(TH1*) const { throw std::runtime_error("Cannot apply Fill(va1, val2) to TH1"); }
+struct fill2_struct : public Utils::Visitor<void> {
+  fill2_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
+  void operator()(TH1* h1) const { h1->Fill(val1_, val2_); }
   void operator()(TH2* h2) const { h2->Fill(val1_, val2_); }
   void operator()(TProfile* p) const { p->Fill(val1_, val2_); }
   double val1_, val2_;
+};
+
+struct fill3_struct : public Utils::Visitor<void> {
+  fill3_struct(double val1, double val2, double val3) : val1_(val1), val2_(val2), val3_(val3) {}
+  void operator()(TH1*) const { throw std::runtime_error("EntryConfig, fill3_struct: cannot fill TH1 with 3 arguments"); }
+  void operator()(TH2* h2) const { h2->Fill(val1_, val2_, val3_); }
+  void operator()(TProfile* p) const { p->Fill(val1_, val2_, val3_); }
+  double val1_, val2_, val3_;
 };
 
 struct write_struct : public Utils::Visitor<void> {
@@ -23,10 +31,11 @@ struct write_struct : public Utils::Visitor<void> {
   std::string name_;
 };
 
-EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts, bool is_integral)
+EntryConfig::EntryConfig(const Axis& axis, Variable& weight, Cuts* cuts, bool is_integral)
   : name_(axis.GetName()),
     type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
     axes_({axis}),
+    var4weight_(weight),
     entry_cuts_(cuts) {
   if (cuts)
     name_ += "_" + cuts->GetName();
@@ -36,8 +45,9 @@ EntryConfig::EntryConfig(const Axis& axis, Cuts* cuts, bool is_integral)
   InitPlot();
 }
 
-EntryConfig::EntryConfig(const Axis& x, const Axis& y, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
+EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
                                                                                       axes_({x, y}),
+                                                                                      var4weight_(weight),
                                                                                       entry_cuts_(cuts) {
   Set2DName();
   InitPlot();
@@ -127,7 +137,11 @@ void EntryConfig::Set2DName() {
 }
 
 void EntryConfig::Fill(double value1, double value2) {
-  ANALYSISTREE_UTILS_VISIT(fill_struct(value1, value2), plot_);
+  ANALYSISTREE_UTILS_VISIT(fill2_struct(value1, value2), plot_);
+}
+
+void EntryConfig::Fill(double value1, double value2, double value3) {
+  ANALYSISTREE_UTILS_VISIT(fill3_struct(value1, value2, value3), plot_);
 }
 
 void EntryConfig::Write() const {

@@ -22,8 +22,6 @@ class Axis : public Variable, public TAxis {
   Axis(const std::string& title, const Variable& var, const TAxis& a) : Variable(var), TAxis(a) {
     this->SetTitle(title.c_str());
     if(this->GetFields().size() == 1 && this->GetFields().at(0).GetName() == "ones"){
-//      fields_[0] = Field(fields_[0].GetBranchName(), "ones");
-//      fields_.clear();
       this->lambda_ = [](const std::vector<double>& ){ return 1; };
       this->name_ = "Ones";
     }
@@ -48,8 +46,8 @@ class EntryConfig {
   };
 
   EntryConfig() = default;
-  explicit EntryConfig(const Axis& axis, Cuts* cuts = nullptr, bool is_integral = false);
-  EntryConfig(const Axis& x, const Axis& y, Cuts* cuts = nullptr, bool is_profile = false);
+  explicit EntryConfig(const Axis& axis, [[maybe_unused]] Variable& weight, Cuts* cuts = nullptr, bool is_integral = false);
+  EntryConfig(const Axis& x, const Axis& y, Variable& weight, Cuts* cuts = nullptr, bool is_profile = false);
   EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y);
 
   EntryConfig(const EntryConfig&) = default;
@@ -60,6 +58,7 @@ class EntryConfig {
 
   void Fill(double value);
   void Fill(double value1, double value2);
+  void Fill(double value1, double value2, double value3);
   void Write() const;
 
   ANALYSISTREE_ATTR_NODISCARD const std::vector<Axis>& GetAxes() const { return axes_; }
@@ -78,6 +77,10 @@ class EntryConfig {
       vars.emplace_back(axis);
     }
     return vars;
+  }
+
+  ANALYSISTREE_ATTR_NODISCARD Variable GetVariableForWeight() const {
+    return var4weight_;
   }
 
   ANALYSISTREE_ATTR_NODISCARD std::string GetDirectoryName() const;
@@ -99,6 +102,7 @@ class EntryConfig {
   PlotType type_{PlotType(-1)};
 
   std::vector<Axis> axes_{};
+  Variable var4weight_{};
   Cuts* entry_cuts_{nullptr};
   std::vector<std::pair<int, int>> vars_id_{};
 

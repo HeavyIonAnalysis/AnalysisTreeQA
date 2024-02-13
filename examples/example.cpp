@@ -20,6 +20,9 @@ void example(const std::string& filelist){
   Cuts* pT_cut =  new Cuts("pT_cut", {RangeCut("VtxTracks.pT", 1, 1.5)});
   task->AddH1({"p_{T}, GeV/c", Variable::FromString("VtxTracks.pT"), {100, 0, 3}}, pT_cut);
 
+  // 1D histo with weight
+  task->AddH1({"PSD module id", Variable::FromString("PsdModules.id"), {51, -1, 50}}, nullptr, Variable::FromString("PsdModules.signal"));
+
   // AnalysisTree::Variable in case of more complicated plot
   Variable chi2_over_ndf("#chi^{2}/NDF", {{"VtxTracks", "chi2"}, {"VtxTracks", "ndf"}}, []( std::vector<double>& var ) { return var.at(0)/var.at(1); });
   task->AddH1({"#chi^{2}/NDF", chi2_over_ndf, {100, 0, 10}});

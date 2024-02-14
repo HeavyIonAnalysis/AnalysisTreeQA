@@ -33,6 +33,20 @@ void example(const std::string& filelist){
   Variable qp_sts("qp_reco", {{"VtxTracks", "q"}, {"VtxTracks", "p"}}, [](std::vector<double>& qp) { return qp.at(0) * qp.at(1); });
   task->AddH2({"sign(q)*p, GeV/c", qp_sts, {500, -10, 10}},{"m^{2}, GeV^{2}/c^{2}", {"TofHits", "mass2"}, {500, -1, 2}});
 
+  // 2D histo with weights
+  Variable prob_e = Variable::FromString("TrdTracks.pid_like_e");
+  Variable prob_k = Variable::FromString("TrdTracks.pid_like_k");
+  Variable prob_p = Variable::FromString("TrdTracks.pid_like_p");
+  Variable prob_pi = Variable::FromString("TrdTracks.pid_like_pi");
+  Cuts* prob_e_cut = new Cuts("prob_e_cut", {RangeCut(prob_e, 0, 1)});
+  Cuts* prob_k_cut = new Cuts("prob_k_cut", {RangeCut(prob_k, 0, 1)});
+  Cuts* prob_p_cut = new Cuts("prob_p_cut", {RangeCut(prob_p, 0, 1)});
+  Cuts* prob_pi_cut = new Cuts("prob_pi_cut", {RangeCut(prob_pi, 0, 1)});
+  task->AddH2({"#eta", Variable::FromString("TrdTracks.eta"), {500, 0, 5}}, {"p_{T}, GeV/c", Variable::FromString("TrdTracks.pT"), {300, 0, 1.5}}, prob_e_cut, prob_e);
+  task->AddH2({"#eta", Variable::FromString("TrdTracks.eta"), {500, 0, 5}}, {"p_{T}, GeV/c", Variable::FromString("TrdTracks.pT"), {300, 0, 1.5}}, prob_k_cut, prob_k);
+  task->AddH2({"#eta", Variable::FromString("TrdTracks.eta"), {500, 0, 5}}, {"p_{T}, GeV/c", Variable::FromString("TrdTracks.pT"), {300, 0, 1.5}}, prob_p_cut, prob_p);
+  task->AddH2({"#eta", Variable::FromString("TrdTracks.eta"), {500, 0, 5}}, {"p_{T}, GeV/c", Variable::FromString("TrdTracks.pT"), {300, 0, 1.5}}, prob_pi_cut, prob_pi);
+
   // Histo with additional cuts:
   Cuts* mc_protons =  new Cuts("McProtons", {EqualsCut("SimParticles.pid", 2212)});
   Cuts* mc_pions =  new Cuts("McPions", {EqualsCut("SimParticles.pid", 211)});

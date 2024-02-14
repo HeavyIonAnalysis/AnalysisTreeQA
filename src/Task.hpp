@@ -21,9 +21,7 @@ class Task : public AnalysisTask {
   void Finish() override;
 
   size_t AddH1(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
-    if(weight.GetNumberOfBranches() == 0) {
-      weight = Variable::FromString(x.GetBranchName() + ".ones");
-    }
+    weight.IfEmptyVariableConvertToOnes(x);
     entries_.emplace_back(EntryConfig(x, weight, cuts, false));
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
@@ -31,9 +29,7 @@ class Task : public AnalysisTask {
   }
 
   size_t AddH2(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
-    if(weight.GetNumberOfBranches() == 0) {
-      weight = Variable::FromString(x.GetBranchName() + ".ones");
-    }
+    weight.IfEmptyVariableConvertToOnes(x);
     entries_.emplace_back(EntryConfig(x, y, weight, cuts));
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
@@ -41,9 +37,7 @@ class Task : public AnalysisTask {
   }
 
   size_t AddProfile(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
-    if(weight.GetNumberOfBranches() == 0) {
-      weight = Variable::FromString(x.GetBranchName() + ".ones");
-    }
+    weight.IfEmptyVariableConvertToOnes(x);
     entries_.emplace_back(EntryConfig(x, y, weight, cuts, true));
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
@@ -51,9 +45,7 @@ class Task : public AnalysisTask {
   }
 
   size_t AddIntegral(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
-    if(weight.GetNumberOfBranches() == 0) {
-      weight = Variable::FromString(x.GetBranchName() + ".ones");
-    }
+    weight.IfEmptyVariableConvertToOnes(x);
     entries_.emplace_back(EntryConfig(x, weight, cuts, true));
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});

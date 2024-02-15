@@ -39,6 +39,9 @@ EntryConfig::EntryConfig(const Axis& axis, Variable& weight, Cuts* cuts, bool is
     entry_cuts_(cuts) {
   if (cuts)
     name_ += "_" + cuts->GetName();
+  if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
+    name_ += "_weight_" + var4weight_.GetName();
+  }
   if(is_integral){
     name_ += "_integral";
   }

@@ -134,6 +134,10 @@ void EntryConfig::Set2DName() {
   if (entry_cuts_ != nullptr)
     name_ += "_" + entry_cuts_->GetName();
 
+  if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
+    name_ += "_weight_" + var4weight_.GetName();
+  }
+
   if (type_ == PlotType::kProfile) {
     name_ += "_profile";
   }
@@ -168,6 +172,9 @@ std::string EntryConfig::GetDirectoryName() const {
   }
   if (entry_cuts_) {
     name += "_" + entry_cuts_->GetName();
+  }
+  if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
+    name += "_weight_" + var4weight_.GetName();
   }
   return name;
 }

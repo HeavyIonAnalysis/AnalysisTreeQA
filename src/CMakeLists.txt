@@ -1,5 +1,3 @@
-include(AnalysisTree)
-
 set(SOURCES
     EntryConfig.cpp
     Task.cpp

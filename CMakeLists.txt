@@ -12,8 +12,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 set(AnalysisTreeQA_BUILD_TASKS OFF CACHE BOOL "Build user' AnalysisTreeQA tasks (tasks/)")
 set(AnalysisTreeQA_BUILD_EXAMPLES ON CACHE BOOL "Build AnalysisTreeQA examples (examples/)")
 set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for AnalysisTreeQA")
-set(AnalysisTreeQA_BUNDLED_AT ON CACHE BOOL "Get and build AnalysisTree")
-set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.3.4" CACHE STRING "Bundled AnalysisTree version")
+set(AnalysisTreeQA_BUNDLED_AT OFF CACHE BOOL "Get and build AnalysisTree")
+set(AnalysisTreeQA_BUNDLED_AT_VERSION "v2.4.0" CACHE STRING "Bundled AnalysisTree version")
+set(AnalysisTreeQA_BUNDLED_AT_URL "https://github.com/HeavyIonAnalysis/AnalysisTree.git" CACHE STRING "URL of AnalysisTree to build")
 set(AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW ON CACHE BOOL "Use CMake GIT_SHALLOW option")
 set(AnalysisTreeQA_BUNDLED_CUTS ON CACHE BOOL "Get and build AnalysisTreeCuts")
 set(AnalysisTreeQA_BUNDLED_CUTS_VERSION "v0.0.1" CACHE STRING "Bundled AnalysisTreeCuts version")
@@ -59,6 +60,8 @@ set(EXTERNAL_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/external)
 
 include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_INCLUDE_DIRECTORIES})
 
+include(AnalysisTree)
+
 add_subdirectory(src)
 
 if(AnalysisTreeQA_BUILD_TASKS)
@@ -76,6 +79,11 @@ if(AnalysisTreeQA_BUILD_TESTS)
     add_subdirectory(test)
 endif()
 
+if(AnalysisTreeQA_BUNDLED_AT)
+  set(AT_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}/bin")
+else()
+  set(AT_INSTALL_BIN "${AnalysisTree_BINARY_DIR}")
+endif()
 configure_file(cmake_modules/AnalysisTreeQAConfig.sh.in ${CMAKE_BINARY_DIR}/AnalysisTreeQAConfig.sh)
 
 include(CMakePackageConfigHelpers)

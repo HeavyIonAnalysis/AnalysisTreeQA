@@ -1,0 +1,6 @@
+{
+    "cmake.configureSettings": {
+        "-DAnalysisTreeQA_BUNDLED_AT": "ON",
+
+    }
+}

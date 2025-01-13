@@ -19,6 +19,11 @@ set(AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW ON CACHE BOOL "Use CMake GIT_SHALLOW o
 set(AnalysisTreeQA_BUNDLED_CUTS ON CACHE BOOL "Get and build AnalysisTreeCuts")
 set(AnalysisTreeQA_BUNDLED_CUTS_VERSION "v0.0.1" CACHE STRING "Bundled AnalysisTreeCuts version")
 
+option(USE_THD_HISTOGRAMS "Use THD histograms if ON, otherwise THF" OFF)
+if (USE_THD_HISTOGRAMS)
+    add_definitions(-DUseTHDHistograms)
+endif()
+
 # by default build optimized code
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RELEASE)

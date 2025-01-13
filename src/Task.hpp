@@ -20,36 +20,52 @@ class Task : public AnalysisTask {
   void Exec() override;
   void Finish() override;
 
-  size_t AddH1(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+  size_t AddH1(const std::string& name, const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
     weight.IfEmptyVariableConvertToOnes(x);
-    entries_.emplace_back(EntryConfig(x, weight, cuts, false));
+    entries_.emplace_back(EntryConfig(x, weight, name, cuts, false));
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
     return entries_.size() - 1;
   }
 
-  size_t AddH2(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+  size_t AddH1(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    return AddH1("", x, cuts, weight);
+  }
+
+  size_t AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
     weight.IfEmptyVariableConvertToOnes(x);
-    entries_.emplace_back(EntryConfig(x, y, weight, cuts));
+    entries_.emplace_back(EntryConfig(x, y, weight, name, cuts));
+    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+    entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
+    return entries_.size() - 1;
+  }
+
+  size_t AddH2(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    return AddH2("", x, y, cuts, weight);
+  }
+
+  size_t AddProfile(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    weight.IfEmptyVariableConvertToOnes(x);
+    entries_.emplace_back(EntryConfig(x, y, weight, name, cuts, true));
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
     entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
     return entries_.size() - 1;
   }
 
   size_t AddProfile(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    return AddProfile("", x, y, cuts, weight);
+  }
+
+  size_t AddIntegral(const std::string& name, const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
     weight.IfEmptyVariableConvertToOnes(x);
-    entries_.emplace_back(EntryConfig(x, y, weight, cuts, true));
+    entries_.emplace_back(EntryConfig(x, weight, name, cuts, true));
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
-    entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
+    entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
     return entries_.size() - 1;
   }
 
   size_t AddIntegral(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
-    weight.IfEmptyVariableConvertToOnes(x);
-    entries_.emplace_back(EntryConfig(x, weight, cuts, true));
-    auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
-    entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
-    return entries_.size() - 1;
+    return AddIntegral("", x, cuts, weight);
   }
 
   size_t AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x = nullptr, Cuts* cuts_y = nullptr) {

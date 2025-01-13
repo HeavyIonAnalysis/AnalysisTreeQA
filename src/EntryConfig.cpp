@@ -5,6 +5,14 @@
 
 #include "EntryConfig.hpp"
 
+#ifdef UseTHDHistograms
+using TH1FD = TH1D;
+using TH2FD = TH2D;
+#else
+using TH1FD = TH1F;
+using TH2FD = TH2F;
+#endif
+
 namespace AnalysisTree {
 namespace QA {
 
@@ -66,7 +74,7 @@ EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_
 
 
 TH1* EntryConfig::CreateHisto1D() const {
-  auto* ret = new TH1F(name_.c_str(), title_.c_str(),
+  auto* ret = new TH1FD(name_.c_str(), title_.c_str(),
                        axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax());
   ret->SetXTitle(axes_.at(0).GetTitle());
   ret->SetYTitle("Entries");
@@ -91,7 +99,7 @@ TProfile* EntryConfig::CreateProfile() const {
 
 TH2* EntryConfig::CreateHisto2D() const {
 
-  auto* ret = new TH2F(name_.c_str(), title_.c_str(),
+  auto* ret = new TH2FD(name_.c_str(), title_.c_str(),
                        axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax(),
                        axes_.at(1).GetNbins(), axes_.at(1).GetXmin(), axes_.at(1).GetXmax());
   ret->SetXTitle(axes_.at(0).GetTitle());

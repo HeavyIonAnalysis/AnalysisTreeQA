@@ -41,5 +41,8 @@
 .idea/vcs.xml
 .idea/
 
+.vscode/
+.vscode/*
+
 *build*/
 install/

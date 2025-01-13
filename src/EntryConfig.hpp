@@ -46,8 +46,8 @@ class EntryConfig {
   };
 
   EntryConfig() = default;
-  explicit EntryConfig(const Axis& axis, [[maybe_unused]] Variable& weight, Cuts* cuts = nullptr, bool is_integral = false);
-  EntryConfig(const Axis& x, const Axis& y, Variable& weight, Cuts* cuts = nullptr, bool is_profile = false);
+  explicit EntryConfig(const Axis& axis, [[maybe_unused]] Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_integral = false);
+  EntryConfig(const Axis& x, const Axis& y, Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_profile = false);
   EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y);
 
   EntryConfig(const EntryConfig&) = default;
@@ -94,7 +94,7 @@ class EntryConfig {
   ANALYSISTREE_ATTR_NODISCARD TH1* CreateHisto1D() const;
   ANALYSISTREE_ATTR_NODISCARD TH2* CreateHisto2D() const;
   ANALYSISTREE_ATTR_NODISCARD TProfile* CreateProfile() const;
-  void Set2DName();
+  void Set2DName(const std::string& name="");
 
   PlotPointer plot_;
   std::string name_;///< Name of the plot

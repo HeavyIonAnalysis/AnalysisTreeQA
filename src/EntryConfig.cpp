@@ -39,28 +39,30 @@ struct write_struct : public Utils::Visitor<void> {
   std::string name_;
 };
 
-EntryConfig::EntryConfig(const Axis& axis, Variable& weight, Cuts* cuts, bool is_integral)
-  : name_(axis.GetName()),
+EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& name, Cuts* cuts, bool is_integral)
+  : name_(name == "" ? axis.GetName() : name),
     type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
     axes_({axis}),
     var4weight_(weight),
     entry_cuts_(cuts) {
-  if (cuts)
-    name_ += "_" + cuts->GetName();
-  if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
-    name_ += "_weight_" + var4weight_.GetName();
-  }
-  if(is_integral){
-    name_ += "_integral";
+  if(name == "") {
+    if (cuts)
+      name_ += "_" + cuts->GetName();
+    if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
+      name_ += "_weight_" + var4weight_.GetName();
+    }
+    if(is_integral){
+      name_ += "_integral";
+    }
   }
   InitPlot();
 }
 
-EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
+EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, const std::string& name, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
                                                                                       axes_({x, y}),
                                                                                       var4weight_(weight),
                                                                                       entry_cuts_(cuts) {
-  Set2DName();
+  Set2DName(name);
   InitPlot();
 }
 
@@ -70,8 +72,6 @@ EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_
   Set2DName();
   InitPlot();
 }
-
-
 
 TH1* EntryConfig::CreateHisto1D() const {
   auto* ret = new TH1FD(name_.c_str(), title_.c_str(),
@@ -137,17 +137,19 @@ void EntryConfig::InitPlot() {
   }
 }
 
-void EntryConfig::Set2DName() {
-  name_ = Form("%s_%s", axes_[0].GetName(), axes_[1].GetName());
-  if (entry_cuts_ != nullptr)
-    name_ += "_" + entry_cuts_->GetName();
+void EntryConfig::Set2DName(const std::string& name) {
+  name_ = name == "" ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
+  if(name == "") {
+    if (entry_cuts_ != nullptr)
+      name_ += "_" + entry_cuts_->GetName();
 
-  if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
-    name_ += "_weight_" + var4weight_.GetName();
-  }
+    if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
+      name_ += "_weight_" + var4weight_.GetName();
+    }
 
-  if (type_ == PlotType::kProfile) {
-    name_ += "_profile";
+    if (type_ == PlotType::kProfile) {
+      name_ += "_profile";
+    }
   }
 }
 

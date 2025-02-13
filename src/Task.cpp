@@ -78,19 +78,36 @@ void Task::Init() {
   out_file_ = new TFile(out_file_name_.c_str(), "recreate");
   for (const auto& dir : dirs) {
     out_file_->cd();
-    dir_map_.insert(std::make_pair(dir, out_file_->mkdir(dir.c_str())));
+    std::cout << "dir.c_str() = " << dir.c_str() << "\n";
+    dir_map_.insert(std::make_pair(dir, MkMultiLevelDir(out_file_, dir.c_str())));
   }
   for (auto& entry : entries_) {
     entry.SetOutDir(dir_map_.find(entry.GetDirectoryName())->second);
   }
 }
 
-//size_t Task::AddAnalysisEntry(const Axis& a, Cuts* cuts, bool is_integral){
-//  entries_.emplace_back(EntryConfig(a, cuts, is_integral));
-//  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts()));
-//  entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
-//  return entries_.size() - 1;
-//}
+TDirectory* Task::MkMultiLevelDir(TFile* file, std::string name) const {
+  auto vDirs = splitBySlash(name);
+  TDirectory* result;
+  for(int iDir=0; iDir<vDirs.size(); iDir++) {
+    if(iDir==0) result = MkDirIfNotExists(file, vDirs.at(iDir).c_str());
+    else result = MkDirIfNotExists(result, vDirs.at(iDir).c_str());
+  }
+  return result;
+}
+
+std::vector<std::string> Task::splitBySlash(const std::string& str) {
+  std::vector<std::string> result;
+  std::stringstream ss(str);
+  std::string item;
+
+  // Split the string by slashes
+  while (std::getline(ss, item, '/')) {
+    result.push_back(item);
+  }
+
+  return result;
+}
 
 
 }// namespace QA

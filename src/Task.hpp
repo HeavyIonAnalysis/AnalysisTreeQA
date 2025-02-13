@@ -81,7 +81,16 @@ class Task : public AnalysisTask {
 
  private:
   void FillIntegral(EntryConfig& plot);
-//  size_t AddAnalysisEntry(const Axis& a, Cuts* cuts, bool is_integral);
+  TDirectory* MkMultiLevelDir(TFile* file, std::string name) const;
+
+  template <typename T>
+  TDirectory* MkDirIfNotExists(T* fod, std::string name) const {
+    TDirectory* result = fod->GetDirectory(name.c_str());
+    if(result == nullptr) result = fod->mkdir(name.c_str());
+    return result;
+  }
+
+  static std::vector<std::string> splitBySlash(const std::string& str);
 
   std::vector<EntryConfig> entries_{};
   std::map<std::string, TDirectory*> dir_map_{};

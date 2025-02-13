@@ -186,6 +186,7 @@ std::string EntryConfig::GetDirectoryName() const {
   if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
     name += "_weight_" + var4weight_.GetName();
   }
+//  name.insert(0, "abcd/");
   return name;
 }
 

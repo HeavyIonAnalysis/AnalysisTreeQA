@@ -40,18 +40,18 @@ struct write_struct : public Utils::Visitor<void> {
 };
 
 EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& name, Cuts* cuts, bool is_integral)
-  : name_(name == "" ? axis.GetName() : name),
-    type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
-    axes_({axis}),
-    var4weight_(weight),
-    entry_cuts_(cuts) {
-  if(name == "") {
+    : name_(name == "" ? axis.GetName() : name),
+      type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
+      axes_({axis}),
+      var4weight_(weight),
+      entry_cuts_(cuts) {
+  if (name == "") {
     if (cuts)
       name_ += "_" + cuts->GetName();
     if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
       name_ += "_weight_" + var4weight_.GetName();
     }
-    if(is_integral){
+    if (is_integral) {
       name_ += "_integral";
     }
   }
@@ -59,23 +59,23 @@ EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& 
 }
 
 EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, const std::string& name, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
-                                                                                      axes_({x, y}),
-                                                                                      var4weight_(weight),
-                                                                                      entry_cuts_(cuts) {
+                                                                                                                                 axes_({x, y}),
+                                                                                                                                 var4weight_(weight),
+                                                                                                                                 entry_cuts_(cuts) {
   Set2DName(name);
   InitPlot();
 }
 
 EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y) : type_(PlotType::kIntegral2D),
-                                                                                      axes_({x, y}),
-                                                                                      entry_cuts_(cuts_x) {
+                                                                                     axes_({x, y}),
+                                                                                     entry_cuts_(cuts_x) {
   Set2DName();
   InitPlot();
 }
 
 TH1* EntryConfig::CreateHisto1D() const {
   auto* ret = new TH1FD(name_.c_str(), title_.c_str(),
-                       axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax());
+                        axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax());
   ret->SetXTitle(axes_.at(0).GetTitle());
   ret->SetYTitle("Entries");
   return ret;
@@ -100,8 +100,8 @@ TProfile* EntryConfig::CreateProfile() const {
 TH2* EntryConfig::CreateHisto2D() const {
 
   auto* ret = new TH2FD(name_.c_str(), title_.c_str(),
-                       axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax(),
-                       axes_.at(1).GetNbins(), axes_.at(1).GetXmin(), axes_.at(1).GetXmax());
+                        axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax(),
+                        axes_.at(1).GetNbins(), axes_.at(1).GetXmin(), axes_.at(1).GetXmax());
   ret->SetXTitle(axes_.at(0).GetTitle());
   ret->SetYTitle(axes_.at(1).GetTitle());
   ret->SetZTitle("Entries");
@@ -139,7 +139,7 @@ void EntryConfig::InitPlot() {
 
 void EntryConfig::Set2DName(const std::string& name) {
   name_ = name == "" ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
-  if(name == "") {
+  if (name == "") {
     if (entry_cuts_ != nullptr)
       name_ += "_" + entry_cuts_->GetName();
 
@@ -186,7 +186,7 @@ std::string EntryConfig::GetDirectoryName() const {
   if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
     name += "_weight_" + var4weight_.GetName();
   }
-  if(!toplevel_dir_name_.empty()) name.insert(0, toplevel_dir_name_ + "/");
+  if (!toplevel_dir_name_.empty()) name.insert(0, toplevel_dir_name_ + "/");
   return name;
 }
 

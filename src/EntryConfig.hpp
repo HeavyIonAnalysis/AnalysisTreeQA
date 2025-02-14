@@ -21,8 +21,8 @@ class Axis : public Variable, public TAxis {
   Axis() = default;
   Axis(const std::string& title, const Variable& var, const TAxis& a) : Variable(var), TAxis(a) {
     this->SetTitle(title.c_str());
-    if(this->GetFields().size() == 1 && this->GetFields().at(0).GetName() == "ones"){
-      this->lambda_ = [](const std::vector<double>& ){ return 1; };
+    if (this->GetFields().size() == 1 && this->GetFields().at(0).GetName() == "ones") {
+      this->lambda_ = [](const std::vector<double>&) { return 1; };
       this->name_ = "Ones";
     }
   }
@@ -96,7 +96,7 @@ class EntryConfig {
   ANALYSISTREE_ATTR_NODISCARD TH1* CreateHisto1D() const;
   ANALYSISTREE_ATTR_NODISCARD TH2* CreateHisto2D() const;
   ANALYSISTREE_ATTR_NODISCARD TProfile* CreateProfile() const;
-  void Set2DName(const std::string& name="");
+  void Set2DName(const std::string& name = "");
 
   PlotPointer plot_;
   std::string name_;///< Name of the plot

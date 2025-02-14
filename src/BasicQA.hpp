@@ -17,7 +17,6 @@ inline void AddEventHeaderQA(Task* task, const std::string& branch, Cuts* cuts =
   task->AddH2({"x_{vertex} (cm)", {branch, "vtx_x"}, {gNbins, -1, 1}}, {"y_{vertex} (cm)", {branch, "vtx_y"}, {gNbins, -1, 1}}, cuts);
 }
 
-
 inline void AddTrackQA(Task* task, const std::string& branch, Cuts* cuts = nullptr) {
 
   task->AddH1({"p_{x}, GeV/c", {branch, "px"}, {gNbins, -3, 3}}, cuts);

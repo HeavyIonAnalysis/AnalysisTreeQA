@@ -38,7 +38,7 @@ class Task : public AnalysisTask {
     entries_.emplace_back(EntryConfig(x, y, weight, name, cuts));
     entries_.back().SetTopLevelDirName(toplevel_dir_name_);
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
-    entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
+    entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)}});
     return entries_.size() - 1;
   }
 
@@ -51,7 +51,7 @@ class Task : public AnalysisTask {
     entries_.emplace_back(EntryConfig(x, y, weight, name, cuts, true));
     entries_.back().SetTopLevelDirName(toplevel_dir_name_);
     auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
-    entries_.back().SetVariablesId({ {var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)} });
+    entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)}});
     return entries_.size() - 1;
   }
 
@@ -77,7 +77,7 @@ class Task : public AnalysisTask {
     entries_.back().SetTopLevelDirName(toplevel_dir_name_);
     auto var_id_x = AddEntry(AnalysisEntry({entries_.back().GetVariables()[0]}, cuts_x));
     auto var_id_y = AddEntry(AnalysisEntry({entries_.back().GetVariables()[1]}, cuts_y));
-    entries_.back().SetVariablesId({ {var_id_x.first, var_id_x.second.at(0)}, {var_id_y.first, var_id_y.second.at(0)} });
+    entries_.back().SetVariablesId({{var_id_x.first, var_id_x.second.at(0)}, {var_id_y.first, var_id_y.second.at(0)}});
     return entries_.size() - 1;
   }
 
@@ -90,10 +90,10 @@ class Task : public AnalysisTask {
   void FillIntegral(EntryConfig& plot);
   TDirectory* MkMultiLevelDir(TFile* file, const std::string& name) const;
 
-  template <typename T>
+  template<typename T>
   TDirectory* MkDirIfNotExists(T* fod, std::string name) const {
     TDirectory* result = fod->GetDirectory(name.c_str());
-    if(result == nullptr) result = fod->mkdir(name.c_str());
+    if (result == nullptr) result = fod->mkdir(name.c_str());
     return result;
   }
 

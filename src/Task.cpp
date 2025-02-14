@@ -3,7 +3,7 @@
 namespace AnalysisTree {
 namespace QA {
 
-void Task::FillIntegral(EntryConfig& plot){
+void Task::FillIntegral(EntryConfig& plot) {
 
   double integral_x{0.};
   double integral_y{0.};
@@ -12,15 +12,14 @@ void Task::FillIntegral(EntryConfig& plot){
   for (const auto& var : this->GetValues(var_ids.at(0).first)) {
     integral_x += var[var_ids.at(0).second];
   }
-  if(plot.GetNdimentions() > 1) {
+  if (plot.GetNdimentions() > 1) {
     for (const auto& var : this->GetValues(var_ids.at(1).first)) {
       integral_y += var[var_ids.at(1).second];
     }
   }
-  if(plot.GetNdimentions() == 1) {
+  if (plot.GetNdimentions() == 1) {
     plot.Fill(integral_x);
-  }
-  else{
+  } else {
     plot.Fill(integral_x, integral_y);
   }
 }
@@ -31,7 +30,7 @@ void Task::Exec() {
 
   for (auto& plot : entries_) {
 
-    if(plot.GetType() == EntryConfig::PlotType::kIntegral1D || plot.GetType() == EntryConfig::PlotType::kIntegral2D){
+    if (plot.GetType() == EntryConfig::PlotType::kIntegral1D || plot.GetType() == EntryConfig::PlotType::kIntegral2D) {
       FillIntegral(plot);
       continue;
     }
@@ -41,16 +40,18 @@ void Task::Exec() {
     for (auto var : this->GetValues(var_ids.at(0).first)) {
       ++ivw;
       auto weight = weights.at(ivw);
-      if(std::fabs(weight) < 1e-6) continue;
+      if (std::fabs(weight) < 1e-6) continue;
       switch (plot.GetNdimentions()) {
         case 1: {
-          if(std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second]);
-          else                                plot.Fill(var[var_ids.at(0).second], weight);
+          if (std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second]);
+          else
+            plot.Fill(var[var_ids.at(0).second], weight);
           break;
         }
         case 2: {
-          if(std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second]);
-          else                                plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second], weight);
+          if (std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second]);
+          else
+            plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second], weight);
           break;
         }
       }
@@ -88,9 +89,10 @@ void Task::Init() {
 TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
   auto vDirs = splitBySlash(name);
   TDirectory* result;
-  for(int iDir=0; iDir<vDirs.size(); iDir++) {
-    if(iDir==0) result = MkDirIfNotExists(file, vDirs.at(iDir));
-    else result = MkDirIfNotExists(result, vDirs.at(iDir));
+  for (int iDir = 0; iDir < vDirs.size(); iDir++) {
+    if (iDir == 0) result = MkDirIfNotExists(file, vDirs.at(iDir));
+    else
+      result = MkDirIfNotExists(result, vDirs.at(iDir));
   }
   return result;
 }
@@ -107,7 +109,6 @@ std::vector<std::string> Task::splitBySlash(const std::string& str) {
 
   return result;
 }
-
 
 }// namespace QA
 }// namespace AnalysisTree

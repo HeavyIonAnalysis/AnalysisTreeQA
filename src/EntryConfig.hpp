@@ -87,6 +87,8 @@ class EntryConfig {
 
   void SetOutDir(TDirectory* out_dir) { out_dir_ = out_dir; }
 
+  void SetTopLevelDirName(const std::string& name) { toplevel_dir_name_ = name; }
+
   PlotPointer GetPlot() { return plot_; }
 
  protected:
@@ -105,6 +107,7 @@ class EntryConfig {
   Variable var4weight_{};
   Cuts* entry_cuts_{nullptr};
   std::vector<std::pair<int, int>> vars_id_{};
+  std::string toplevel_dir_name_{""};
 
   TDirectory* out_dir_{nullptr};
   ClassDef(EntryConfig, 1);

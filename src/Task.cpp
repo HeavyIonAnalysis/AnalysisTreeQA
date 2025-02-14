@@ -78,20 +78,19 @@ void Task::Init() {
   out_file_ = new TFile(out_file_name_.c_str(), "recreate");
   for (const auto& dir : dirs) {
     out_file_->cd();
-    std::cout << "dir.c_str() = " << dir.c_str() << "\n";
-    dir_map_.insert(std::make_pair(dir, MkMultiLevelDir(out_file_, dir.c_str())));
+    dir_map_.insert(std::make_pair(dir, MkMultiLevelDir(out_file_, dir)));
   }
   for (auto& entry : entries_) {
     entry.SetOutDir(dir_map_.find(entry.GetDirectoryName())->second);
   }
 }
 
-TDirectory* Task::MkMultiLevelDir(TFile* file, std::string name) const {
+TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
   auto vDirs = splitBySlash(name);
   TDirectory* result;
   for(int iDir=0; iDir<vDirs.size(); iDir++) {
-    if(iDir==0) result = MkDirIfNotExists(file, vDirs.at(iDir).c_str());
-    else result = MkDirIfNotExists(result, vDirs.at(iDir).c_str());
+    if(iDir==0) result = MkDirIfNotExists(file, vDirs.at(iDir));
+    else result = MkDirIfNotExists(result, vDirs.at(iDir));
   }
   return result;
 }

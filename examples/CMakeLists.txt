@@ -13,8 +13,13 @@ if(PROJECT_LINK_DIRECTORIES)
     link_directories(${PROJECT_LINK_DIRECTORIES})
 endif()
 
-add_executable(example example.cpp)
-add_dependencies(example AnalysisTreeQA)
-target_link_libraries(example ${ROOT_LIBRARIES} AnalysisTreeQA AnalysisTreeBase AnalysisTreeInfra)
+set(EXECUTABLES example
+                )
 
-install (TARGETS example RUNTIME DESTINATION bin)
+foreach(EXE ${EXECUTABLES})
+    add_executable(${EXE} ${EXE}.cpp)
+    add_dependencies(${EXE} AnalysisTreeQA)
+    target_link_libraries(${EXE} ${ROOT_LIBRARIES} AnalysisTreeQA AnalysisTreeBase AnalysisTreeInfra)
+    install (TARGETS ${EXE} RUNTIME DESTINATION bin)
+    install (FILES ${EXE}.cpp DESTINATION share)
+endforeach()

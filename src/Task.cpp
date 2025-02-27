@@ -61,10 +61,6 @@ void Task::Exec() {
 }
 
 void Task::Finish() {
-  out_file_->cd();
-//  for (auto& plot : entries_) {
-//    plot.Write();
-//  }
   out_file_->Write();
   out_file_->Close();
 }
@@ -74,20 +70,22 @@ void Task::Init() {
   AnalysisTask::Init();
   std::set<std::string> dirs{};
 
-//  for (auto& entry : entries_) {
-//    dirs.insert(entry.GetDirectoryName());
-//  }
-//  out_file_ = new TFile(out_file_name_.c_str(), "recreate");
-//  for (const auto& dir : dirs) {
-//    out_file_->cd();
-//    dir_map_.insert(std::make_pair(dir, MkMultiLevelDir(out_file_, dir)));
-//  }
-//  for (auto& entry : entries_) {
-//    entry.SetOutDir(dir_map_.find(entry.GetDirectoryName())->second);
-//  }
 }
 
 TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
+  auto splitBySlash = [] (const std::string& str) {
+    std::vector<std::string> result;
+    std::stringstream ss(str);
+    std::string item;
+
+    // Split the string by slashes
+    while (std::getline(ss, item, '/')) {
+      result.push_back(item);
+    }
+
+    return result;
+  };
+
   auto vDirs = splitBySlash(name);
   TDirectory* result;
   for (int iDir = 0; iDir < vDirs.size(); iDir++) {
@@ -98,17 +96,8 @@ TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
   return result;
 }
 
-std::vector<std::string> Task::splitBySlash(const std::string& str) {
-  std::vector<std::string> result;
-  std::stringstream ss(str);
-  std::string item;
-
-  // Split the string by slashes
-  while (std::getline(ss, item, '/')) {
-    result.push_back(item);
-  }
-
-  return result;
+void Task::CreateOutputFileIfNotYet() {
+  if (out_file_ == nullptr) out_file_ = new TFile(out_file_name_.c_str(), "recreate");
 }
 
 }// namespace QA

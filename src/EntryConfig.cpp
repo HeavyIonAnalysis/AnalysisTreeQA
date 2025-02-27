@@ -161,12 +161,6 @@ void EntryConfig::Fill(double value1, double value2, double value3) {
   ANALYSISTREE_UTILS_VISIT(fill3_struct(value1, value2, value3), plot_);
 }
 
-void EntryConfig::Write() const {
-  assert(out_dir_);
-  out_dir_->cd();
-  ANALYSISTREE_UTILS_VISIT(write_struct(name_), plot_);
-}
-
 void EntryConfig::Fill(double value) { ANALYSISTREE_UTILS_GET<TH1*>(plot_)->Fill(value); }
 
 std::string EntryConfig::GetDirectoryName() const {
@@ -186,7 +180,6 @@ std::string EntryConfig::GetDirectoryName() const {
   if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
     name += "_weight_" + var4weight_.GetName();
   }
-  if (!toplevel_dir_name_.empty()) name.insert(0, toplevel_dir_name_ + "/");
   return name;
 }
 

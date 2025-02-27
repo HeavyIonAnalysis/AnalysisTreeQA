@@ -35,9 +35,9 @@ class Task : public AnalysisTask {
   void Finish() override;
 
   size_t AddH1(const std::string& name, const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    CreateOutputFileIfNotYet();
     weight.IfEmptyVariableConvertToOnes(x);
     entries_.emplace_back(EntryConfig(x, weight, name, cuts, false));
-//    entries_.back().SetTopLevelDirName(toplevel_dir_name_);
     TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
     ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
     ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -51,9 +51,9 @@ class Task : public AnalysisTask {
   }
 
   size_t AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    CreateOutputFileIfNotYet();
     weight.IfEmptyVariableConvertToOnes(x);
     entries_.emplace_back(EntryConfig(x, y, weight, name, cuts));
-//    entries_.back().SetTopLevelDirName(toplevel_dir_name_);
     TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
     ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
     ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -67,9 +67,9 @@ class Task : public AnalysisTask {
   }
 
   size_t AddProfile(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    CreateOutputFileIfNotYet();
     weight.IfEmptyVariableConvertToOnes(x);
     entries_.emplace_back(EntryConfig(x, y, weight, name, cuts, true));
-//    entries_.back().SetTopLevelDirName(toplevel_dir_name_);
     TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
     ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
     ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -83,9 +83,9 @@ class Task : public AnalysisTask {
   }
 
   size_t AddIntegral(const std::string& name, const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{}) {
+    CreateOutputFileIfNotYet();
     weight.IfEmptyVariableConvertToOnes(x);
     entries_.emplace_back(EntryConfig(x, weight, name, cuts, true));
-//    entries_.back().SetTopLevelDirName(toplevel_dir_name_);
     TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
     ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
     ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -99,8 +99,8 @@ class Task : public AnalysisTask {
   }
 
   size_t AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x = nullptr, Cuts* cuts_y = nullptr) {
+    CreateOutputFileIfNotYet();
     entries_.emplace_back(EntryConfig(x, cuts_x, y, cuts_y));
-//    entries_.back().SetTopLevelDirName(toplevel_dir_name_);
     TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
     ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
     ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -111,10 +111,7 @@ class Task : public AnalysisTask {
   }
 
   std::vector<EntryConfig>& Entries() { return entries_; }
-  void SetOutputFileName(std::string name) { // TODO fix function name or mv new TFile smw else
-    out_file_name_ = std::move(name);
-    out_file_ = new TFile(out_file_name_.c_str(), "recreate");
-  }
+  void SetOutputFileName(std::string name) { out_file_name_ = std::move(name); }
   void SetTopLevelDirName(const std::string& name) { toplevel_dir_name_ = name; }
   void ResetTopLevelDirName() { toplevel_dir_name_ = ""; }
 
@@ -130,7 +127,7 @@ class Task : public AnalysisTask {
     return result;
   }
 
-  static std::vector<std::string> splitBySlash(const std::string& str);
+  void CreateOutputFileIfNotYet();
 
   std::vector<EntryConfig> entries_{};
   std::map<std::string, TDirectory*> dir_map_{};

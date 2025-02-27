@@ -62,9 +62,10 @@ void Task::Exec() {
 
 void Task::Finish() {
   out_file_->cd();
-  for (auto& plot : entries_) {
-    plot.Write();
-  }
+//  for (auto& plot : entries_) {
+//    plot.Write();
+//  }
+  out_file_->Write();
   out_file_->Close();
 }
 
@@ -73,17 +74,17 @@ void Task::Init() {
   AnalysisTask::Init();
   std::set<std::string> dirs{};
 
-  for (auto& entry : entries_) {
-    dirs.insert(entry.GetDirectoryName());
-  }
-  out_file_ = new TFile(out_file_name_.c_str(), "recreate");
-  for (const auto& dir : dirs) {
-    out_file_->cd();
-    dir_map_.insert(std::make_pair(dir, MkMultiLevelDir(out_file_, dir)));
-  }
-  for (auto& entry : entries_) {
-    entry.SetOutDir(dir_map_.find(entry.GetDirectoryName())->second);
-  }
+//  for (auto& entry : entries_) {
+//    dirs.insert(entry.GetDirectoryName());
+//  }
+//  out_file_ = new TFile(out_file_name_.c_str(), "recreate");
+//  for (const auto& dir : dirs) {
+//    out_file_->cd();
+//    dir_map_.insert(std::make_pair(dir, MkMultiLevelDir(out_file_, dir)));
+//  }
+//  for (auto& entry : entries_) {
+//    entry.SetOutDir(dir_map_.find(entry.GetDirectoryName())->second);
+//  }
 }
 
 TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {

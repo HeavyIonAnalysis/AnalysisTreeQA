@@ -5,13 +5,12 @@
 #include <vector>
 
 #include <TAxis.h>
+#include <TH1.h>
+#include <TH2.h>
+#include <TProfile.h>
 
 #include "AnalysisTree/Cuts.hpp"
 #include "AnalysisTree/Utils.hpp"
-
-class TH1;
-class TH2;
-class TProfile;
 
 namespace AnalysisTree {
 namespace QA {
@@ -90,6 +89,8 @@ class EntryConfig {
   void SetTopLevelDirName(const std::string& name) { toplevel_dir_name_ = name; }
 
   PlotPointer GetPlot() { return plot_; }
+
+  const std::string& GetName() const { return name_; }
 
  protected:
   void InitPlot();

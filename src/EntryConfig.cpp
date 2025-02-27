@@ -13,8 +13,7 @@ using TH1FD = TH1F;
 using TH2FD = TH2F;
 #endif
 
-namespace AnalysisTree {
-namespace QA {
+namespace AnalysisTree::QA {
 
 struct fill2_struct : public Utils::Visitor<void> {
   fill2_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
@@ -131,8 +130,8 @@ void EntryConfig::InitPlot() {
 }
 
 void EntryConfig::Set2DName(const std::string& name) {
-  name_ = name == "" ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
-  if (name == "") {
+  name_ = name.empty() ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
+  if (name.empty()) {
     if (entry_cuts_ != nullptr)
       name_ += "_" + entry_cuts_->GetName();
 
@@ -176,5 +175,4 @@ std::string EntryConfig::GetDirectoryName() const {
   return name;
 }
 
-}// namespace QA
-}// namespace AnalysisTree
+} // namespace AnalysisTree::QA

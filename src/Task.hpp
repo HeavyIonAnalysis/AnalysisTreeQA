@@ -30,7 +30,6 @@ class Task : public AnalysisTask {
  public:
   Task() = default;
 
-  void Init() override;
   void Exec() override;
   void Finish() override;
 

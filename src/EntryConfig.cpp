@@ -32,13 +32,6 @@ struct fill3_struct : public Utils::Visitor<void> {
   double val1_, val2_, val3_;
 };
 
-struct write_struct : public Utils::Visitor<void> {
-  explicit write_struct(std::string n) : name_(std::move(n)) {}
-  template<class PlotType>
-  void operator()(PlotType* p) const { p->Write(name_.c_str()); }
-  std::string name_;
-};
-
 EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& name, Cuts* cuts, bool is_integral)
     : name_(name == "" ? axis.GetName() : name),
       type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),

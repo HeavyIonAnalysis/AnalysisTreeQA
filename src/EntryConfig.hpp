@@ -5,16 +5,14 @@
 #include <vector>
 
 #include <TAxis.h>
+#include <TH1.h>
+#include <TH2.h>
+#include <TProfile.h>
 
 #include "AnalysisTree/Cuts.hpp"
 #include "AnalysisTree/Utils.hpp"
 
-class TH1;
-class TH2;
-class TProfile;
-
-namespace AnalysisTree {
-namespace QA {
+namespace AnalysisTree::QA {
 
 class Axis : public Variable, public TAxis {
  public:
@@ -59,12 +57,8 @@ class EntryConfig {
   void Fill(double value);
   void Fill(double value1, double value2);
   void Fill(double value1, double value2, double value3);
-  void Write() const;
 
-  ANALYSISTREE_ATTR_NODISCARD const std::vector<Axis>& GetAxes() const { return axes_; }
-  std::vector<Axis>& Axes() { return axes_; }
-
-  ANALYSISTREE_ATTR_NODISCARD unsigned int GetNdimentions() const { return axes_.size(); }
+  ANALYSISTREE_ATTR_NODISCARD unsigned int GetNdimensions() const { return axes_.size(); }
   ANALYSISTREE_ATTR_NODISCARD Cuts* GetEntryCuts() const { return entry_cuts_; }
   ANALYSISTREE_ATTR_NODISCARD PlotType GetType() const { return type_; }
 
@@ -85,11 +79,9 @@ class EntryConfig {
 
   ANALYSISTREE_ATTR_NODISCARD std::string GetDirectoryName() const;
 
-  void SetOutDir(TDirectory* out_dir) { out_dir_ = out_dir; }
-
-  void SetTopLevelDirName(const std::string& name) { toplevel_dir_name_ = name; }
-
   PlotPointer GetPlot() { return plot_; }
+
+  const std::string& GetName() const { return name_; }
 
  protected:
   void InitPlot();
@@ -107,12 +99,9 @@ class EntryConfig {
   Variable var4weight_{};
   Cuts* entry_cuts_{nullptr};
   std::vector<std::pair<int, int>> vars_id_{};
-  std::string toplevel_dir_name_{""};
 
-  TDirectory* out_dir_{nullptr};
   ClassDef(EntryConfig, 1);
 };
 
-}// namespace QA
-}// namespace AnalysisTree
+}// namespace AnalysisTree::QA
 #endif//ANALYSISTREE_QA_ENTRYCONFIG_H

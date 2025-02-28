@@ -13,8 +13,7 @@ using TH1FD = TH1F;
 using TH2FD = TH2F;
 #endif
 
-namespace AnalysisTree {
-namespace QA {
+namespace AnalysisTree::QA {
 
 struct fill2_struct : public Utils::Visitor<void> {
   fill2_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
@@ -30,13 +29,6 @@ struct fill3_struct : public Utils::Visitor<void> {
   void operator()(TH2* h2) const { h2->Fill(val1_, val2_, val3_); }
   void operator()(TProfile* p) const { p->Fill(val1_, val2_, val3_); }
   double val1_, val2_, val3_;
-};
-
-struct write_struct : public Utils::Visitor<void> {
-  explicit write_struct(std::string n) : name_(std::move(n)) {}
-  template<class PlotType>
-  void operator()(PlotType* p) const { p->Write(name_.c_str()); }
-  std::string name_;
 };
 
 EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& name, Cuts* cuts, bool is_integral)
@@ -138,8 +130,8 @@ void EntryConfig::InitPlot() {
 }
 
 void EntryConfig::Set2DName(const std::string& name) {
-  name_ = name == "" ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
-  if (name == "") {
+  name_ = name.empty() ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
+  if (name.empty()) {
     if (entry_cuts_ != nullptr)
       name_ += "_" + entry_cuts_->GetName();
 
@@ -161,12 +153,6 @@ void EntryConfig::Fill(double value1, double value2, double value3) {
   ANALYSISTREE_UTILS_VISIT(fill3_struct(value1, value2, value3), plot_);
 }
 
-void EntryConfig::Write() const {
-  assert(out_dir_);
-  out_dir_->cd();
-  ANALYSISTREE_UTILS_VISIT(write_struct(name_), plot_);
-}
-
 void EntryConfig::Fill(double value) { ANALYSISTREE_UTILS_GET<TH1*>(plot_)->Fill(value); }
 
 std::string EntryConfig::GetDirectoryName() const {
@@ -186,9 +172,7 @@ std::string EntryConfig::GetDirectoryName() const {
   if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
     name += "_weight_" + var4weight_.GetName();
   }
-  if (!toplevel_dir_name_.empty()) name.insert(0, toplevel_dir_name_ + "/");
   return name;
 }
 
-}// namespace QA
-}// namespace AnalysisTree
+} // namespace AnalysisTree::QA

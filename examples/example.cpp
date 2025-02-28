@@ -64,7 +64,7 @@ void example(const std::string& filelist){
   //Integral plot 1D
   SimpleCut vtx_chi2_track_cut = RangeCut({"VtxTracks.vtx_chi2"}, 0, 3);
   SimpleCut nhits_cut = RangeCut({"VtxTracks.nhits"}, 4, 100);
-  SimpleCut chi2_cut({"VtxTracks.chi2", "VtxTracks.ndf"}, [](std::vector<double> par){ return par[0]/par[1] < 10; });
+  SimpleCut chi2_cut((std::vector<std::string>){"VtxTracks.chi2", "VtxTracks.ndf"}, [](std::vector<double> par){ return par[0]/par[1] < 10; });
   SimpleCut eta_cut = RangeCut({"VtxTracks.eta"}, 0, 3);
   Cuts* vertex_tracks_cuts = new Cuts("GoodCentralityTracks", {vtx_chi2_track_cut, nhits_cut, chi2_cut, eta_cut});
   task->AddIntegral({"Multiplicity", Variable::FromString("VtxTracks.ones"), {1000, 0, 1000}}, vertex_tracks_cuts);

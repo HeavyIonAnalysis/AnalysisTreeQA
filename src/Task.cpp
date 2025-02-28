@@ -1,10 +1,86 @@
 #include "Task.hpp"
 
-namespace AnalysisTree {
-namespace QA {
+#include <utility>
+
+namespace AnalysisTree::QA {
+
+size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable weight) {
+  CreateOutputFileIfNotYet();
+  weight.IfEmptyVariableConvertToOnes(x);
+  entries_.emplace_back(x, weight, name, cuts, false);
+  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
+  ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+  entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
+  return entries_.size() - 1;
+}
+
+size_t Task::AddH1(const Axis& x, Cuts* cuts, Variable weight) {
+  return AddH1("", x, cuts, std::move(weight));
+}
+
+size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts, Variable weight) {
+  CreateOutputFileIfNotYet();
+  weight.IfEmptyVariableConvertToOnes(x);
+  entries_.emplace_back(x, y, weight, name, cuts);
+  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
+  ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+  entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)}});
+  return entries_.size() - 1;
+}
+
+size_t Task::AddH2(const Axis& x, const Axis& y, Cuts* cuts, Variable weight) {
+  return AddH2("", x, y, cuts, std::move(weight));
+}
+
+size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts, Variable weight) {
+  CreateOutputFileIfNotYet();
+  weight.IfEmptyVariableConvertToOnes(x);
+  entries_.emplace_back(x, y, weight, name, cuts, true);
+  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
+  ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+  entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)}});
+  return entries_.size() - 1;
+}
+
+size_t Task::AddProfile(const Axis& x, const Axis& y, Cuts* cuts, Variable weight) {
+  return AddProfile("", x, y, cuts, std::move(weight));
+}
+
+size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts, Variable weight) {
+  CreateOutputFileIfNotYet();
+  weight.IfEmptyVariableConvertToOnes(x);
+  entries_.emplace_back(x, weight, name, cuts, true);
+  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
+  ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+  entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
+  return entries_.size() - 1;
+}
+
+size_t Task::AddIntegral(const Axis& x, Cuts* cuts, Variable weight) {
+  return AddIntegral("", x, cuts, std::move(weight));
+}
+
+size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_y) {
+  CreateOutputFileIfNotYet();
+  entries_.emplace_back(x, cuts_x, y, cuts_y);
+  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
+  ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
+  auto var_id_x = AddEntry(AnalysisEntry({entries_.back().GetVariables()[0]}, cuts_x));
+  auto var_id_y = AddEntry(AnalysisEntry({entries_.back().GetVariables()[1]}, cuts_y));
+  entries_.back().SetVariablesId({{var_id_x.first, var_id_x.second.at(0)}, {var_id_y.first, var_id_y.second.at(0)}});
+  return entries_.size() - 1;
+}
 
 void Task::FillIntegral(EntryConfig& plot) {
-
   double integral_x{0.};
   double integral_y{0.};
   auto var_ids = plot.GetVariablesId();
@@ -12,12 +88,12 @@ void Task::FillIntegral(EntryConfig& plot) {
   for (const auto& var : this->GetValues(var_ids.at(0).first)) {
     integral_x += var[var_ids.at(0).second];
   }
-  if (plot.GetNdimentions() > 1) {
+  if (plot.GetNdimensions() > 1) {
     for (const auto& var : this->GetValues(var_ids.at(1).first)) {
       integral_y += var[var_ids.at(1).second];
     }
   }
-  if (plot.GetNdimentions() == 1) {
+  if (plot.GetNdimensions() == 1) {
     plot.Fill(integral_x);
   } else {
     plot.Fill(integral_x, integral_y);
@@ -25,7 +101,6 @@ void Task::FillIntegral(EntryConfig& plot) {
 }
 
 void Task::Exec() {
-
   AnalysisTask::Exec();
 
   for (auto& plot : entries_) {
@@ -41,7 +116,7 @@ void Task::Exec() {
       ++ivw;
       auto weight = weights.at(ivw);
       if (std::fabs(weight) < 1e-6) continue;
-      switch (plot.GetNdimentions()) {
+      switch (plot.GetNdimensions()) {
         case 1: {
           if (std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second]);
           else
@@ -56,37 +131,28 @@ void Task::Exec() {
         }
       }
     }
-
   }// plots
 }
 
 void Task::Finish() {
-  out_file_->cd();
-  for (auto& plot : entries_) {
-    plot.Write();
-  }
+  out_file_->Write();
   out_file_->Close();
 }
 
-void Task::Init() {
-
-  AnalysisTask::Init();
-  std::set<std::string> dirs{};
-
-  for (auto& entry : entries_) {
-    dirs.insert(entry.GetDirectoryName());
-  }
-  out_file_ = new TFile(out_file_name_.c_str(), "recreate");
-  for (const auto& dir : dirs) {
-    out_file_->cd();
-    dir_map_.insert(std::make_pair(dir, MkMultiLevelDir(out_file_, dir)));
-  }
-  for (auto& entry : entries_) {
-    entry.SetOutDir(dir_map_.find(entry.GetDirectoryName())->second);
-  }
-}
-
 TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
+  auto splitBySlash = [] (const std::string& str) {
+    std::vector<std::string> result;
+    std::stringstream ss(str);
+    std::string item;
+
+    // Split the string by slashes
+    while (std::getline(ss, item, '/')) {
+      result.push_back(item);
+    }
+
+    return result;
+  };
+
   auto vDirs = splitBySlash(name);
   TDirectory* result;
   for (int iDir = 0; iDir < vDirs.size(); iDir++) {
@@ -97,18 +163,9 @@ TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
   return result;
 }
 
-std::vector<std::string> Task::splitBySlash(const std::string& str) {
-  std::vector<std::string> result;
-  std::stringstream ss(str);
-  std::string item;
-
-  // Split the string by slashes
-  while (std::getline(ss, item, '/')) {
-    result.push_back(item);
-  }
-
-  return result;
+void Task::CreateOutputFileIfNotYet() {
+  if (out_file_ == nullptr) out_file_ = new TFile(out_file_name_.c_str(), "recreate");
 }
 
-}// namespace QA
-}// namespace AnalysisTree
+} // namespace AnalysisTree::QA
+

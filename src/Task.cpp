@@ -8,7 +8,8 @@ size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable 
   CreateOutputFileIfNotYet();
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, false);
-  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -24,7 +25,8 @@ size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* 
   CreateOutputFileIfNotYet();
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts);
-  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -40,7 +42,8 @@ size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, C
   CreateOutputFileIfNotYet();
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts, true);
-  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -56,7 +59,8 @@ size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts, Var
   CreateOutputFileIfNotYet();
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, true);
-  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -71,7 +75,8 @@ size_t Task::AddIntegral(const Axis& x, Cuts* cuts, Variable weight) {
 size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_y) {
   CreateOutputFileIfNotYet();
   entries_.emplace_back(x, cuts_x, y, cuts_y);
-  TDirectory* dir = MkMultiLevelDir(out_file_, toplevel_dir_name_ + "/" + entries_.back().GetDirectoryName());
+  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id_x = AddEntry(AnalysisEntry({entries_.back().GetVariables()[0]}, cuts_x));

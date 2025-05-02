@@ -52,7 +52,7 @@ class Task : public AnalysisTask {
   size_t AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x = nullptr, Cuts* cuts_y = nullptr);
 
   std::vector<EntryConfig>& Entries() { return entries_; }
-  void SetOutputFileName(std::string name, std::string option="recreate") {
+  void SetOutputFileName(std::string name, std::string option = "recreate") {
     out_file_name_ = std::move(name);
     out_file_option_ = std::move(option);
   }
@@ -65,7 +65,7 @@ class Task : public AnalysisTask {
 
   template<typename T>
   TDirectory* MkDirIfNotExists(T* fod, std::string name) const {
-    if(fod == nullptr) throw std::runtime_error("Task::MkDirIfNotExists(): file or directory ptr is null");
+    if (fod == nullptr) throw std::runtime_error("Task::MkDirIfNotExists(): file or directory ptr is null");
     TDirectory* result = fod->GetDirectory(name.c_str());
     if (result == nullptr) result = fod->mkdir(name.c_str());
     return result;

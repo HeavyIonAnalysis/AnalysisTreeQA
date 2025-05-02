@@ -9,7 +9,7 @@ size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable 
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, false);
   const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
-  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
+  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -26,7 +26,7 @@ size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* 
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts);
   const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
-  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
+  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -43,7 +43,7 @@ size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, C
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts, true);
   const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
-  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
+  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -60,7 +60,7 @@ size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts, Var
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, true);
   const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
-  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
+  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -76,7 +76,7 @@ size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_
   CreateOutputFileIfNotYet();
   entries_.emplace_back(x, cuts_x, y, cuts_y);
   const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
-  TDirectory* dir = MkMultiLevelDir(out_file_,  dirName);
+  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id_x = AddEntry(AnalysisEntry({entries_.back().GetVariables()[0]}, cuts_x));
@@ -145,7 +145,7 @@ void Task::Finish() {
 }
 
 TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
-  auto splitBySlash = [] (const std::string& str) {
+  auto splitBySlash = [](const std::string& str) {
     std::vector<std::string> result;
     std::stringstream ss(str);
     std::string item;
@@ -172,5 +172,4 @@ void Task::CreateOutputFileIfNotYet() {
   if (out_file_ == nullptr) out_file_ = new TFile(out_file_name_.c_str(), out_file_option_.c_str());
 }
 
-} // namespace AnalysisTree::QA
-
+}// namespace AnalysisTree::QA

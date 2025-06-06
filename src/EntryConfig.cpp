@@ -66,9 +66,22 @@ EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_
 }
 
 TH1* EntryConfig::CreateHisto1D() const {
-  auto* ret = new TH1FD(name_.c_str(), title_.c_str(),
-                        axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax());
-  ret->SetXTitle(axes_.at(0).GetTitle());
+  const TAxis& x_axis = axes_.at(0);
+  const TArrayD* xbins = x_axis.GetXbins();
+
+  TH1* ret = nullptr;
+
+  if (xbins && xbins->GetSize() > 0) {
+    // Variable binning
+    ret = new TH1FD(name_.c_str(), title_.c_str(),
+                    xbins->GetSize() - 1, xbins->GetArray());
+  } else {
+    // Uniform binning
+    ret = new TH1FD(name_.c_str(), title_.c_str(),
+                    x_axis.GetNbins(), x_axis.GetXmin(), x_axis.GetXmax());
+  }
+
+  ret->SetXTitle(x_axis.GetTitle());
   ret->SetYTitle("Entries");
   return ret;
 }
@@ -90,14 +103,41 @@ TProfile* EntryConfig::CreateProfile() const {
 }
 
 TH2* EntryConfig::CreateHisto2D() const {
+  const TAxis& x_axis = axes_.at(0);
+  const TAxis& y_axis = axes_.at(1);
 
-  auto* ret = new TH2FD(name_.c_str(), title_.c_str(),
-                        axes_.at(0).GetNbins(), axes_.at(0).GetXmin(), axes_.at(0).GetXmax(),
-                        axes_.at(1).GetNbins(), axes_.at(1).GetXmin(), axes_.at(1).GetXmax());
-  ret->SetXTitle(axes_.at(0).GetTitle());
-  ret->SetYTitle(axes_.at(1).GetTitle());
+  const TArrayD* xbins = x_axis.GetXbins();
+  const TArrayD* ybins = y_axis.GetXbins();
+
+  TH2* ret = nullptr;
+
+  if (xbins && xbins->GetSize() > 0 && ybins && ybins->GetSize() > 0) {
+    // Both axes have variable binning
+    ret = new TH2FD(name_.c_str(), title_.c_str(),
+                    xbins->GetSize() - 1, xbins->GetArray(),
+                    ybins->GetSize() - 1, ybins->GetArray());
+  } else if (xbins && xbins->GetSize() > 0) {
+    // Only X axis has variable binning
+    ret = new TH2FD(name_.c_str(), title_.c_str(),
+                    xbins->GetSize() - 1, xbins->GetArray(),
+                    y_axis.GetNbins(), y_axis.GetXmin(), y_axis.GetXmax());
+  } else if (ybins && ybins->GetSize() > 0) {
+    // Only Y axis has variable binning
+    ret = new TH2FD(name_.c_str(), title_.c_str(),
+                    x_axis.GetNbins(), x_axis.GetXmin(), x_axis.GetXmax(),
+                    ybins->GetSize() - 1, ybins->GetArray());
+  } else {
+    // Both axes are uniform
+    ret = new TH2FD(name_.c_str(), title_.c_str(),
+                    x_axis.GetNbins(), x_axis.GetXmin(), x_axis.GetXmax(),
+                    y_axis.GetNbins(), y_axis.GetXmin(), y_axis.GetXmax());
+  }
+
+  ret->SetXTitle(x_axis.GetTitle());
+  ret->SetYTitle(y_axis.GetTitle());
   ret->SetZTitle("Entries");
   ret->SetMinimum(1);
+
   return ret;
 }
 

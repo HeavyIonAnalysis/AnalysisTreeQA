@@ -16,17 +16,21 @@ permissions:
 
 jobs:
   build_centos7:
-    container: kreisl/rootcpp17
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Configure CMake
-        run: source /opt/rh/devtoolset-8/enable && cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DAnalysisTreeQA_BUILD_TESTS=ON -DAnalysisTreeQA_BUNDLED_AT=ON
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-      - name: Test
-        run: cd ${{github.workspace}}/build && ctest -C ${{env.BUILD_TYPE}}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build & test in CentOS 7
+        uses: docker://kreisl/rootcpp17
+        with:
+          entrypoint: /bin/bash
+          args: -lc "
+            source /opt/rh/devtoolset-8/enable &&
+            cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DAnalysisTreeQA_BUILD_TESTS=ON -DAnalysisTreeQA_BUNDLED_AT=ON . &&
+            cmake --build build &&
+            cd build && ctest -C ${{env.BUILD_TYPE}}"
         
   build_fedora35:
     container: rootproject/root:6.24.06-fedora35

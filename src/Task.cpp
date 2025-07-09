@@ -8,7 +8,7 @@ size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable 
   CreateOutputFileIfNotYet();
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, false);
-  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -25,7 +25,7 @@ size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* 
   CreateOutputFileIfNotYet();
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts);
-  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -42,7 +42,7 @@ size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, C
   CreateOutputFileIfNotYet();
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts, true);
-  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -59,7 +59,7 @@ size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts, Var
   CreateOutputFileIfNotYet();
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, true);
-  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -75,7 +75,7 @@ size_t Task::AddIntegral(const Axis& x, Cuts* cuts, Variable weight) {
 size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_y) {
   CreateOutputFileIfNotYet();
   entries_.emplace_back(x, cuts_x, y, cuts_y);
-  const std::string dirName = toplevel_dir_name_.empty() ? entries_.back().GetDirectoryName() : toplevel_dir_name_;
+  const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
@@ -170,6 +170,14 @@ TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
 
 void Task::CreateOutputFileIfNotYet() {
   if (out_file_ == nullptr) out_file_ = new TFile(out_file_name_.c_str(), out_file_option_.c_str());
+}
+
+std::string Task::ConstructOutputDirectoryName() {
+  const std::string entryName = entries_.back().GetDirectoryName();
+  std::string dirName = toplevel_dir_name_.empty() ? entryName : toplevel_dir_name_;
+  if(is_append_dir_name_with_entry_name_ && !toplevel_dir_name_.empty()) dirName.append("/" + entryName);
+
+  return dirName;
 }
 
 }// namespace AnalysisTree::QA

@@ -52,9 +52,18 @@ class Task : public AnalysisTask {
   size_t AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x = nullptr, Cuts* cuts_y = nullptr);
 
   std::vector<EntryConfig>& Entries() { return entries_; }
-  void SetOutputFileName(std::string name) { out_file_name_ = std::move(name); }
-  void SetTopLevelDirName(const std::string& name) { toplevel_dir_name_ = name; }
-  void ResetTopLevelDirName() { toplevel_dir_name_ = ""; }
+  void SetOutputFileName(std::string name, std::string option = "recreate") {
+    out_file_name_ = std::move(name);
+    out_file_option_ = std::move(option);
+  }
+  void SetTopLevelDirName(const std::string& name, bool is_append_dir_name_with_entry_name = false) {
+    toplevel_dir_name_ = name;
+    is_append_dir_name_with_entry_name_ = is_append_dir_name_with_entry_name;
+  }
+  void ResetTopLevelDirName() {
+    toplevel_dir_name_ = "";
+    is_append_dir_name_with_entry_name_ = false;
+  }
 
  private:
   void FillIntegral(EntryConfig& plot);
@@ -62,18 +71,21 @@ class Task : public AnalysisTask {
 
   template<typename T>
   TDirectory* MkDirIfNotExists(T* fod, std::string name) const {
-    if(fod == nullptr) throw std::runtime_error("Task::MkDirIfNotExists(): file or directory ptr is null");
+    if (fod == nullptr) throw std::runtime_error("Task::MkDirIfNotExists(): file or directory ptr is null");
     TDirectory* result = fod->GetDirectory(name.c_str());
     if (result == nullptr) result = fod->mkdir(name.c_str());
     return result;
   }
 
   void CreateOutputFileIfNotYet();
+  std::string ConstructOutputDirectoryName();
 
   std::vector<EntryConfig> entries_{};
   std::map<std::string, TDirectory*> dir_map_{};
   std::string out_file_name_{"QA.root"};
+  std::string out_file_option_{"recreate"};
   std::string toplevel_dir_name_{""};
+  bool is_append_dir_name_with_entry_name_{false};
   TFile* out_file_{nullptr};
 
   ClassDefOverride(Task, 1);

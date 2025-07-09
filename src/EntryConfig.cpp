@@ -215,4 +215,4 @@ std::string EntryConfig::GetDirectoryName() const {
   return name;
 }
 
-} // namespace AnalysisTree::QA
+}// namespace AnalysisTree::QA

@@ -175,7 +175,7 @@ void Task::CreateOutputFileIfNotYet() {
 std::string Task::ConstructOutputDirectoryName() {
   const std::string entryName = entries_.back().GetDirectoryName();
   std::string dirName = toplevel_dir_name_.empty() ? entryName : toplevel_dir_name_;
-  if(is_append_dir_name_with_entry_name_ && !toplevel_dir_name_.empty()) dirName.append("/" + entryName);
+  if (is_append_dir_name_with_entry_name_ && !toplevel_dir_name_.empty()) dirName.append("/" + entryName);
 
   return dirName;
 }

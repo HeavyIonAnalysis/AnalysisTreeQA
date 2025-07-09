@@ -56,7 +56,7 @@ class Task : public AnalysisTask {
     out_file_name_ = std::move(name);
     out_file_option_ = std::move(option);
   }
-  void SetTopLevelDirName(const std::string& name, bool is_append_dir_name_with_entry_name=false) {
+  void SetTopLevelDirName(const std::string& name, bool is_append_dir_name_with_entry_name = false) {
     toplevel_dir_name_ = name;
     is_append_dir_name_with_entry_name_ = is_append_dir_name_with_entry_name;
   }

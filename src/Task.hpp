@@ -67,10 +67,10 @@ class Task : public AnalysisTask {
 
  private:
   void FillIntegral(EntryConfig& plot);
-  TDirectory* MkMultiLevelDir(TFile* file, const std::string& name) const;
+  static TDirectory* MkMultiLevelDir(TFile* file, const std::string& name);
 
   template<typename T>
-  TDirectory* MkDirIfNotExists(T* fod, std::string name) const {
+  static TDirectory* MkDirIfNotExists(T* fod, const std::string& name) {
     if (fod == nullptr) throw std::runtime_error("Task::MkDirIfNotExists(): file or directory ptr is null");
     TDirectory* result = fod->GetDirectory(name.c_str());
     if (result == nullptr) result = fod->mkdir(name.c_str());
@@ -78,7 +78,7 @@ class Task : public AnalysisTask {
   }
 
   void CreateOutputFileIfNotYet();
-  std::string ConstructOutputDirectoryName();
+  std::string ConstructOutputDirectoryName() const;
 
   std::vector<EntryConfig> entries_{};
   std::map<std::string, TDirectory*> dir_map_{};

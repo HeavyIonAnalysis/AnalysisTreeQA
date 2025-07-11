@@ -144,7 +144,7 @@ void Task::Finish() {
   out_file_->Close();
 }
 
-TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) const {
+TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) {
   auto splitBySlash = [](const std::string& str) {
     std::vector<std::string> result;
     std::stringstream ss(str);
@@ -172,7 +172,7 @@ void Task::CreateOutputFileIfNotYet() {
   if (out_file_ == nullptr) out_file_ = new TFile(out_file_name_.c_str(), out_file_option_.c_str());
 }
 
-std::string Task::ConstructOutputDirectoryName() {
+std::string Task::ConstructOutputDirectoryName() const {
   const std::string entryName = entries_.back().GetDirectoryName();
   std::string dirName = toplevel_dir_name_.empty() ? entryName : toplevel_dir_name_;
   if (is_append_dir_name_with_entry_name_ && !toplevel_dir_name_.empty()) dirName.append("/" + entryName);

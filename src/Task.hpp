@@ -69,8 +69,8 @@ class Task : public AnalysisTask {
   void FillIntegral(EntryConfig& plot);
 
   template<typename T>
-  static TDirectory* MkDirIfNotExists(T* fileOrDirectory, const std::string& name) {
-    if (fileOrDirectory == nullptr) throw std::runtime_error("HelperFunctions::MkDirIfNotExists(): file or directory ptr is null");
+  static TDirectory* MkDirIfNotYet(T* fileOrDirectory, const std::string& name) {
+    if (fileOrDirectory == nullptr) throw std::runtime_error("HelperFunctions::MkDirIfNotYet(): file or directory ptr is null");
     TDirectory* result = fileOrDirectory->GetDirectory(name.c_str());
     if (result == nullptr) fileOrDirectory->mkdir(name.c_str());
     result = fileOrDirectory->GetDirectory(name.c_str());

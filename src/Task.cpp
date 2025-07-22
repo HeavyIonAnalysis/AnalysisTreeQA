@@ -9,7 +9,7 @@ size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable 
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, false);
   const std::string dirName = ConstructOutputDirectoryName();
-  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
+  TDirectory* dir = MkDirIfNotExists(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -26,7 +26,7 @@ size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* 
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts);
   const std::string dirName = ConstructOutputDirectoryName();
-  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
+  TDirectory* dir = MkDirIfNotExists(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -43,7 +43,7 @@ size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, C
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts, true);
   const std::string dirName = ConstructOutputDirectoryName();
-  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
+  TDirectory* dir = MkDirIfNotExists(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -60,7 +60,7 @@ size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts, Var
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, true);
   const std::string dirName = ConstructOutputDirectoryName();
-  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
+  TDirectory* dir = MkDirIfNotExists(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
@@ -76,7 +76,7 @@ size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_
   CreateOutputFileIfNotYet();
   entries_.emplace_back(x, cuts_x, y, cuts_y);
   const std::string dirName = ConstructOutputDirectoryName();
-  TDirectory* dir = MkMultiLevelDir(out_file_, dirName);
+  TDirectory* dir = MkDirIfNotExists(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
   auto var_id_x = AddEntry(AnalysisEntry({entries_.back().GetVariables()[0]}, cuts_x));
@@ -142,30 +142,6 @@ void Task::Exec() {
 void Task::Finish() {
   out_file_->Write();
   out_file_->Close();
-}
-
-TDirectory* Task::MkMultiLevelDir(TFile* file, const std::string& name) {
-  auto splitBySlash = [](const std::string& str) {
-    std::vector<std::string> result;
-    std::stringstream ss(str);
-    std::string item;
-
-    // Split the string by slashes
-    while (std::getline(ss, item, '/')) {
-      result.push_back(item);
-    }
-
-    return result;
-  };
-
-  auto vDirs = splitBySlash(name);
-  TDirectory* result;
-  for (int iDir = 0; iDir < vDirs.size(); iDir++) {
-    if (iDir == 0) result = MkDirIfNotExists(file, vDirs.at(iDir));
-    else
-      result = MkDirIfNotExists(result, vDirs.at(iDir));
-  }
-  return result;
 }
 
 void Task::CreateOutputFileIfNotYet() {

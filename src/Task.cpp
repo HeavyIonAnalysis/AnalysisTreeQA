@@ -12,7 +12,7 @@ size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable 
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
   entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
   return entries_.size() - 1;
 }
@@ -29,7 +29,7 @@ size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* 
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
   entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)}});
   return entries_.size() - 1;
 }
@@ -46,7 +46,7 @@ size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, C
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
   entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)}});
   return entries_.size() - 1;
 }
@@ -63,7 +63,7 @@ size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts, Var
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), entries_.back().GetEntryCuts(), entries_.back().GetVariableForWeight()));
+  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
   entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
   return entries_.size() - 1;
 }

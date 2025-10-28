@@ -59,7 +59,7 @@ class EntryConfig {
   void Fill(double value1, double value2, double value3);
 
   ANALYSISTREE_ATTR_NODISCARD unsigned int GetNdimensions() const { return axes_.size(); }
-  ANALYSISTREE_ATTR_NODISCARD Cuts* GetEntryCuts() const { return entry_cuts_; }
+  ANALYSISTREE_ATTR_NODISCARD const std::string& GetEntryCutsName() const { return entry_cuts_name_; }
   ANALYSISTREE_ATTR_NODISCARD PlotType GetType() const { return type_; }
 
   ANALYSISTREE_ATTR_NODISCARD std::vector<std::pair<int, int>> GetVariablesId() const { return vars_id_; }
@@ -97,7 +97,7 @@ class EntryConfig {
 
   std::vector<Axis> axes_{};
   Variable var4weight_{};
-  Cuts* entry_cuts_{nullptr};
+  std::string entry_cuts_name_{};
   std::vector<std::pair<int, int>> vars_id_{};
 
   ClassDef(EntryConfig, 1);

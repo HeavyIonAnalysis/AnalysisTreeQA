@@ -36,7 +36,7 @@ EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& 
       type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
       axes_({axis}),
       var4weight_(weight),
-      entry_cuts_(cuts) {
+      entry_cuts_name_(cuts != nullptr ? cuts->GetName() : "") {
   if (name == "") {
     if (cuts)
       name_ += "_" + cuts->GetName();
@@ -53,14 +53,18 @@ EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& 
 EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, const std::string& name, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
                                                                                                                                  axes_({x, y}),
                                                                                                                                  var4weight_(weight),
-                                                                                                                                 entry_cuts_(cuts) {
+                                                                                                                                 entry_cuts_name_(cuts != nullptr ? cuts->GetName() : "") {
   Set2DName(name);
   InitPlot();
 }
 
 EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y) : type_(PlotType::kIntegral2D),
-                                                                                     axes_({x, y}),
-                                                                                     entry_cuts_(cuts_x) {
+                                                                                     axes_({x, y}) {
+  const std::string cutNameX = cuts_x != nullptr ? cuts_x->GetName() : "";
+  const std::string cutNameY = cuts_y != nullptr ? cuts_y->GetName() : "";
+  const std::string cutNameSeparator = cuts_x != nullptr && cuts_y != nullptr ? "_" : "";
+  entry_cuts_name_ = cutNameX + cutNameSeparator + cutNameY;
+
   Set2DName();
   InitPlot();
 }
@@ -172,8 +176,7 @@ void EntryConfig::InitPlot() {
 void EntryConfig::Set2DName(const std::string& name) {
   name_ = name.empty() ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
   if (name.empty()) {
-    if (entry_cuts_ != nullptr)
-      name_ += "_" + entry_cuts_->GetName();
+    name_ += "_" + entry_cuts_name_;
 
     if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
       name_ += "_weight_" + var4weight_.GetName();
@@ -206,9 +209,7 @@ std::string EntryConfig::GetDirectoryName() const {
   for (auto it = ++branches.begin(); it != branches.end(); ++it) {
     name += "_" + *it;
   }
-  if (entry_cuts_) {
-    name += "_" + entry_cuts_->GetName();
-  }
+  name += "_" + entry_cuts_name_;
   if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
     name += "_weight_" + var4weight_.GetName();
   }

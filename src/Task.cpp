@@ -88,7 +88,7 @@ size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_
 void Task::FillIntegral(EntryConfig& plot) {
   double integral_x{0.};
   double integral_y{0.};
-  auto var_ids = plot.GetVariablesId();
+  const auto& var_ids = plot.GetVariablesId();
 
   for (const auto& var : this->GetValues(var_ids.at(0).first)) {
     integral_x += var[var_ids.at(0).second];
@@ -114,26 +114,16 @@ void Task::Exec() {
       FillIntegral(plot);
       continue;
     }
-    auto var_ids = plot.GetVariablesId();
-    auto weights = this->GetWeights(var_ids.at(0).first);
+    const auto& var_ids = plot.GetVariablesId();
+    const auto& weights = this->GetWeights(var_ids.at(0).first);
     int ivw{-1};
-    for (auto var : this->GetValues(var_ids.at(0).first)) {
+    for (const auto& var : this->GetValues(var_ids.at(0).first)) {
       ++ivw;
-      auto weight = weights.at(ivw);
-      if (std::fabs(weight) < 1e-6) continue;
-      switch (plot.GetNdimensions()) {
-        case 1: {
-          if (std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second]);
-          else
-            plot.Fill(var[var_ids.at(0).second], weight);
-          break;
-        }
-        case 2: {
-          if (std::fabs(weight - 1) < 1e-4) plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second]);
-          else
-            plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second], weight);
-          break;
-        }
+      const auto& weight = weights.at(ivw);
+      if (plot.GetNdimensions() == 1) {
+        plot.Fill(var[var_ids.at(0).second], weight);
+      } else {
+        plot.Fill(var[var_ids.at(0).second], var[var_ids.at(1).second], weight);
       }
     }
   }// plots

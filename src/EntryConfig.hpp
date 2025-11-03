@@ -103,5 +103,8 @@ class EntryConfig {
   ClassDef(EntryConfig, 1);
 };
 
+inline bool FloatingEqualZero(const double value, const double eps = 1e-6) { return std::fabs(value) < eps; }
+inline bool FloatingEqualOne(const double value, const double eps = 1e-6) { return std::fabs(value - 1) < eps; }
+
 }// namespace AnalysisTree::QA
 #endif//ANALYSISTREE_QA_ENTRYCONFIG_H

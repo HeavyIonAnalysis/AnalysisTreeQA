@@ -17,7 +17,12 @@ namespace AnalysisTree::QA {
 
 struct fill2_struct : public Utils::Visitor<void> {
   fill2_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
-  void operator()(TH1* h1) const { h1->Fill(val1_, val2_); }
+  void operator()(TH1* h1) const {
+    if (FloatingEqualZero(val2_)) return;
+    if (FloatingEqualOne(val2_)) h1->Fill(val1_);
+    else
+      h1->Fill(val1_, val2_);
+  }
   void operator()(TH2* h2) const { h2->Fill(val1_, val2_); }
   void operator()(TProfile* p) const { p->Fill(val1_, val2_); }
   double val1_, val2_;
@@ -26,8 +31,18 @@ struct fill2_struct : public Utils::Visitor<void> {
 struct fill3_struct : public Utils::Visitor<void> {
   fill3_struct(double val1, double val2, double val3) : val1_(val1), val2_(val2), val3_(val3) {}
   void operator()(TH1*) const { throw std::runtime_error("EntryConfig, fill3_struct: cannot fill TH1 with 3 arguments"); }
-  void operator()(TH2* h2) const { h2->Fill(val1_, val2_, val3_); }
-  void operator()(TProfile* p) const { p->Fill(val1_, val2_, val3_); }
+  void operator()(TH2* h2) const {
+    if (FloatingEqualZero(val3_)) return;
+    if (FloatingEqualOne(val3_)) h2->Fill(val1_, val2_);
+    else
+      h2->Fill(val1_, val2_, val3_);
+  }
+  void operator()(TProfile* p) const {
+    if (FloatingEqualZero(val3_)) return;
+    if (FloatingEqualOne(val3_)) p->Fill(val1_, val2_);
+    else
+      p->Fill(val1_, val2_, val3_);
+  }
   double val1_, val2_, val3_;
 };
 

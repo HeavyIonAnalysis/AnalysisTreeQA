@@ -45,9 +45,9 @@ class Task : public AnalysisTask {
 
   size_t AddProfile(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{});
 
-  size_t AddIntegral(const std::string& name, const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{});
+  size_t AddIntegral(const std::string& name, const Axis& x, Cuts* cuts = nullptr);
 
-  size_t AddIntegral(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{});
+  size_t AddIntegral(const Axis& x, Cuts* cuts = nullptr);
 
   size_t AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x = nullptr, Cuts* cuts_y = nullptr);
 

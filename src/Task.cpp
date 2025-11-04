@@ -55,8 +55,9 @@ size_t Task::AddProfile(const Axis& x, const Axis& y, Cuts* cuts, Variable weigh
   return AddProfile("", x, y, cuts, std::move(weight));
 }
 
-size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts, Variable weight) {
+size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts) {
   CreateOutputFileIfNotYet();
+  Variable weight{};
   weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, true);
   const std::string dirName = ConstructOutputDirectoryName();
@@ -68,8 +69,8 @@ size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts, Var
   return entries_.size() - 1;
 }
 
-size_t Task::AddIntegral(const Axis& x, Cuts* cuts, Variable weight) {
-  return AddIntegral("", x, cuts, std::move(weight));
+size_t Task::AddIntegral(const Axis& x, Cuts* cuts) {
+  return AddIntegral("", x, cuts);
 }
 
 size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_y) {

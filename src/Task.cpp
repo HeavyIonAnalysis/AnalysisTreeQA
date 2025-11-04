@@ -73,9 +73,9 @@ size_t Task::AddIntegral(const Axis& x, Cuts* cuts) {
   return AddIntegral("", x, cuts);
 }
 
-size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_y) {
+size_t Task::AddIntegral(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_y) {
   CreateOutputFileIfNotYet();
-  entries_.emplace_back(x, cuts_x, y, cuts_y);
+  entries_.emplace_back(x, cuts_x, y, cuts_y, name);
   const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
@@ -84,6 +84,10 @@ size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_
   auto var_id_y = AddEntry(AnalysisEntry({entries_.back().GetVariables()[1]}, cuts_y));
   entries_.back().SetVariablesId({{var_id_x.first, var_id_x.second.at(0)}, {var_id_y.first, var_id_y.second.at(0)}});
   return entries_.size() - 1;
+}
+
+size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_y) {
+  return AddIntegral("", x, y, cuts_x, cuts_y);
 }
 
 void Task::FillIntegral(EntryConfig& plot) {

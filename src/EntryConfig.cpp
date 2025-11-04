@@ -73,14 +73,14 @@ EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, const s
   InitPlot();
 }
 
-EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y) : type_(PlotType::kIntegral2D),
+EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y, const std::string& name) : type_(PlotType::kIntegral2D),
                                                                                      axes_({x, y}) {
   const std::string cutNameX = cuts_x != nullptr ? cuts_x->GetName() : "";
   const std::string cutNameY = cuts_y != nullptr ? cuts_y->GetName() : "";
   const std::string cutNameSeparator = cuts_x != nullptr && cuts_y != nullptr ? "_" : "";
   entry_cuts_name_ = cutNameX + cutNameSeparator + cutNameY;
 
-  Set2DName();
+  Set2DName(name);
   InitPlot();
 }
 

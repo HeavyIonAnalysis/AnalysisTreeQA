@@ -13,7 +13,7 @@ size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable 
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
+  const auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
   entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
   return entries_.size() - 1;
 }
@@ -30,7 +30,7 @@ size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* 
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
+  const auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
   entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)}});
   return entries_.size() - 1;
 }
@@ -47,7 +47,7 @@ size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, C
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
+  const auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
   entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}, {var_id.first, var_id.second.at(1)}});
   return entries_.size() - 1;
 }
@@ -65,7 +65,7 @@ size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts) {
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
+  const auto var_id = AddEntry(AnalysisEntry(entries_.back().GetVariables(), cuts, entries_.back().GetVariableForWeight()));
   entries_.back().SetVariablesId({{var_id.first, var_id.second.at(0)}});
   return entries_.size() - 1;
 }
@@ -81,8 +81,8 @@ size_t Task::AddIntegral(const std::string& name, const Axis& x, const Axis& y, 
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
   ANALYSISTREE_UTILS_VISIT(setdirectory_struct(dir), entries_.back().GetPlot());
   ANALYSISTREE_UTILS_VISIT(setname_struct(entries_.back().GetName()), entries_.back().GetPlot());
-  auto var_id_x = AddEntry(AnalysisEntry({entries_.back().GetVariables()[0]}, cuts_x));
-  auto var_id_y = AddEntry(AnalysisEntry({entries_.back().GetVariables()[1]}, cuts_y));
+  const auto var_id_x = AddEntry(AnalysisEntry({entries_.back().GetVariables()[0]}, cuts_x));
+  const auto var_id_y = AddEntry(AnalysisEntry({entries_.back().GetVariables()[1]}, cuts_y));
   entries_.back().SetVariablesId({{var_id_x.first, var_id_x.second.at(0)}, {var_id_y.first, var_id_y.second.at(0)}});
   return entries_.size() - 1;
 }
@@ -115,7 +115,6 @@ void Task::Exec() {
   AnalysisTask::Exec();
 
   for (auto& plot : entries_) {
-
     if (plot.GetType() == EntryConfig::PlotType::kIntegral1D || plot.GetType() == EntryConfig::PlotType::kIntegral2D) {
       FillIntegral(plot);
       continue;
@@ -145,11 +144,23 @@ void Task::CreateOutputFileIfNotYet() {
 }
 
 std::string Task::ConstructOutputDirectoryName() const {
-  const std::string entryName = entries_.back().GetDirectoryName();
+  const std::string& entryName = entries_.back().GetDirectoryName();
   std::string dirName = toplevel_dir_name_.empty() ? entryName : toplevel_dir_name_;
   if (is_append_dir_name_with_entry_name_ && !toplevel_dir_name_.empty()) dirName.append("/" + entryName);
 
   return dirName;
+}
+
+void Task::SetOutputFileName(std::string name, std::string option) {
+  out_file_name_ = std::move(name);
+  out_file_option_ = std::move(option);
+}
+void Task::SetTopLevelDirName(const std::string& name, bool is_append_dir_name_with_entry_name) {
+  toplevel_dir_name_ = name;
+  is_append_dir_name_with_entry_name_ = is_append_dir_name_with_entry_name;
+}
+void Task::ResetTopLevelDirName() {
+  SetTopLevelDirName("", false);
 }
 
 }// namespace QA

@@ -54,18 +54,10 @@ class Task : public AnalysisTask {
   size_t AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x = nullptr, Cuts* cuts_y = nullptr);
 
   std::vector<EntryConfig>& Entries() { return entries_; }
-  void SetOutputFileName(std::string name, std::string option = "recreate") {
-    out_file_name_ = std::move(name);
-    out_file_option_ = std::move(option);
-  }
-  void SetTopLevelDirName(const std::string& name, bool is_append_dir_name_with_entry_name = false) {
-    toplevel_dir_name_ = name;
-    is_append_dir_name_with_entry_name_ = is_append_dir_name_with_entry_name;
-  }
-  void ResetTopLevelDirName() {
-    toplevel_dir_name_ = "";
-    is_append_dir_name_with_entry_name_ = false;
-  }
+
+  void SetOutputFileName(std::string name, std::string option = "recreate");
+  void SetTopLevelDirName(const std::string& name, bool is_append_dir_name_with_entry_name = false);
+  void ResetTopLevelDirName();
 
  private:
   void FillIntegral(EntryConfig& plot);
@@ -86,7 +78,7 @@ class Task : public AnalysisTask {
   std::map<std::string, TDirectory*> dir_map_{};
   std::string out_file_name_{"QA.root"};
   std::string out_file_option_{"recreate"};
-  std::string toplevel_dir_name_{""};
+  std::string toplevel_dir_name_{};
   bool is_append_dir_name_with_entry_name_{false};
   TFile* out_file_{nullptr};
 

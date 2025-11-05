@@ -13,7 +13,8 @@ using TH1FD = TH1F;
 using TH2FD = TH2F;
 #endif
 
-namespace AnalysisTree::QA {
+namespace AnalysisTree {
+namespace QA {
 
 struct fill2_struct : public Utils::Visitor<void> {
   fill2_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
@@ -74,7 +75,7 @@ EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, const s
 }
 
 EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y, const std::string& name) : type_(PlotType::kIntegral2D),
-                                                                                     axes_({x, y}) {
+                                                                                                              axes_({x, y}) {
   const std::string cutNameX = cuts_x != nullptr ? cuts_x->GetName() : "";
   const std::string cutNameY = cuts_y != nullptr ? cuts_y->GetName() : "";
   const std::string cutNameSeparator = cuts_x != nullptr && cuts_y != nullptr ? "_" : "";
@@ -231,4 +232,5 @@ std::string EntryConfig::GetDirectoryName() const {
   return name;
 }
 
-}// namespace AnalysisTree::QA
+}// namespace QA
+}// namespace AnalysisTree

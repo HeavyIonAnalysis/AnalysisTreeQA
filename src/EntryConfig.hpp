@@ -12,7 +12,8 @@
 #include "AnalysisTree/Cuts.hpp"
 #include "AnalysisTree/Utils.hpp"
 
-namespace AnalysisTree::QA {
+namespace AnalysisTree {
+namespace QA {
 
 class Axis : public Variable, public TAxis {
  public:
@@ -106,5 +107,6 @@ class EntryConfig {
 inline bool FloatingEqualZero(const double value, const double eps = 1e-6) { return std::fabs(value) < eps; }
 inline bool FloatingEqualOne(const double value, const double eps = 1e-6) { return std::fabs(value - 1) < eps; }
 
-}// namespace AnalysisTree::QA
+}// namespace QA
+}// namespace AnalysisTree
 #endif//ANALYSISTREE_QA_ENTRYCONFIG_H

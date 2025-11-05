@@ -2,7 +2,8 @@
 
 #include <utility>
 
-namespace AnalysisTree::QA {
+namespace AnalysisTree {
+namespace QA {
 
 size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable weight) {
   CreateOutputFileIfNotYet();
@@ -151,4 +152,5 @@ std::string Task::ConstructOutputDirectoryName() const {
   return dirName;
 }
 
-}// namespace AnalysisTree::QA
+}// namespace QA
+}// namespace AnalysisTree

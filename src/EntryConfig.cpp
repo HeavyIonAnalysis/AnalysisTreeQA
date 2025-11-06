@@ -47,7 +47,7 @@ struct fill3_struct : public Utils::Visitor<void> {
   double val1_, val2_, val3_;
 };
 
-EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& name, Cuts* cuts, bool is_integral)
+EntryConfig::EntryConfig(const Axis& axis, const Variable& weight, const std::string& name, Cuts* cuts, bool is_integral)
     : name_(name == "" ? axis.GetName() : name),
       type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
       axes_({axis}),
@@ -66,10 +66,10 @@ EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& 
   InitPlot();
 }
 
-EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, const std::string& name, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
-                                                                                                                                 axes_({x, y}),
-                                                                                                                                 var4weight_(weight),
-                                                                                                                                 entry_cuts_name_(cuts != nullptr ? cuts->GetName() : "") {
+EntryConfig::EntryConfig(const Axis& x, const Axis& y, const Variable& weight, const std::string& name, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
+                                                                                                                                       axes_({x, y}),
+                                                                                                                                       var4weight_(weight),
+                                                                                                                                       entry_cuts_name_(cuts != nullptr ? cuts->GetName() : "") {
   Set2DName(name);
   InitPlot();
 }

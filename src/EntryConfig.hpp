@@ -45,8 +45,8 @@ class EntryConfig {
   };
 
   EntryConfig() = default;
-  explicit EntryConfig(const Axis& axis, [[maybe_unused]] Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_integral = false);
-  EntryConfig(const Axis& x, const Axis& y, Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_profile = false);
+  explicit EntryConfig(const Axis& axis, [[maybe_unused]] const Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_integral = false);
+  EntryConfig(const Axis& x, const Axis& y, const Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_profile = false);
   EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y, const std::string& name);
 
   EntryConfig(const EntryConfig&) = default;

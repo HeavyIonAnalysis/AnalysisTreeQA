@@ -5,9 +5,8 @@
 namespace AnalysisTree {
 namespace QA {
 
-size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable weight) {
+size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, const Variable& weight) {
   CreateOutputFileIfNotYet();
-  weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, weight, name, cuts, false);
   const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
@@ -18,13 +17,12 @@ size_t Task::AddH1(const std::string& name, const Axis& x, Cuts* cuts, Variable 
   return entries_.size() - 1;
 }
 
-size_t Task::AddH1(const Axis& x, Cuts* cuts, Variable weight) {
-  return AddH1("", x, cuts, std::move(weight));
+size_t Task::AddH1(const Axis& x, Cuts* cuts, const Variable& weight) {
+  return AddH1("", x, cuts, weight);
 }
 
-size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts, Variable weight) {
+size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts, const Variable& weight) {
   CreateOutputFileIfNotYet();
-  weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts);
   const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
@@ -35,13 +33,12 @@ size_t Task::AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* 
   return entries_.size() - 1;
 }
 
-size_t Task::AddH2(const Axis& x, const Axis& y, Cuts* cuts, Variable weight) {
-  return AddH2("", x, y, cuts, std::move(weight));
+size_t Task::AddH2(const Axis& x, const Axis& y, Cuts* cuts, const Variable& weight) {
+  return AddH2("", x, y, cuts, weight);
 }
 
-size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts, Variable weight) {
+size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts, const Variable& weight) {
   CreateOutputFileIfNotYet();
-  weight.IfEmptyVariableConvertToOnes(x);
   entries_.emplace_back(x, y, weight, name, cuts, true);
   const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
@@ -52,14 +49,13 @@ size_t Task::AddProfile(const std::string& name, const Axis& x, const Axis& y, C
   return entries_.size() - 1;
 }
 
-size_t Task::AddProfile(const Axis& x, const Axis& y, Cuts* cuts, Variable weight) {
-  return AddProfile("", x, y, cuts, std::move(weight));
+size_t Task::AddProfile(const Axis& x, const Axis& y, Cuts* cuts, const Variable& weight) {
+  return AddProfile("", x, y, cuts, weight);
 }
 
 size_t Task::AddIntegral(const std::string& name, const Axis& x, Cuts* cuts) {
   CreateOutputFileIfNotYet();
-  Variable weight{};
-  weight.IfEmptyVariableConvertToOnes(x);
+  const Variable weight{};
   entries_.emplace_back(x, weight, name, cuts, true);
   const std::string dirName = ConstructOutputDirectoryName();
   TDirectory* dir = MkDirIfNotYet(out_file_, dirName);
@@ -91,7 +87,7 @@ size_t Task::AddIntegral(const Axis& x, const Axis& y, Cuts* cuts_x, Cuts* cuts_
   return AddIntegral("", x, y, cuts_x, cuts_y);
 }
 
-void Task::FillIntegral(EntryConfig& plot) {
+void Task::FillIntegral(EntryConfig& plot) const {
   double integral_x{0.};
   double integral_y{0.};
   const auto& var_ids = plot.GetVariablesId();

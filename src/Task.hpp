@@ -33,17 +33,17 @@ class Task : public AnalysisTask {
   void Exec() override;
   void Finish() override;
 
-  size_t AddH1(const std::string& name, const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{});
+  size_t AddH1(const std::string& name, const Axis& x, Cuts* cuts = nullptr, const Variable& weight = {});
 
-  size_t AddH1(const Axis& x, Cuts* cuts = nullptr, Variable weight = Variable{});
+  size_t AddH1(const Axis& x, Cuts* cuts = nullptr, const Variable& weight = {});
 
-  size_t AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{});
+  size_t AddH2(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts = nullptr, const Variable& weight = {});
 
-  size_t AddH2(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{});
+  size_t AddH2(const Axis& x, const Axis& y, Cuts* cuts = nullptr, const Variable& weight = {});
 
-  size_t AddProfile(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{});
+  size_t AddProfile(const std::string& name, const Axis& x, const Axis& y, Cuts* cuts = nullptr, const Variable& weight = {});
 
-  size_t AddProfile(const Axis& x, const Axis& y, Cuts* cuts = nullptr, Variable weight = Variable{});
+  size_t AddProfile(const Axis& x, const Axis& y, Cuts* cuts = nullptr, const Variable& weight = {});
 
   size_t AddIntegral(const std::string& name, const Axis& x, Cuts* cuts = nullptr);
 
@@ -60,7 +60,7 @@ class Task : public AnalysisTask {
   void ResetTopLevelDirName();
 
  private:
-  void FillIntegral(EntryConfig& plot);
+  void FillIntegral(EntryConfig& plot) const;
 
   template<typename T>
   static TDirectory* MkDirIfNotYet(T* fileOrDirectory, const std::string& name) {

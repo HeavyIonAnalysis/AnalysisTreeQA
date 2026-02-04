@@ -141,8 +141,10 @@ void Task::CreateOutputFileIfNotYet() {
 
 std::string Task::ConstructOutputDirectoryName() const {
   const std::string& entryName = entries_.back().GetDirectoryName();
-  std::string dirName = toplevel_dir_name_.empty() ? entryName : toplevel_dir_name_;
-  if (is_append_dir_name_with_entry_name_ && !toplevel_dir_name_.empty()) dirName.append("/" + entryName);
+  std::string dirName = toplevel_dir_name_ == UndefTopLevelDirName ? entryName : toplevel_dir_name_;
+  if (is_append_dir_name_with_entry_name_ && toplevel_dir_name_ != UndefTopLevelDirName) {
+    dirName.append((toplevel_dir_name_.empty() ? "" : "/") + entryName);
+  };
 
   return dirName;
 }
@@ -156,7 +158,7 @@ void Task::SetTopLevelDirName(const std::string& name, bool is_append_dir_name_w
   is_append_dir_name_with_entry_name_ = is_append_dir_name_with_entry_name;
 }
 void Task::ResetTopLevelDirName() {
-  SetTopLevelDirName("", false);
+  SetTopLevelDirName(UndefTopLevelDirName, false);
 }
 
 }// namespace QA

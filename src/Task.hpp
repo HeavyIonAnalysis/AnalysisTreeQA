@@ -12,6 +12,8 @@
 namespace AnalysisTree {
 namespace QA {
 
+const std::string UndefTopLevelDirName{"-999"};
+
 struct setdirectory_struct : Utils::Visitor<void> {
   explicit setdirectory_struct(TDirectory* dir) : dir_(dir) {}
   template<class PlotType>
@@ -78,7 +80,7 @@ class Task : public AnalysisTask {
   std::map<std::string, TDirectory*> dir_map_{};
   std::string out_file_name_{"QA.root"};
   std::string out_file_option_{"recreate"};
-  std::string toplevel_dir_name_{};
+  std::string toplevel_dir_name_{UndefTopLevelDirName};
   bool is_append_dir_name_with_entry_name_{false};
   TFile* out_file_{nullptr};
 

@@ -192,7 +192,9 @@ void EntryConfig::InitPlot() {
 void EntryConfig::Set2DName(const std::string& name) {
   name_ = name.empty() ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
   if (name.empty()) {
-    name_ += "_" + entry_cuts_name_;
+    if (!entry_cuts_name_.empty()) {
+      name_ += "_" + entry_cuts_name_;
+    }
 
     if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
       name_ += "_weight_" + var4weight_.GetName();
@@ -225,7 +227,9 @@ std::string EntryConfig::GetDirectoryName() const {
   for (auto it = ++branches.begin(); it != branches.end(); ++it) {
     name += "_" + *it;
   }
-  name += "_" + entry_cuts_name_;
+  if (!entry_cuts_name_.empty()) {
+    name += "_" + entry_cuts_name_;
+  }
   if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
     name += "_weight_" + var4weight_.GetName();
   }

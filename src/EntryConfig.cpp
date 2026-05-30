@@ -13,11 +13,17 @@ using TH1FD = TH1F;
 using TH2FD = TH2F;
 #endif
 
-namespace AnalysisTree::QA {
+namespace AnalysisTree {
+namespace QA {
 
 struct fill2_struct : public Utils::Visitor<void> {
   fill2_struct(double val1, double val2) : val1_(val1), val2_(val2) {}
-  void operator()(TH1* h1) const { h1->Fill(val1_, val2_); }
+  void operator()(TH1* h1) const {
+    if (FloatingEqualZero(val2_)) return;
+    if (FloatingEqualOne(val2_)) h1->Fill(val1_);
+    else
+      h1->Fill(val1_, val2_);
+  }
   void operator()(TH2* h2) const { h2->Fill(val1_, val2_); }
   void operator()(TProfile* p) const { p->Fill(val1_, val2_); }
   double val1_, val2_;
@@ -26,17 +32,27 @@ struct fill2_struct : public Utils::Visitor<void> {
 struct fill3_struct : public Utils::Visitor<void> {
   fill3_struct(double val1, double val2, double val3) : val1_(val1), val2_(val2), val3_(val3) {}
   void operator()(TH1*) const { throw std::runtime_error("EntryConfig, fill3_struct: cannot fill TH1 with 3 arguments"); }
-  void operator()(TH2* h2) const { h2->Fill(val1_, val2_, val3_); }
-  void operator()(TProfile* p) const { p->Fill(val1_, val2_, val3_); }
+  void operator()(TH2* h2) const {
+    if (FloatingEqualZero(val3_)) return;
+    if (FloatingEqualOne(val3_)) h2->Fill(val1_, val2_);
+    else
+      h2->Fill(val1_, val2_, val3_);
+  }
+  void operator()(TProfile* p) const {
+    if (FloatingEqualZero(val3_)) return;
+    if (FloatingEqualOne(val3_)) p->Fill(val1_, val2_);
+    else
+      p->Fill(val1_, val2_, val3_);
+  }
   double val1_, val2_, val3_;
 };
 
-EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& name, Cuts* cuts, bool is_integral)
+EntryConfig::EntryConfig(const Axis& axis, const Variable& weight, const std::string& name, Cuts* cuts, bool is_integral)
     : name_(name == "" ? axis.GetName() : name),
       type_(is_integral ? PlotType::kIntegral1D : PlotType::kHisto1D),
       axes_({axis}),
       var4weight_(weight),
-      entry_cuts_(cuts) {
+      entry_cuts_name_(cuts != nullptr ? cuts->GetName() : "") {
   if (name == "") {
     if (cuts)
       name_ += "_" + cuts->GetName();
@@ -50,18 +66,22 @@ EntryConfig::EntryConfig(const Axis& axis, Variable& weight, const std::string& 
   InitPlot();
 }
 
-EntryConfig::EntryConfig(const Axis& x, const Axis& y, Variable& weight, const std::string& name, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
-                                                                                                                                 axes_({x, y}),
-                                                                                                                                 var4weight_(weight),
-                                                                                                                                 entry_cuts_(cuts) {
+EntryConfig::EntryConfig(const Axis& x, const Axis& y, const Variable& weight, const std::string& name, Cuts* cuts, bool is_profile) : type_(is_profile ? PlotType::kProfile : PlotType::kHisto2D),
+                                                                                                                                       axes_({x, y}),
+                                                                                                                                       var4weight_(weight),
+                                                                                                                                       entry_cuts_name_(cuts != nullptr ? cuts->GetName() : "") {
   Set2DName(name);
   InitPlot();
 }
 
-EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y) : type_(PlotType::kIntegral2D),
-                                                                                     axes_({x, y}),
-                                                                                     entry_cuts_(cuts_x) {
-  Set2DName();
+EntryConfig::EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y, const std::string& name) : type_(PlotType::kIntegral2D),
+                                                                                                              axes_({x, y}) {
+  const std::string cutNameX = cuts_x != nullptr ? cuts_x->GetName() : "";
+  const std::string cutNameY = cuts_y != nullptr ? cuts_y->GetName() : "";
+  const std::string cutNameSeparator = cuts_x != nullptr && cuts_y != nullptr ? "_" : "";
+  entry_cuts_name_ = cutNameX + cutNameSeparator + cutNameY;
+
+  Set2DName(name);
   InitPlot();
 }
 
@@ -172,8 +192,9 @@ void EntryConfig::InitPlot() {
 void EntryConfig::Set2DName(const std::string& name) {
   name_ = name.empty() ? Form("%s_%s", axes_[0].GetName(), axes_[1].GetName()) : name;
   if (name.empty()) {
-    if (entry_cuts_ != nullptr)
-      name_ += "_" + entry_cuts_->GetName();
+    if (!entry_cuts_name_.empty()) {
+      name_ += "_" + entry_cuts_name_;
+    }
 
     if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
       name_ += "_weight_" + var4weight_.GetName();
@@ -206,8 +227,8 @@ std::string EntryConfig::GetDirectoryName() const {
   for (auto it = ++branches.begin(); it != branches.end(); ++it) {
     name += "_" + *it;
   }
-  if (entry_cuts_) {
-    name += "_" + entry_cuts_->GetName();
+  if (!entry_cuts_name_.empty()) {
+    name += "_" + entry_cuts_name_;
   }
   if (!var4weight_.GetName().empty() && var4weight_.GetFields().at(0).GetName() != "ones") {
     name += "_weight_" + var4weight_.GetName();
@@ -215,4 +236,5 @@ std::string EntryConfig::GetDirectoryName() const {
   return name;
 }
 
-}// namespace AnalysisTree::QA
+}// namespace QA
+}// namespace AnalysisTree

@@ -12,7 +12,8 @@
 #include "AnalysisTree/Cuts.hpp"
 #include "AnalysisTree/Utils.hpp"
 
-namespace AnalysisTree::QA {
+namespace AnalysisTree {
+namespace QA {
 
 class Axis : public Variable, public TAxis {
  public:
@@ -44,9 +45,9 @@ class EntryConfig {
   };
 
   EntryConfig() = default;
-  explicit EntryConfig(const Axis& axis, [[maybe_unused]] Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_integral = false);
-  EntryConfig(const Axis& x, const Axis& y, Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_profile = false);
-  EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y);
+  explicit EntryConfig(const Axis& axis, [[maybe_unused]] const Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_integral = false);
+  EntryConfig(const Axis& x, const Axis& y, const Variable& weight, const std::string& name, Cuts* cuts = nullptr, bool is_profile = false);
+  EntryConfig(const Axis& x, Cuts* cuts_x, const Axis& y, Cuts* cuts_y, const std::string& name);
 
   EntryConfig(const EntryConfig&) = default;
   EntryConfig(EntryConfig&&) = default;
@@ -59,7 +60,7 @@ class EntryConfig {
   void Fill(double value1, double value2, double value3);
 
   ANALYSISTREE_ATTR_NODISCARD unsigned int GetNdimensions() const { return axes_.size(); }
-  ANALYSISTREE_ATTR_NODISCARD Cuts* GetEntryCuts() const { return entry_cuts_; }
+  ANALYSISTREE_ATTR_NODISCARD const std::string& GetEntryCutsName() const { return entry_cuts_name_; }
   ANALYSISTREE_ATTR_NODISCARD PlotType GetType() const { return type_; }
 
   ANALYSISTREE_ATTR_NODISCARD std::vector<std::pair<int, int>> GetVariablesId() const { return vars_id_; }
@@ -97,11 +98,15 @@ class EntryConfig {
 
   std::vector<Axis> axes_{};
   Variable var4weight_{};
-  Cuts* entry_cuts_{nullptr};
+  std::string entry_cuts_name_{};
   std::vector<std::pair<int, int>> vars_id_{};
 
   ClassDef(EntryConfig, 1);
 };
 
-}// namespace AnalysisTree::QA
+inline bool FloatingEqualZero(const double value, const double eps = 1e-6) { return std::fabs(value) < eps; }
+inline bool FloatingEqualOne(const double value, const double eps = 1e-6) { return std::fabs(value - 1) < eps; }
+
+}// namespace QA
+}// namespace AnalysisTree
 #endif//ANALYSISTREE_QA_ENTRYCONFIG_H

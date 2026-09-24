@@ -6,6 +6,8 @@ add_library(AnalysisTreeQASteerCore STATIC
 )
 target_include_directories(AnalysisTreeQASteerCore PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${PROJECT_INCLUDE_DIRECTORIES}>
+    $<BUILD_INTERFACE:${AnalysisTree_BINARY_DIR}/include>
     $<INSTALL_INTERFACE:include/AnalysisTreeQA/services/steer>
 )
 target_link_libraries(AnalysisTreeQASteerCore PUBLIC AnalysisTreeQA AnalysisTreeBase AnalysisTreeInfra ${AnalysisTreeQA_YAMLCPP_TARGET})

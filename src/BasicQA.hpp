@@ -65,13 +65,13 @@ inline void AddParticlesFlowQA(Task* task, const std::string& particles, const F
   for (auto pdg : pdg_codes) {
     std::vector<SimpleCut> simple_cuts{EqualsCut(particles + ".pid", pdg)};
     if (cuts != nullptr) {
-      const auto& additional_cutc = cuts->GetCuts();
+      const auto& additional_cuts = cuts->GetCuts();
       simple_cuts.insert(simple_cuts.end(), additional_cuts.begin(), additional_cuts.end());
     }
     auto* flow_cuts = new Cuts("mc_" + std::to_string(pdg), simple_cuts);
 
-    task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{1}", v1, {}}, flow_cut);
-    task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{2}", v2, {}}, flow_cut);
+    task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{1}", v1, {}}, flow_cuts);
+    task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{2}", v2, {}}, flow_cuts);
   }
 }
 

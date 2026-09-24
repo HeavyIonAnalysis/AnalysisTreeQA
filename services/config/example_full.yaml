@@ -1,0 +1,66 @@
+# Showcase AnalysisTreeQA services config - demonstrates named, inline and
+# custom (C++-registered) cuts, and the fully YAML-declarative HistogramQA
+# task type. See services/README.md for the complete schema reference.
+
+input:
+  files:
+    - "input.root"
+  tree: "rTree"
+
+output:
+  file: "qa_full.root"
+  overwrite: true
+
+nevents: -1
+
+cuts:
+  # Shared, named cut - reusable by any task via "cuts: pT_cut".
+  pT_cut:
+    simple_cuts:
+      - {variable: "VtxTracks.pT", type: range, min: 1.0, max: 1.5}
+
+tasks:
+  # Named, shared cut.
+  - type: TrackQA
+    name: VtxTracksQA
+    branch: VtxTracks
+    cuts: pT_cut
+
+  # Inline, task-local cut.
+  - type: TrackQA
+    name: TrdTracksQA
+    branch: TrdTracks
+    cuts:
+      simple_cuts:
+        - {variable: "TrdTracks.pid_like_e", type: range, min: 0, max: 1}
+
+  # Custom, C++-registered cut (see services/steer/tasks/BuiltinCuts.cpp) -
+  # for predicates that don't fit the declarative range/equals form.
+  - type: TrackQA
+    name: GoodQualityTracksQA
+    branch: VtxTracks
+    cuts:
+      simple_cuts:
+        - {type: custom, name: GoodTrackQuality}
+
+  - type: EventHeaderQA
+    name: EventHeaderQA
+    branch: SimEventHeader
+
+  # Fully YAML-declarative: two different branches (VtxTracks, TofHits) on
+  # one plot - no new C++ class needed for this. This is the maximum
+  # AnalysisTree itself supports: a plot's axes + cuts may together
+  # reference at most two independent multi-object branches (here both cut
+  # and y-axis stay within {VtxTracks, TofHits}). Cutting on a THIRD,
+  # unrelated branch (e.g. SimParticles) is not possible - see the
+  # "Cross-branch limits" note in services/README.md.
+  - type: HistogramQA
+    name: TofPidCheck
+    plots:
+      - kind: h2
+        name: p_vs_mass2
+        x: {branch: VtxTracks, field: p,     bins: {nbins: 200, min: 0,    max: 4}}
+        y: {branch: TofHits,   field: mass2, bins: {nbins: 200, min: -0.2, max: 1.2}}
+        cuts:
+          simple_cuts:
+            - {variable: "VtxTracks.eta", type: range, min: 0, max: 2}

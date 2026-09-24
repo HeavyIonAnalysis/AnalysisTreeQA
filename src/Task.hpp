@@ -61,6 +61,12 @@ class Task : public AnalysisTask {
   void SetTopLevelDirName(const std::string& name, bool is_append_dir_name_with_entry_name = false);
   void ResetTopLevelDirName();
 
+  /// Attaches this task to an already-open, externally-owned output file
+  /// (e.g. shared by several independent tasks, each writing to its own
+  /// top-level directory via SetTopLevelDirName). Finish() will then no
+  /// longer write/close the file itself - the owner is responsible for that.
+  void AttachOutputFile(TFile* file);
+
  private:
   void FillIntegral(EntryConfig& plot) const;
 
@@ -83,6 +89,7 @@ class Task : public AnalysisTask {
   std::string toplevel_dir_name_{UndefTopLevelDirName};
   bool is_append_dir_name_with_entry_name_{false};
   TFile* out_file_{nullptr};
+  bool owns_output_file_{true};
 
   ClassDefOverride(Task, 1);
 };

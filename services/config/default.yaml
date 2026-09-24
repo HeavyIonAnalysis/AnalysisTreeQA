@@ -1,0 +1,19 @@
+# Minimal AnalysisTreeQA services config. See services/README.md for the
+# full schema, and example_full.yaml for named/inline/custom cuts and the
+# fully YAML-declarative HistogramQA task type.
+
+input:
+  files:
+    - "input.root"   # adjust to your AnalysisTree file(s)
+  tree: "rTree"       # AnalysisTree tree name, as passed to AnalysisTree::TaskManager::Init()
+
+output:
+  file: "qa.root"
+  overwrite: false
+
+nevents: -1   # -1 = all events
+
+tasks:
+  - type: TrackQA
+    name: VtxTracksQA
+    branch: VtxTracks

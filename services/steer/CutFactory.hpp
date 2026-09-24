@@ -14,10 +14,13 @@ namespace AnalysisTree {
 namespace QA {
 
 /// Builds AnalysisTree::Cuts from YAML, either declaratively
-/// (range/equals/not_equals) or via a named, C++-registered custom predicate
-/// (for logic that cannot be expressed as a single field vs. threshold/value
-/// check, e.g. a ratio of two fields) - see services/README.md for the full
-/// schema and examples.
+/// (range/equals/not_equals, optionally combined with logical OR via
+/// `or: {clauses: [...]}`) or via a named, C++-registered custom predicate
+/// (for logic that cannot be expressed declaratively at all, e.g. a ratio of
+/// two fields) - see services/README.md for the full schema and examples.
+/// Every entry in one `simple_cuts:` list (including an `or` entry) is
+/// always combined with the others via logical AND - that's the one
+/// combination AnalysisTree::Cuts itself provides.
 class CutFactory {
  public:
   /// Builds one AnalysisTree::SimpleCut from a "custom" cut's YAML params.
@@ -44,6 +47,11 @@ class CutFactory {
 
   AnalysisTree::SimpleCut BuildSimpleCut(const YAML::Node& simple_cut_node) const;
   AnalysisTree::SimpleCut CreateCustomCut(const std::string& type_name, const YAML::Node& params) const;
+  /// {type: or, clauses: [...]} - combines several range/equals/not_equals
+  /// clauses (each on its own variable) with logical OR into one SimpleCut.
+  /// AnalysisTree::Cuts itself only ever ANDs its SimpleCuts, so this is the
+  /// only way to express OR: as a single, self-contained SimpleCut.
+  AnalysisTree::SimpleCut BuildOrCut(const YAML::Node& or_node) const;
 
   YAML::Node shared_cuts_node_;
   std::map<std::string, CutCreatorFunction> cut_creators_;

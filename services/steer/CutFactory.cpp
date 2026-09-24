@@ -52,8 +52,57 @@ AnalysisTree::SimpleCut CutFactory::BuildSimpleCut(const YAML::Node& simple_cut_
   if (type == "custom") {
     return CreateCustomCut(simple_cut_node["name"].as<std::string>(), simple_cut_node);
   }
+  if (type == "or") {
+    return BuildOrCut(simple_cut_node);
+  }
   throw std::runtime_error("CutFactory::BuildSimpleCut(): unknown simple cut type '" + type
-                            + "' (expected 'range', 'equals', 'not_equals' or 'custom')");
+                            + "' (expected 'range', 'equals', 'not_equals', 'custom' or 'or')");
+}
+
+AnalysisTree::SimpleCut CutFactory::BuildOrCut(const YAML::Node& or_node) const {
+  const auto title = or_node["title"].as<std::string>("");
+  const YAML::Node clauses = or_node["clauses"];
+  if (!clauses.IsDefined() || !clauses.IsSequence() || clauses.size() == 0) {
+    throw std::runtime_error("CutFactory::BuildOrCut(): 'or' requires a non-empty 'clauses' list");
+  }
+
+  // Each clause references exactly one variable, so clause predicate i is
+  // evaluated against v[i] below - order matters, hence keeping "variables"
+  // and "predicates" as two parallel vectors instead of e.g. a map.
+  std::vector<std::string> variables;
+  std::vector<std::function<bool(double)>> predicates;
+  variables.reserve(clauses.size());
+  predicates.reserve(clauses.size());
+
+  for (const auto& clause : clauses) {
+    const auto clause_type = clause["type"].as<std::string>();
+    variables.push_back(clause["variable"].as<std::string>());
+
+    if (clause_type == "range") {
+      const auto min = clause["min"].as<double>();
+      const auto max = clause["max"].as<double>();
+      predicates.push_back([min, max](double x) { return x >= min && x <= max; });
+    } else if (clause_type == "equals") {
+      const int value = clause["value"].as<int>();
+      predicates.push_back([value](double x) { return static_cast<int>(x) == value; });
+    } else if (clause_type == "not_equals") {
+      const int value = clause["value"].as<int>();
+      predicates.push_back([value](double x) { return static_cast<int>(x) != value; });
+    } else {
+      throw std::runtime_error("CutFactory::BuildOrCut(): unsupported clause type '" + clause_type
+                                + "' inside 'or' (expected 'range', 'equals' or 'not_equals')");
+    }
+  }
+
+  return AnalysisTree::SimpleCut(
+      variables,
+      [predicates](std::vector<double> v) {
+        for (std::size_t i = 0; i < predicates.size(); ++i) {
+          if (predicates[i](v[i])) return true;
+        }
+        return false;
+      },
+      title);
 }
 
 AnalysisTree::Cuts* CutFactory::BuildCuts(const YAML::Node& cuts_field, const std::string& default_name) const {

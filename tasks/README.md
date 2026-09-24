@@ -8,7 +8,7 @@ Drop your own QA task class here (a `.hpp` + `.cpp` pair) to make it selectable 
 
 1. Your class derives from `AnalysisTree::QA::Task` (`src/Task.hpp`), the same class the classic macro API (`examples/example.cpp`) uses directly.
 2. It has a constructor `explicit YourTask(const YAML::Node& node)`. `node` is the *entire* YAML entry for this task (its `type`, `name`, and whatever custom fields you define).
-   Cuts: build them with `AnalysisTree::QA::CutFactory::Instance().BuildCuts(node["cuts"], "some_default_name")` (see `services/steer/CutFactory.hpp`) to get the same declarative range/equals/not_equals/named/custom-lambda cut support every built-in task has.
+   Cuts: build them with `AnalysisTree::QA::CutFactory::Instance().BuildCuts(node["cuts"], "some_default_name")` (see `services/steer/CutFactory.hpp`) to get the same declarative range/equals/not_equals/or/named/custom-lambda cut support every built-in task has.
 3. It overrides `void Init() override`, where it books its histograms/cuts (`AddH1`/`AddH2`/`AddProfile`/`AddIntegral`, or any `BasicQA.hpp` helper), and finishes by calling `AnalysisTask::Init();`. Booking must happen here, not in the constructor. The shared output file and top-level directory are only attached to the task after construction but before `Init()` runs.
 4. At the very bottom of the `.cpp` file, **inside** the `namespace AnalysisTree { namespace QA { ... } }` block, add one line: 
    ```cpp

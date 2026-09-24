@@ -1,5 +1,5 @@
 # Showcase AnalysisTreeQA services config - demonstrates named, inline,
-# not_equals and custom (built-in RatioInRange) cuts, and the fully
+# not_equals, or and custom (built-in RatioInRange) cuts, and the fully
 # YAML-declarative HistogramQA task type. See services/README.md for the
 # complete schema reference.
 
@@ -52,6 +52,19 @@ tasks:
     cuts:
       simple_cuts:
         - {type: custom, name: RatioInRange, branch: VtxTracks, numerator_field: chi2, denominator_field: ndf, min: 0, max: 10}
+
+  # "or": pi+ OR pi-, ANDed with a pT range - AnalysisTree::Cuts itself only
+  # ANDs, so OR is expressed within one "or" entry (see services/README.md).
+  - type: ParticleQA
+    name: PionsQA
+    branch: SimParticles
+    cuts:
+      simple_cuts:
+        - type: or
+          clauses:
+            - {variable: "SimParticles.pid", type: equals, value: 211}
+            - {variable: "SimParticles.pid", type: equals, value: -211}
+        - {variable: "SimParticles.pT", type: range, min: 0.2, max: 2.0}
 
   - type: EventHeaderQA
     name: EventHeaderQA

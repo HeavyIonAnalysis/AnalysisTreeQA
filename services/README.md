@@ -89,12 +89,30 @@ Each entry in a `simple_cuts:` list is one of:
 {variable: "Branch.field", type: equals,     value: <int>,           title: "optional"}
 {variable: "Branch.field", type: not_equals, value: <int>,           title: "optional"}
 {type: custom, name: "RegisteredCutName", ...any params your cut reads...}
+{type: or, clauses: [...], title: "optional"}
 ```
-All entries in one `simple_cuts:` list are combined with logical AND. These
-three declarative types cover "one field vs. a threshold/value" - e.g. an
-MC-truth primary/secondary selection is just
+All entries in one `simple_cuts:` list are combined with logical **AND**.
+`range`/`equals`/`not_equals` cover "one field vs. a threshold/value" - e.g.
+an MC-truth primary/secondary selection is just
 `{variable: "SimParticles.mother_id", type: equals, value: -1}` (primary) or
 `type: not_equals` (secondary), no custom code needed.
+
+**Logical OR**: `AnalysisTree::Cuts` itself only ever ANDs its clauses, so OR
+is provided as its own declarative type, `or`, combining several
+`range`/`equals`/`not_equals` clauses (each on its own field) into a single
+AND-able entry:
+```yaml
+simple_cuts:
+  - type: or
+    clauses:
+      - {variable: "SimParticles.pid", type: equals, value: 211}
+      - {variable: "SimParticles.pid", type: equals, value: 2212}
+  - {variable: "VtxTracks.pT", type: range, min: 0.2, max: 2.0}
+```
+which reads as `(pid == 211 OR pid == 2212) AND (0.2 <= pT <= 2.0)`. Nested
+`or`/`custom` clauses *inside* an `or` aren't supported (each clause must be
+`range`/`equals`/`not_equals`) - write a custom cut (below) if you need more
+than that.
 
 The `custom` type dispatches to a cut registered in C++ via
 `ATQA_REGISTER_CUT` (see `CutFactory.hpp`) - only needed for something the

@@ -1,7 +1,6 @@
-# Minimum 3.5 version is determined by cmake -E copy_if_different command
-# that was used to copy headers to the build directory:
-# multiple files are supported since cmake 3.5
-cmake_minimum_required(VERSION 3.5)
+# services/ (optional, AnalysisTreeQA_BUILD_SERVICES=ON) exports an OBJECT library (AnalysisTreeQABuiltinTasks) as part of the
+# installed CMake package, which needs CMake 3.12 at least.
+cmake_minimum_required(VERSION 3.12)
 project(AnalysisTreeQA CXX)
 set(PROJECT_VERSION 1.1)
 

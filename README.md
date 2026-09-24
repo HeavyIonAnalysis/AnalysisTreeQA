@@ -46,6 +46,12 @@ If AnalysisTreeQA_BUNDLED_AT_VERSION variable shows not on the tag (but branch n
 
 The classic macro-based workflow below (`examples/example.cpp`, `src/BasicQA.hpp`) only ever needs ROOT and AnalysisTree, exactly as described above. On top of it, AnalysisTreeQA optionally provides a compiled CLI binary (`analysistreeqa`) that runs a configurable set of QA tasks purely from a YAML config file - no macro to write or compile. This is opt-in via `-DAnalysisTreeQA_BUILD_SERVICES=ON`, and additionally needs `yaml-cpp` and Boost's `program_options` component (`AnalysisTreeQA_BUILD_TASKS=ON`, for writing your own private task classes, needs the same two and requires `AnalysisTreeQA_BUILD_SERVICES=ON`). See [`services/README.md`](services/README.md) for the full tutorial.
 
+#### Where should your own QA tasks live?
+
+Two supported options, pick whichever fits:
+- **Fork this repository, add to its own [`tasks/`](tasks/README.md)**: simplest for a quick, local, one-off analysis; `analysistreeqa` is built right there in the same repo/branch (`-DAnalysisTreeQA_BUILD_SERVICES=ON -DAnalysisTreeQA_BUILD_TASKS=ON`).
+- **Your own, separate repository, with AnalysisTreeQA as a dependency**: better for an analysis that shouldn't live inside/track AnalysisTreeQA's own git history, and can be versioned independently. See [`services/README.md`](services/README.md#using-analysistreeqa-from-your-own-repository), "Using AnalysisTreeQA from your own repository."
+
 ## Usage
 
 Simple program: 

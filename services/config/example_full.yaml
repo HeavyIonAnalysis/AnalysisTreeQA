@@ -37,12 +37,14 @@ tasks:
 
   # "not_equals": e.g. an MC-truth secondary-particle selection (whatever
   # field/branch/value your own AnalysisTree producer uses for "no mother").
-  - type: ParticleQA
+  - type: HistogramQA
     name: SecondaryParticlesQA
-    branch: SimParticles
-    cuts:
-      simple_cuts:
-        - {variable: "SimParticles.mother_id", type: not_equals, value: -1}
+    plots:
+      - kind: h1
+        x: {branch: SimParticles, field: pT, bins: {nbins: 100, min: 0, max: 2}}
+        cuts:
+          simple_cuts:
+            - {variable: "SimParticles.mother_id", type: not_equals, value: -1}
 
   # Built-in "custom" cut (services/steer/tasks/BuiltinCuts.cpp) - a ratio of
   # two fields, which the declarative types can't express.
@@ -55,20 +57,18 @@ tasks:
 
   # "or": pi+ OR pi-, ANDed with a pT range - AnalysisTree::Cuts itself only
   # ANDs, so OR is expressed within one "or" entry (see services/README.md).
-  - type: ParticleQA
+  - type: HistogramQA
     name: PionsQA
-    branch: SimParticles
-    cuts:
-      simple_cuts:
-        - type: or
-          clauses:
-            - {variable: "SimParticles.pid", type: equals, value: 211}
-            - {variable: "SimParticles.pid", type: equals, value: -211}
-        - {variable: "SimParticles.pT", type: range, min: 0.2, max: 2.0}
-
-  - type: EventHeaderQA
-    name: EventHeaderQA
-    branch: SimEventHeader
+    plots:
+      - kind: h1
+        x: {branch: SimParticles, field: pT, bins: {nbins: 100, min: 0, max: 2}}
+        cuts:
+          simple_cuts:
+            - type: or
+              clauses:
+                - {variable: "SimParticles.pid", type: equals, value: 211}
+                - {variable: "SimParticles.pid", type: equals, value: -211}
+            - {variable: "SimParticles.pT", type: range, min: 0.2, max: 2.0}
 
   # Fully YAML-declarative: two different branches (VtxTracks, TofHits) on
   # one plot - no new C++ class needed for this. This is the maximum

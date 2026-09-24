@@ -4,6 +4,8 @@ Drop your own QA task class here (a `.hpp` + `.cpp` pair) to make it selectable 
 
 `tasks/ExampleUserTask.hpp`/`.cpp` is a minimal worked example. You can copy it, rename the class, and adjust the `Init()` function. `tasks/ExampleCustomCut.cpp` is a worked example for a private custom cut (see "Custom cuts" below).
 
+`EventHeaderQaTask`, `ParticleQaTask`, `TracksMatchQaTask` and `ParticlesFlowQaTask` (also here, not in `services/steer/`) are ready-to-use examples of the same pattern applied to `src/BasicQA.hpp`'s canned histogram sets - only `TrackQA` and the fully-declarative `HistogramQA` ship as built-in types (see `services/README.md`), since which quantities matter for e.g. "particle QA" is an analysis-specific choice, not a framework default. Use these four directly (`type: EventHeaderQA`/`ParticleQA`/`TracksMatchQA`/`ParticlesFlowQA` still work, just now require `-DAnalysisTreeQA_BUILD_TASKS=ON`), or as templates for your own.
+
 ## How to setup the tasks
 
 1. Your class derives from `AnalysisTree::QA::Task` (`src/Task.hpp`), the same class the classic macro API (`examples/example.cpp`) uses directly.

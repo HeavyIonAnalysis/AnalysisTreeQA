@@ -2,13 +2,13 @@
 
 Drop your own QA task class here (a `.hpp` + `.cpp` pair) to make it selectable from a `services/` YAML config by name, without editing any central file. This only works when the project is built with `-DAnalysisTreeQA_BUILD_SERVICES=ON -DAnalysisTreeQA_BUILD_TASKS=ON`. See main `README.md` and `services/README.md` for the full picture.
 
-`tasks/ExampleUserTask.hpp`/`.cpp` is a minimal worked example. You can copy it, rename the class, and adjust the `Init()` function.
+`tasks/ExampleUserTask.hpp`/`.cpp` is a minimal worked example. You can copy it, rename the class, and adjust the `Init()` function. `tasks/ExampleCustomCut.cpp` is a worked example for a private custom cut (see "Custom cuts" below).
 
 ## How to setup the tasks
 
 1. Your class derives from `AnalysisTree::QA::Task` (`src/Task.hpp`), the same class the classic macro API (`examples/example.cpp`) uses directly.
 2. It has a constructor `explicit YourTask(const YAML::Node& node)`. `node` is the *entire* YAML entry for this task (its `type`, `name`, and whatever custom fields you define).
-   Cuts: build them with `AnalysisTree::QA::CutFactory::Instance().BuildCuts(node["cuts"], "some_default_name")` (see `services/steer/CutFactory.hpp`) to get the same declarative range/equals/named/custom-lambda cut support every built-intask has.
+   Cuts: build them with `AnalysisTree::QA::CutFactory::Instance().BuildCuts(node["cuts"], "some_default_name")` (see `services/steer/CutFactory.hpp`) to get the same declarative range/equals/not_equals/named/custom-lambda cut support every built-in task has.
 3. It overrides `void Init() override`, where it books its histograms/cuts (`AddH1`/`AddH2`/`AddProfile`/`AddIntegral`, or any `BasicQA.hpp` helper), and finishes by calling `AnalysisTask::Init();`. Booking must happen here, not in the constructor. The shared output file and top-level directory are only attached to the task after construction but before `Init()` runs.
 4. At the very bottom of the `.cpp` file, **inside** the `namespace AnalysisTree { namespace QA { ... } }` block, add one line: 
    ```cpp
@@ -22,7 +22,12 @@ Drop your own QA task class here (a `.hpp` + `.cpp` pair) to make it selectable 
 
 ## Custom cuts
 
-If a cut can't be expressed as a declarative range/equals check, register a named C++ predicate once (typically in its own small `.cpp` here, following `services/steer/tasks/BuiltinCuts.cpp` as a template):
+Most conditions on a single field are already covered declaratively -
+`{type: range}`, `{type: equals}`, `{type: not_equals}` (see
+`services/README.md`) - so you rarely need a custom cut at all. Write one
+only for something those can't express, e.g. a RATIO of two fields. Register
+a named C++ predicate once (typically in its own small `.cpp` here,
+following `tasks/ExampleCustomCut.cpp` as a template):
 ```cpp
 ATQA_REGISTER_CUT(MyCut, [](const YAML::Node& params) {
   return AnalysisTree::SimpleCut({"Branch.field"}, [](std::vector<double> v) { return v[0] > 0; }, "MyCut");

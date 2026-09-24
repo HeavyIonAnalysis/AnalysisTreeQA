@@ -13,10 +13,11 @@
 namespace AnalysisTree {
 namespace QA {
 
-/// Builds AnalysisTree::Cuts from YAML, either declaratively (range/equals)
-/// or via a named, C++-registered custom predicate (for logic that cannot be
-/// expressed as a simple range/equals check) - see services/README.md for
-/// the full schema and examples.
+/// Builds AnalysisTree::Cuts from YAML, either declaratively
+/// (range/equals/not_equals) or via a named, C++-registered custom predicate
+/// (for logic that cannot be expressed as a single field vs. threshold/value
+/// check, e.g. a ratio of two fields) - see services/README.md for the full
+/// schema and examples.
 class CutFactory {
  public:
   /// Builds one AnalysisTree::SimpleCut from a "custom" cut's YAML params.

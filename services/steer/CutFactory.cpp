@@ -43,11 +43,17 @@ AnalysisTree::SimpleCut CutFactory::BuildSimpleCut(const YAML::Node& simple_cut_
   if (type == "equals") {
     return EqualsCut(simple_cut_node["variable"].as<std::string>(), simple_cut_node["value"].as<int>(), title);
   }
+  if (type == "not_equals") {
+    const auto variable = simple_cut_node["variable"].as<std::string>();
+    const int value = simple_cut_node["value"].as<int>();
+    return AnalysisTree::SimpleCut(
+        {variable}, [value](std::vector<double> v) { return static_cast<int>(v[0]) != value; }, title);
+  }
   if (type == "custom") {
     return CreateCustomCut(simple_cut_node["name"].as<std::string>(), simple_cut_node);
   }
   throw std::runtime_error("CutFactory::BuildSimpleCut(): unknown simple cut type '" + type
-                            + "' (expected 'range', 'equals' or 'custom')");
+                            + "' (expected 'range', 'equals', 'not_equals' or 'custom')");
 }
 
 AnalysisTree::Cuts* CutFactory::BuildCuts(const YAML::Node& cuts_field, const std::string& default_name) const {

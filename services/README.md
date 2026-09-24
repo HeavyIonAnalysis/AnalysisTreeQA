@@ -85,15 +85,37 @@ Every task's `cuts:` field accepts three forms:
 
 Each entry in a `simple_cuts:` list is one of:
 ```yaml
-{variable: "Branch.field", type: range,  min: <num>, max: <num>, title: "optional"}
-{variable: "Branch.field", type: equals, value: <int>,           title: "optional"}
+{variable: "Branch.field", type: range,      min: <num>, max: <num>, title: "optional"}
+{variable: "Branch.field", type: equals,     value: <int>,           title: "optional"}
+{variable: "Branch.field", type: not_equals, value: <int>,           title: "optional"}
 {type: custom, name: "RegisteredCutName", ...any params your cut reads...}
 ```
-All entries in one `simple_cuts:` list are combined with logical AND. The
-`custom` type dispatches to a cut registered in C++ via `ATQA_REGISTER_CUT`
-(see `steer/tasks/BuiltinCuts.cpp` for `GoodTrackQuality`, a worked example
-mirroring the `GoodCentralityTracks` cut in `examples/example.cpp`) - use
-this for predicates that don't fit the declarative range/equals form.
+All entries in one `simple_cuts:` list are combined with logical AND. These
+three declarative types cover "one field vs. a threshold/value" - e.g. an
+MC-truth primary/secondary selection is just
+`{variable: "SimParticles.mother_id", type: equals, value: -1}` (primary) or
+`type: not_equals` (secondary), no custom code needed.
+
+The `custom` type dispatches to a cut registered in C++ via
+`ATQA_REGISTER_CUT` (see `CutFactory.hpp`) - only needed for something the
+three declarative types truly can't express, since each only ever compares
+ONE field against a fixed value. Registering a custom cut is a core `services/`
+capability, not something tied to private tasks - a generic, built-in one
+ships in `steer/tasks/BuiltinCuts.cpp`:
+
+| `name:` | Meaning | Params |
+| --- | --- | --- |
+| `RatioInRange` | ratio of two fields (from the same branch) within a range, e.g. chi2/ndf | `branch`, `numerator_field`, `denominator_field`, `min`, `max` (all required) |
+
+```yaml
+{type: custom, name: RatioInRange, branch: VtxTracks, numerator_field: chi2, denominator_field: ndf, min: 0, max: 10}
+```
+
+AnalysisTreeQA does *not* ship analysis-specific combo cuts by default
+(which quantities define e.g. "a good track" is an analysis choice, not a
+framework default) - see `../tasks/README.md` and
+`../tasks/ExampleCustomCut.cpp` for a worked example of that kind, and how to
+add your own.
 
 ## Built-in task types
 

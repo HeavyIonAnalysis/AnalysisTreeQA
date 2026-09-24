@@ -1,6 +1,7 @@
-# Showcase AnalysisTreeQA services config - demonstrates named, inline and
-# custom (C++-registered) cuts, and the fully YAML-declarative HistogramQA
-# task type. See services/README.md for the complete schema reference.
+# Showcase AnalysisTreeQA services config - demonstrates named, inline,
+# not_equals and custom (built-in RatioInRange) cuts, and the fully
+# YAML-declarative HistogramQA task type. See services/README.md for the
+# complete schema reference.
 
 input:
   files:
@@ -34,14 +35,23 @@ tasks:
       simple_cuts:
         - {variable: "TrdTracks.pid_like_e", type: range, min: 0, max: 1}
 
-  # Custom, C++-registered cut (see services/steer/tasks/BuiltinCuts.cpp) -
-  # for predicates that don't fit the declarative range/equals form.
+  # "not_equals": e.g. an MC-truth secondary-particle selection (whatever
+  # field/branch/value your own AnalysisTree producer uses for "no mother").
+  - type: ParticleQA
+    name: SecondaryParticlesQA
+    branch: SimParticles
+    cuts:
+      simple_cuts:
+        - {variable: "SimParticles.mother_id", type: not_equals, value: -1}
+
+  # Built-in "custom" cut (services/steer/tasks/BuiltinCuts.cpp) - a ratio of
+  # two fields, which the declarative types can't express.
   - type: TrackQA
-    name: GoodQualityTracksQA
+    name: GoodChi2NdfTracksQA
     branch: VtxTracks
     cuts:
       simple_cuts:
-        - {type: custom, name: GoodTrackQuality}
+        - {type: custom, name: RatioInRange, branch: VtxTracks, numerator_field: chi2, denominator_field: ndf, min: 0, max: 10}
 
   - type: EventHeaderQA
     name: EventHeaderQA

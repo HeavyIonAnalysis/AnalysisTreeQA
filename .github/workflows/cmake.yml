@@ -55,5 +55,21 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
       - name: Test
         run: cd ${{github.workspace}}/build && ctest -C ${{env.BUILD_TYPE}}
-        
-        
+
+  # Builds the optional CLI + YAML task framework (services/). Kept as its
+  # own job, separate from build_fedora35/34/build_centos7 above, since
+  # AnalysisTreeQA_BUILD_SERVICES=ON is the only configuration that needs
+  # yaml-cpp and Boost::program_options - the default build (used by every
+  # other job) must keep working without either.
+  build_services_fedora35:
+    container: rootproject/root:6.24.06-fedora35
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install yaml-cpp and Boost
+        run: dnf install -y yaml-cpp-devel boost-devel
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DAnalysisTreeQA_BUNDLED_AT=ON -DAnalysisTreeQA_BUILD_SERVICES=ON -DAnalysisTreeQA_BUILD_TASKS=ON
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+

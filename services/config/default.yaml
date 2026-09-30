@@ -1,0 +1,18 @@
+# Minimal AnalysisTreeQA services config. See services/README.md for the full schema
+
+input:
+  files:
+    # Either a ROOT file directly, or a "filelist" text file (one AnalysisTree ROOT file path per line), see services/README.md.
+    - "data.root"
+  tree: "rTree"       # AnalysisTree tree name, as passed to AnalysisTree::TaskManager::Init()
+
+output:
+  file: "qa.root"
+  overwrite: false
+
+nevents: -1   # -1 = all events
+
+tasks:
+  - task: TrackQaTask
+    name: VtxTracksQA
+    branch: VtxTracks

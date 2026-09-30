@@ -131,12 +131,19 @@ void Task::Exec() {
 }
 
 void Task::Finish() {
-  out_file_->Write();
-  out_file_->Close();
+  if (owns_output_file_) {
+    out_file_->Write();
+    out_file_->Close();
+  }
 }
 
 void Task::CreateOutputFileIfNotYet() {
   if (out_file_ == nullptr) out_file_ = new TFile(out_file_name_.c_str(), out_file_option_.c_str());
+}
+
+void Task::AttachOutputFile(TFile* file) {
+  out_file_ = file;
+  owns_output_file_ = false;
 }
 
 std::string Task::ConstructOutputDirectoryName() const {

@@ -57,16 +57,21 @@ inline void AddTracksMatchQA(Task* task, const std::string& rec_tracks, const st
   task->AddH2({"#phi", {rec_tracks, "phi"}, {gNbins, -3.2, 3.2}}, {"#phi", {sim_particles, "phi"}, {gNbins, -3.2, 3.2}}, cuts);
 }
 
-inline void AddParticlesFlowQA(Task* task, const std::string& particles, const Field& psi_RP, const std::vector<int>& pdg_codes) {
+inline void AddParticlesFlowQA(Task* task, const std::string& particles, const Field& psi_RP, const std::vector<int>& pdg_codes, Cuts* cuts = nullptr) {
 
   Variable v1("v1", {{particles, "phi"}, psi_RP}, [](std::vector<double> phi) { return cos(phi[0] - phi[1]); });
   Variable v2("v2", {{particles, "phi"}, psi_RP}, [](std::vector<double> phi) { return cos(2 * (phi[0] - phi[1])); });
 
   for (auto pdg : pdg_codes) {
-    auto* pid_cut = new Cuts("mc_" + std::to_string(pdg), {EqualsCut(particles + ".pid", pdg)});
+    std::vector<SimpleCut> simple_cuts{EqualsCut(particles + ".pid", pdg)};
+    if (cuts != nullptr) {
+      const auto& additional_cuts = cuts->GetCuts();
+      simple_cuts.insert(simple_cuts.end(), additional_cuts.begin(), additional_cuts.end());
+    }
+    auto* flow_cuts = new Cuts("mc_" + std::to_string(pdg), simple_cuts);
 
-    task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{1}", v1, {}}, pid_cut);
-    task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{2}", v2, {}}, pid_cut);
+    task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{1}", v1, {}}, flow_cuts);
+    task->AddProfile({"#it{y}", {particles, "rapidity"}, {20, 0.5, 2.5}}, {"v_{2}", v2, {}}, flow_cuts);
   }
 }
 

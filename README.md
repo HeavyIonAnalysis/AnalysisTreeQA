@@ -34,12 +34,21 @@ To apply the flag use -D{Name}={value}, for example, if you want to compile usin
 | CMAKE_BUILD_TYPE  | RELEASE  | RELEASE/DEBUG |
 | CMAKE_CXX_STANDARD  | 17  | 11/14/17 |
 | AnalysisTreeQA_BUILD_TESTS  | ON  | ON/OFF |
-| AnalysisTreeQA_BUILD_TASKS  | OFF  | ON/OFF |
+| AnalysisTreeQA_BUILD_SERVICES | OFF | ON/OFF |
+| AnalysisTreeQA_BUILD_EXAMPLES  | ON  | ON/OFF |
 | AnalysisTreeQA_BUNDLED_AT  | ON  | ON/OFF |
 | AnalysisTreeQA_BUNDLED_AT_VERSION  | v2.2.8  | master/v2.0.1/... |
 | AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW  | ON  | ON/OFF |
 
 If AnalysisTreeQA_BUNDLED_AT_VERSION variable shows not on the tag (but branch name or commit hash) then AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW variable must be set OFF.
+
+### Optional: CLI + YAML task framework (services/)
+
+The Macro API below (`examples/example.cpp`, `src/BasicQA.hpp`) only ever needs ROOT and AnalysisTree, exactly as described above. On top of it, AnalysisTreeQA optionally provides a compiled CLI binary (`analysistreeqa`) that runs a configurable set of QA tasks purely from a YAML config file - no macro to write or compile. This is opt-in via `-DAnalysisTreeQA_BUILD_SERVICES=ON`, and additionally needs `yaml-cpp` and Boost's `program_options` component. See [`services/README.md`](services/README.md) for the full tutorial.
+
+#### Where should your own QA tasks live?
+
+See [`examples/README.md`](examples/README.md) for the full, step-by-step tutorial: writing your own task class in your own, separate repository that depends on AnalysisTreeQA as an installed package - better for an analysis that shouldn't live inside/track AnalysisTreeQA's own git history, and can be versioned independently. It also covers the Macro API (above) in more detail, and ships two worked-example task classes (`ExampleEventHeaderTask`/`ExampleParticleTask`) to copy from.
 
 ## Usage
 
@@ -69,4 +78,4 @@ Simple program:
 
 ## Known problems
 
- - Matching between 3 branches is not available (i. e. TofHits.m2 vs. VtxTracks.p with cut on MC-true protons) 
+ - Matching between 3 branches is not available (i. e. TofHits.m2 vs. VtxTracks.p with cut on MC-true protons). This is a limitation of the AnalysisTree dependency itself (`AnalysisTree::Matching` only ever correlates two independent multi-object branches) - it also applies to the YAML-declarative `HistogramQaTask` task in `services/` (see `services/README.md`), not just the C++ macro API.

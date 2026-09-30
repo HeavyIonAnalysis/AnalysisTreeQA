@@ -11,7 +11,11 @@ CutFactory& CutFactory::Instance() {
 }
 
 void CutFactory::SetSharedCutsNode(const YAML::Node& shared_cuts_node) {
-  shared_cuts_node_ = shared_cuts_node;
+  // Assigning an undefined node into an already-constructed Node member via operator= throws yaml-cpp's InvalidNode (unlike fresh-initializing a local one): only assign when there's actually something defined; the
+  // member's own default constructor already leaves it equivalently "undefined" otherwise.
+  if (shared_cuts_node.IsDefined()) {
+    shared_cuts_node_ = shared_cuts_node;
+  }
 }
 
 void CutFactory::RegisterCutType(const std::string& type_name, CutCreatorFunction creator) {
@@ -32,7 +36,7 @@ AnalysisTree::SimpleCut CutFactory::CreateCustomCut(const std::string& type_name
 
 AnalysisTree::SimpleCut CutFactory::BuildSimpleCut(const YAML::Node& simple_cut_node) const {
   const auto type = simple_cut_node["type"].as<std::string>();
-  const auto title = simple_cut_node["title"].as<std::string>("");
+  const auto title = GetOrDefault<std::string>(simple_cut_node["title"], "");
 
   if (type == "range") {
     return RangeCut(simple_cut_node["variable"].as<std::string>(),
@@ -60,15 +64,13 @@ AnalysisTree::SimpleCut CutFactory::BuildSimpleCut(const YAML::Node& simple_cut_
 }
 
 AnalysisTree::SimpleCut CutFactory::BuildOrCut(const YAML::Node& or_node) const {
-  const auto title = or_node["title"].as<std::string>("");
+  const auto title = GetOrDefault<std::string>(or_node["title"], "");
   const YAML::Node clauses = or_node["clauses"];
   if (!clauses.IsDefined() || !clauses.IsSequence() || clauses.size() == 0) {
     throw std::runtime_error("CutFactory::BuildOrCut(): 'or' requires a non-empty 'clauses' list");
   }
 
-  // Each clause references exactly one variable, so clause predicate i is
-  // evaluated against v[i] below - order matters, hence keeping "variables"
-  // and "predicates" as two parallel vectors instead of e.g. a map.
+  // Each clause references exactly one variable, so clause predicate i is evaluated against v[i] below: order matters, hence keeping "variables" and "predicates" as two parallel vectors instead of e.g. a map.
   std::vector<std::string> variables;
   std::vector<std::function<bool(double)>> predicates;
   variables.reserve(clauses.size());

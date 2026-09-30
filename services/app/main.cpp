@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
       return EXIT_SUCCESS;
     }
     if (options.PrintRegisteredTasksRequested()) {
-      std::cout << "Registered task types (usable as 'type:' in YAML):\n";
+      std::cout << "Registered task types (usable as 'task:' in YAML):\n";
       for (const auto& type_name : AnalysisTree::QA::TaskFactory::Instance().RegisteredTypeNames()) {
         std::cout << "  " << type_name << "\n";
       }

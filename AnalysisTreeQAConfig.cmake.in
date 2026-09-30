@@ -1,28 +1,24 @@
-include(CMakeFindDependencyMacro)
-
-include("${CMAKE_CURRENT_LIST_DIR}/AnalysisTreeQATargets.cmake")
-
 @PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
 
 message ("-- Found AnalysisTreeQA...")
 
-# Resolves dependencies of AnalysisTreeQA so a downstream project can use
-# find_package(AnalysisTreeQA) self-sufficiently. It does not need to
-# separately find_package() everything AnalysisTreeQA itself depends on.
+# Resolves dependencies of AnalysisTreeQA so a downstream project can use find_package(AnalysisTreeQA) self-sufficiently. It does not need to separately find_package() everything AnalysisTreeQA itself depends on. 
+# Must run BEFORE including AnalysisTreeQATargets.cmake below: that generated file checks that every externally-referenced target (here: AnalysisTreeBase/AnalysisTreeInfra, from the separate AnalysisTree package)
+# already exists, and marks the whole package NOT FOUND otherwise.
 find_dependency(ROOT COMPONENTS RIO)
 find_dependency(AnalysisTree)
 
-# yaml-cpp/Boost::program_options are only needed by the services/ targets
-# (AnalysisTreeQASteerCore, AnalysisTreeQABuiltinTasks, AnalysisTreeQAAppCore)
-# which only exist in AnalysisTreeQATargets.cmake at all if THIS particular
-# installed build had AnalysisTreeQA_BUILD_SERVICES=ON. A macro-API-only
-# install must not force a consumer who only links the core AnalysisTreeQA
-# target to also have yaml-cpp/Boost available.
+# yaml-cpp/Boost::program_options are only needed by the services/ targets (AnalysisTreeQASteerCore, AnalysisTreeQABuiltinTasks, AnalysisTreeQAAppCore) which only exist in AnalysisTreeQATargets.cmake at all if
+# THIS particular installed build had AnalysisTreeQA_BUILD_SERVICES=ON. A macro-API-only install must not force a consumer who only links the core AnalysisTreeQA target to also have yaml-cpp/Boost available.
 set(AnalysisTreeQA_SERVICES_BUILT "@AnalysisTreeQA_BUILD_SERVICES@")
 if(AnalysisTreeQA_SERVICES_BUILT)
     find_dependency(yaml-cpp)
     find_dependency(Boost COMPONENTS program_options)
 endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/AnalysisTreeQATargets.cmake")
 
 set(AnalysisTreeQA_INCLUDE_DIR	"@PACKAGE_AnalysisTreeQA_INCLUDE_DIR@")
 message ("AnalysisTreeQA_INCLUDE_DIR = ${AnalysisTreeQA_INCLUDE_DIR}")

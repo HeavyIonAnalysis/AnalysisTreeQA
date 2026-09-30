@@ -25,8 +25,8 @@ namespace QA {
 /// documents, and fixing it would require a new N-way matching mechanism in
 /// the AnalysisTree library, out of scope here. See services/README.md.
 ///
-/// Not covered here (write a private AnalysisTree::Task instead, see
-/// tasks/README.md, if needed): integral plots, and anything beyond
+/// Not covered here (write your own AnalysisTree::Task instead, see
+/// examples/README.md, if needed): integral plots, and anything beyond
 /// filling histograms/profiles from per-event branch values.
 class HistogramQaTask : public Task {
  public:

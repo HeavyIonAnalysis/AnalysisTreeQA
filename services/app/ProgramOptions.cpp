@@ -11,7 +11,7 @@ namespace QA {
 ProgramOptions::ProgramOptions(int argc, char** argv) {
   desc_.add_options()("help,h", "print this help message")(
       "print-registered-tasks", po::bool_switch(&print_registered_tasks_),
-      "list every task type currently registered (i.e. selectable via 'type:' in YAML) and exit")(
+      "list every task type currently registered (i.e. selectable via 'task:' in YAML) and exit")(
       "config,c", po::value<std::string>(&config_file_)->required(), "YAML config file (see services/README.md)")(
       "input,i", po::value<std::vector<std::string>>(&input_files_)->multitoken(),
       "override the YAML config's input.files")(

@@ -23,3 +23,12 @@ foreach(EXE ${EXECUTABLES})
     install (TARGETS ${EXE} RUNTIME DESTINATION bin)
     install (FILES ${EXE}.cpp DESTINATION share)
 endforeach()
+
+# Two worked-example services/ task classes (ExampleEventHeaderTask, ExampleParticleTask, see examples/README.md), each booking one H1/H2/TProfile directly in Init(). Only buildable together with services/ itself
+# (needs AnalysisTreeQASteerCore/ATQA_REGISTER_TASK), unlike the classic example.cpp macro above which never needs it, hence the separate guard here rather than gating the whole examples/ directory on it.
+if(AnalysisTreeQA_BUILD_SERVICES)
+    add_library(AnalysisTreeQAExampleTasks OBJECT
+            ExampleEventHeaderTask.cpp
+            ExampleParticleTask.cpp)
+    target_link_libraries(AnalysisTreeQAExampleTasks PUBLIC AnalysisTreeQASteerCore)
+endif()

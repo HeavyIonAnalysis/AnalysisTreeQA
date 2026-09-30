@@ -20,7 +20,7 @@ Axis BuildAxis(const YAML::Node& axis_node) {
   const int nbins = bins["nbins"].as<int>();
   const double min = bins["min"].as<double>();
   const double max = bins["max"].as<double>();
-  const auto title = axis_node["title"].as<std::string>(branch + "." + field);
+  const auto title = GetOrDefault<std::string>(axis_node["title"], branch + "." + field);
   return Axis(title, Variable::FromString(branch + "." + field), TAxis(nbins, min, max));
 }
 
@@ -43,8 +43,8 @@ HistogramQaTask::HistogramQaTask(const YAML::Node& node) : plots_node_(node["plo
 void HistogramQaTask::Init() {
   size_t plot_index{0};
   for (const auto& plot_node : plots_node_) {
-    const auto kind = plot_node["kind"].as<std::string>();
-    const auto name = plot_node["name"].as<std::string>("");
+    const auto kind = plot_node["type"].as<std::string>();
+    const auto name = GetOrDefault<std::string>(plot_node["name"], "");
     const auto cuts_default_name = name.empty() ? ("plot_" + std::to_string(plot_index) + "_cuts") : (name + "_cuts");
     auto* cuts = CutFactory::Instance().BuildCuts(plot_node["cuts"], cuts_default_name);
     const auto weight = BuildWeight(plot_node);

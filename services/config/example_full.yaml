@@ -1,11 +1,10 @@
-# Showcase AnalysisTreeQA services config - demonstrates named, inline,
-# not_equals, or and custom (built-in RatioInRange) cuts, and the fully
-# YAML-declarative HistogramQA task type. See services/README.md for the
-# complete schema reference.
+# Showcase AnalysisTreeQA services config: demonstrates named, inline, not_equals, or and custom (built-in RatioInRange) cuts, and the fully YAML-declarative HistogramQaTask task type.
+# See services/README.md for the complete schema reference.
 
 input:
   files:
-    - "input.root"
+    # Either a ROOT file directly, or a "filelist" text file (one AnalysisTree ROOT file path per line), see services/README.md.
+    - "data.root"
   tree: "rTree"
 
 output:
@@ -15,52 +14,49 @@ output:
 nevents: -1
 
 cuts:
-  # Shared, named cut - reusable by any task via "cuts: pT_cut".
+  # Shared, named cut: reusable by any task via "cuts: pT_cut".
   pT_cut:
     simple_cuts:
       - {variable: "VtxTracks.pT", type: range, min: 1.0, max: 1.5}
 
 tasks:
   # Named, shared cut.
-  - type: TrackQA
+  - task: TrackQaTask
     name: VtxTracksQA
     branch: VtxTracks
     cuts: pT_cut
 
   # Inline, task-local cut.
-  - type: TrackQA
+  - task: TrackQaTask
     name: TrdTracksQA
     branch: TrdTracks
     cuts:
       simple_cuts:
         - {variable: "TrdTracks.pid_like_e", type: range, min: 0, max: 1}
 
-  # "not_equals": e.g. an MC-truth secondary-particle selection (whatever
-  # field/branch/value your own AnalysisTree producer uses for "no mother").
-  - type: HistogramQA
+  # "not_equals": e.g. an MC-truth secondary-particle selection (whatever field/branch/value your own AnalysisTree producer uses for "no mother").
+  - task: HistogramQaTask
     name: SecondaryParticlesQA
     plots:
-      - kind: h1
+      - type: h1
         x: {branch: SimParticles, field: pT, bins: {nbins: 100, min: 0, max: 2}}
         cuts:
           simple_cuts:
             - {variable: "SimParticles.mother_id", type: not_equals, value: -1}
 
-  # Built-in "custom" cut (services/steer/tasks/BuiltinCuts.cpp) - a ratio of
-  # two fields, which the declarative types can't express.
-  - type: TrackQA
+  # Built-in "custom" cut (services/steer/tasks/BuiltinCuts.cpp) - a ratio of two fields, which the declarative types can't express.
+  - task: TrackQaTask
     name: GoodChi2NdfTracksQA
     branch: VtxTracks
     cuts:
       simple_cuts:
         - {type: custom, name: RatioInRange, branch: VtxTracks, numerator_field: chi2, denominator_field: ndf, min: 0, max: 10}
 
-  # "or": pi+ OR pi-, ANDed with a pT range - AnalysisTree::Cuts itself only
-  # ANDs, so OR is expressed within one "or" entry (see services/README.md).
-  - type: HistogramQA
+  # "or": pi+ OR pi-, ANDed with a pT range - AnalysisTree::Cuts itself only ANDs, so OR is expressed within one "or" entry (see services/README.md).
+  - task: HistogramQaTask
     name: PionsQA
     plots:
-      - kind: h1
+      - type: h1
         x: {branch: SimParticles, field: pT, bins: {nbins: 100, min: 0, max: 2}}
         cuts:
           simple_cuts:
@@ -70,17 +66,13 @@ tasks:
                 - {variable: "SimParticles.pid", type: equals, value: -211}
             - {variable: "SimParticles.pT", type: range, min: 0.2, max: 2.0}
 
-  # Fully YAML-declarative: two different branches (VtxTracks, TofHits) on
-  # one plot - no new C++ class needed for this. This is the maximum
-  # AnalysisTree itself supports: a plot's axes + cuts may together
-  # reference at most two independent multi-object branches (here both cut
-  # and y-axis stay within {VtxTracks, TofHits}). Cutting on a THIRD,
-  # unrelated branch (e.g. SimParticles) is not possible - see the
+  # Fully YAML-declarative: two different branches (VtxTracks, TofHits) on one plot: no new C++ class needed for this. This is the maximum AnalysisTree itself supports: a plot's axes + cuts may together
+  # reference at most two independent multi-object branches (here both cut and y-axis stay within {VtxTracks, TofHits}). Cutting on a THIRD, unrelated branch (e.g. SimParticles) is not possible, see the
   # "Cross-branch limits" note in services/README.md.
-  - type: HistogramQA
+  - task: HistogramQaTask
     name: TofPidCheck
     plots:
-      - kind: h2
+      - type: h2
         name: p_vs_mass2
         x: {branch: VtxTracks, field: p,     bins: {nbins: 200, min: 0,    max: 4}}
         y: {branch: TofHits,   field: mass2, bins: {nbins: 200, min: -0.2, max: 1.2}}

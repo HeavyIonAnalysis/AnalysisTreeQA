@@ -27,13 +27,23 @@ void Config::LoadYaml(const std::string& filename) {
     throw std::runtime_error("Config::LoadYaml(): missing required 'output:' section in " + filename);
   }
   output_file_ = output["file"].as<std::string>();
-  overwrite_ = output["overwrite"].as<bool>(false);
+  const YAML::Node overwrite_node = output["overwrite"];
+  overwrite_ = overwrite_node.IsDefined() ? overwrite_node.as<bool>() : false;
 
-  n_events_ = root["nevents"].as<long long>(-1);
+  const YAML::Node nevents_node = root["nevents"];
+  n_events_ = nevents_node.IsDefined() ? nevents_node.as<long long>() : -1;
 
-  shared_cuts_node_ = root["cuts"];
+  // Assigning an undefined YAML::Node into an already-constructed Node member via operator= (as opposed to fresh-initializing a local one) throws yaml-cpp's InvalidNode; guard with IsDefined() and only assign when
+  // there's actually something to assign; the member's own default constructor already leaves it in an equivalent "undefined" state.
+  const YAML::Node cuts_node = root["cuts"];
+  if (cuts_node.IsDefined()) {
+    shared_cuts_node_ = cuts_node;
+  }
 
-  task_nodes_ = root["tasks"];
+  const YAML::Node tasks_node = root["tasks"];
+  if (tasks_node.IsDefined()) {
+    task_nodes_ = tasks_node;
+  }
   if (!task_nodes_.IsDefined() || !task_nodes_.IsSequence() || task_nodes_.size() == 0) {
     throw std::runtime_error("Config::LoadYaml(): 'tasks:' must be a non-empty list in " + filename);
   }

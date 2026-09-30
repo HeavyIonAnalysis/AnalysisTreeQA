@@ -1,9 +1,5 @@
-# ProgramOptions/Application are built as a separate, installable library
-# (not baked directly into the analysistreeqa executable) so that an
-# external repository depending on AnalysisTreeQA as a package (see
-# services/README.md, "Using AnalysisTreeQA from your own repository") can
-# reuse the CLI/config-loading logic too, needing only a trivial main.cpp of
-# its own instead of duplicating ProgramOptions/Application.
+# ProgramOptions/Application are built as a separate, installable library (not baked directly into the analysistreeqa executable) so that an external repository depending on AnalysisTreeQA as a package (see
+# examples/README.md) can reuse the CLI/config-loading logic too, needing only a trivial main.cpp of its own instead of duplicating ProgramOptions/Application.
 add_library(AnalysisTreeQAAppCore STATIC
     ProgramOptions.cpp
     Application.cpp
@@ -24,12 +20,10 @@ target_link_libraries(analysistreeqa
         AnalysisTreeQABuiltinTasks
 )
 
-# AnalysisTreeQAUserTasks (user-private tasks under the top-level tasks/,
-# see tasks/CMakeLists.txt) only exists when AnalysisTreeQA_BUILD_TASKS=ON,
-# which itself requires AnalysisTreeQA_BUILD_SERVICES=ON (enforced in the
-# root CMakeLists.txt).
-if(AnalysisTreeQA_BUILD_TASKS)
-    target_link_libraries(analysistreeqa PRIVATE AnalysisTreeQAUserTasks)
+# AnalysisTreeQAExampleTasks (the two worked-example task classes under examples/, see examples/CMakeLists.txt) only exists when AnalysisTreeQA_BUILD_EXAMPLES=ON - we're already inside services/, so
+# AnalysisTreeQA_BUILD_SERVICES=ON is guaranteed here (root CMakeLists.txt only add_subdirectory(services) under that condition).
+if(AnalysisTreeQA_BUILD_EXAMPLES)
+    target_link_libraries(analysistreeqa PRIVATE AnalysisTreeQAExampleTasks)
 endif()
 
 install(TARGETS analysistreeqa RUNTIME DESTINATION bin)

@@ -8,7 +8,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 #
 # Options
 #
-set(AnalysisTreeQA_BUILD_TASKS OFF CACHE BOOL "Build user' AnalysisTreeQA tasks (tasks/); requires AnalysisTreeQA_BUILD_SERVICES=ON")
 set(AnalysisTreeQA_BUILD_EXAMPLES ON CACHE BOOL "Build AnalysisTreeQA examples (examples/)")
 set(AnalysisTreeQA_BUILD_TESTS OFF CACHE BOOL "Build tests for AnalysisTreeQA")
 set(AnalysisTreeQA_BUILD_SERVICES OFF CACHE BOOL "Build the AnalysisTreeQA CLI + YAML task framework (services/); needs yaml-cpp and Boost::program_options, not required otherwise")
@@ -67,10 +66,8 @@ include_directories(${CMAKE_SOURCE_DIR} ${AnalysisTree_INCLUDE_DIR} ${PROJECT_IN
 
 include(AnalysisTree)
 
-# yaml-cpp and Boost::program_options are only needed by the optional CLI +
-# YAML task framework (services/) and the user-private tasks that plug into
-# it (tasks/). The classic macro-based workflow (src/, examples/) never needs
-# either and must keep building without them.
+# yaml-cpp and Boost::program_options are only needed by the optional CLI + YAML task framework (services/) and the two worked-example task classes under examples/ that plug into it (only built together with
+# AnalysisTreeQA_BUILD_SERVICES=ON, see examples/CMakeLists.txt). The classic macro-based workflow (src/, examples/example.cpp) never needs either and must keep building without them.
 if(AnalysisTreeQA_BUILD_SERVICES)
     find_package(yaml-cpp REQUIRED)
     if(TARGET yaml-cpp::yaml-cpp)
@@ -79,19 +76,12 @@ if(AnalysisTreeQA_BUILD_SERVICES)
         set(AnalysisTreeQA_YAMLCPP_TARGET yaml-cpp)
     endif()
     find_package(Boost REQUIRED COMPONENTS program_options)
-elseif(AnalysisTreeQA_BUILD_TASKS)
-    message(FATAL_ERROR "AnalysisTreeQA_BUILD_TASKS=ON requires AnalysisTreeQA_BUILD_SERVICES=ON "
-                         "(user-private tasks need the TaskFactory/CutFactory built by services/)")
 endif()
 
 add_subdirectory(src)
 
 if(AnalysisTreeQA_BUILD_SERVICES)
     add_subdirectory(services)
-endif()
-
-if(AnalysisTreeQA_BUILD_TASKS)
-    add_subdirectory(tasks)
 endif()
 
 if(AnalysisTreeQA_BUILD_EXAMPLES)

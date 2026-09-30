@@ -127,15 +127,21 @@ make -j install
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">AnalysisTreeQA_BUILD_TESTS  </td><td class="markdownTableBodyNone">ON  </td><td class="markdownTableBodyNone">ON/OFF  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">AnalysisTreeQA_BUILD_TASKS  </td><td class="markdownTableBodyNone">OFF  </td><td class="markdownTableBodyNone">ON/OFF  </td></tr>
+<td class="markdownTableBodyNone">AnalysisTreeQA_BUILD_SERVICES  </td><td class="markdownTableBodyNone">OFF  </td><td class="markdownTableBodyNone">ON/OFF  </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT  </td><td class="markdownTableBodyNone">ON  </td><td class="markdownTableBodyNone">ON/OFF  </td></tr>
+<td class="markdownTableBodyNone">AnalysisTreeQA_BUILD_EXAMPLES  </td><td class="markdownTableBodyNone">ON  </td><td class="markdownTableBodyNone">ON/OFF  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT_VERSION  </td><td class="markdownTableBodyNone">v2.2.8  </td><td class="markdownTableBodyNone">master/v2.0.1/...  </td></tr>
+<td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT  </td><td class="markdownTableBodyNone">ON  </td><td class="markdownTableBodyNone">ON/OFF  </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT_VERSION  </td><td class="markdownTableBodyNone">v2.2.8  </td><td class="markdownTableBodyNone">master/v2.0.1/...  </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW  </td><td class="markdownTableBodyNone">ON  </td><td class="markdownTableBodyNone">ON/OFF  </td></tr>
 </table>
 <p>If AnalysisTreeQA_BUNDLED_AT_VERSION variable shows not on the tag (but branch name or commit hash) then AnalysisTreeQA_BUNDLED_AT_GIT_SHALLOW variable must be set OFF.</p>
+<h2>Optional: CLI + YAML task framework (services/)</h2>
+<p>The Macro API below (<span class="tt">examples/example.cpp</span>, <span class="tt">src/BasicQA.hpp</span>) only ever needs ROOT and AnalysisTree, exactly as described above. On top of it, AnalysisTreeQA optionally provides a compiled CLI binary (<span class="tt">analysistreeqa</span>) that runs a configurable set of QA tasks purely from a YAML config file - no macro to write or compile. This is opt-in via <span class="tt">-DAnalysisTreeQA_BUILD_SERVICES=ON</span>, and additionally needs <span class="tt">yaml-cpp</span> and Boost's <span class="tt">program_options</span> component. See <span class="tt">services/README.md</span> for the full tutorial.</p>
+<h3>Where should your own QA tasks live?</h3>
+<p>See <span class="tt">examples/README.md</span> for the full, step-by-step tutorial: writing your own task class in your own, separate repository that depends on AnalysisTreeQA as an installed package - better for an analysis that shouldn't live inside/track AnalysisTreeQA's own git history, and can be versioned independently. It also covers the Macro API (above) in more detail, and ships two worked-example task classes (<span class="tt">ExampleEventHeaderTask</span>/<span class="tt">ExampleParticleTask</span>) to copy from.</p>
 <h1>Usage</h1>
 <p>Simple program: </p><pre class="fragment">// Manager instance: filelist1, filelist2, ...; treename1, treename2, ...
 QA::Manager man({filelist1, filelist2}, {"aTree", "bTree"}); 
@@ -160,7 +166,7 @@ task-&gt;AddH1({"N_{hits}", {"VtxTracks", "nhits"}, {15, 0, 15}}, mc_protons);
 man.Run();
 </pre><h1>Known problems</h1>
 <ul>
-<li>Matching between 3 branches is not available (i. e. TofHits.m2 vs. VtxTracks.p with cut on MC-true protons) </li>
+<li>Matching between 3 branches is not available (i. e. TofHits.m2 vs. VtxTracks.p with cut on MC-true protons). This is a limitation of the AnalysisTree dependency itself (<span class="tt">AnalysisTree::Matching</span> only ever correlates two independent multi-object branches) - it also applies to the YAML-declarative <span class="tt">HistogramQaTask</span> task in <span class="tt">services/</span> (see <span class="tt">services/README.md</span>), not just the C++ macro API. </li>
 </ul>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
